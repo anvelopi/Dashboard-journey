@@ -3,11 +3,10 @@ import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  // Check if Anthropic key exists
   if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({
       enabled: false,
-      message: "ANTHROPIC_API_KEY not configured. Add it to Vercel env vars to enable AI insights.",
+      message: "ANTHROPIC_API_KEY not configured",
     });
   }
 
@@ -19,8 +18,6 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { keywords, pages, revenue, domain } = body;
-
-    // Build context for Claude
     const context = buildContext(keywords, pages, revenue, domain);
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -32,100 +29,82 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
-        system: `Eres un consultor SEO experto. Analizas datos de Google Search Console y Google Analytics 4 para generar recomendaciones accionables priorizadas por impacto económico.
-
-Responde SIEMPRE con el formato delimitado:
-===REC===
-TITULO: [título corto]
-PRIORIDAD: [ALTA|MEDIA|BAJA]
-FASE: [Descubrimiento|Investigación|Evaluación|Decisión|Compra|Post-venta]
-TIPO: [SEO|CONTENIDO|TÉCNICO|CRO|ENLAZADO]
-IMPACTO: [estimación en € o % de mejora]
-ESFUERZO: [horas estimadas]
-DESCRIPCION: [descripción detallada de 2-3 frases con datos específicos]
-===END===
-
-Genera entre 6 y 10 recomendaciones ordenadas por impacto descendente. Cada recomendación debe ser ESPECÍFICA para este dominio y usar datos reales del contexto proporcionado. NO generes recomendaciones genéricas.`,
-        messages: [
-          {
-            role: "user",
-            content: `Analiza estos datos del dominio ${domain} y genera recomendaciones SEO accionables:\n\n${context}`,
-          },
-        ],
+        max_tokens: 8000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: "Analiza estos datos del dominio " + domain + " y genera el Customer Journey SEO completo:\n\n" + context }],
       }),
     });
 
     const data = await response.json();
     const text = data.content?.[0]?.text || "";
 
-    // Parse ===REC=== format
-    const recs = parseRecommendations(text);
+    let journey = null;
+    try {
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) journey = JSON.parse(jsonMatch[0]);
+    } catch (e) {
+      console.error("Failed to parse journey JSON:", e);
+    }
 
-    return NextResponse.json({ enabled: true, recommendations: recs, raw: text });
+    return NextResponse.json({ enabled: true, journey, raw: text });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-// Check if insights are available (GET)
 export async function GET() {
-  return NextResponse.json({
-    enabled: !!process.env.ANTHROPIC_API_KEY,
-  });
+  return NextResponse.json({ enabled: !!process.env.ANTHROPIC_API_KEY });
 }
+
+const SYSTEM_PROMPT = `Eres un consultor SEO experto especializado en Customer Journey Mapping. Analizas datos de Google Search Console y Google Analytics 4 para construir un mapa completo del customer journey SEO.
+
+Devuelve un JSON con esta estructura exacta:
+
+{
+  "archetypes": [
+    {"id":"A1","name":"nombre","icon":"emoji","desc":"descripción 2 frases","pct":35,"color":"#00b4d8"},
+    {"id":"A2",...}, {"id":"A3",...}, {"id":"A4",...}
+  ],
+  "keywords_classified": [
+    {"kw":"keyword","clicks":N,"imp":N,"ctr":N,"pos":N,"phase":"Fase","intent":"Intent","archs":["A1"]}
+  ],
+  "pain_points": [
+    {"title":"titulo","desc":"descripcion","phases":["Fase"],"archs":["A1","A2"],"sev":5}
+  ],
+  "insights": {
+    "A1": {
+      "Descubrimiento": {"t":"qué piensa/busca","f":"qué siente","p":["pain1","pain2"],"g":["gain1","gain2"]},
+      "Investigación": {...}, "Evaluación": {...}, "Decisión": {...}, "Compra": {...}, "Post-venta": {...}
+    },
+    "A2": {...}, "A3": {...}, "A4": {...}
+  },
+  "content_gaps": [
+    {"arch":"A1","phase":"Fase","title":"titulo del gap","kws":"keywords relacionadas","prio":"alta"}
+  ],
+  "recommendations": [
+    {"title":"titulo","priority":"ALTA","phase":"Fase","type":"SEO","impact":"estimación €","effort":"Xh","description":"descripcion detallada"}
+  ]
+}
+
+REGLAS:
+- Las fases son: Descubrimiento, Investigación, Evaluación, Decisión, Compra, Post-venta
+- Las intenciones son: Informacional, Comercial, Transaccional, Navegacional
+- Clasifica TODAS las keywords proporcionadas
+- Los 4 arquetipos deben reflejar patrones reales de las keywords del dominio
+- Los pain points deben basarse en datos reales (CTR bajo, posiciones malas, páginas sin conversión)
+- Los insights por celda (arquetipo x fase) deben ser específicos para este dominio
+- Genera 8-12 pain points, 12-18 content gaps, 6-10 recomendaciones
+- Responde SOLO con el JSON, sin texto, sin backticks markdown`;
 
 function buildContext(keywords: any[], pages: any[], revenue: any, domain: string): string {
-  let ctx = `DOMINIO: ${domain}\n\n`;
-
-  if (revenue) {
-    ctx += `ECOMMERCE (30d): Revenue ${revenue.total}€, ${revenue.transactions} transacciones\n\n`;
-  }
-
-  if (keywords?.length) {
-    ctx += `TOP 30 KEYWORDS GSC (28d):\n`;
-    keywords.slice(0, 30).forEach((k: any) => {
-      ctx += `- "${k.keys?.[0] || k.kw}" | clicks:${k.clicks} | imp:${k.impressions || k.imp} | CTR:${(k.ctr * 100 || k.ctr).toFixed(1)}% | pos:${(k.position || k.pos).toFixed(1)}\n`;
-    });
-    ctx += "\n";
-  }
-
+  let ctx = "DOMINIO: " + domain + "\n";
+  if (revenue) ctx += "ECOMMERCE (30d): Revenue " + revenue.total + " EUR, " + revenue.transactions + " transacciones, " + revenue.sessions + " sesiones\n\n";
+  ctx += "KEYWORDS GSC (28d) - " + keywords.length + " keywords:\n";
+  keywords.slice(0, 80).forEach((k: any) => { ctx += '"' + k.kw + '" | clicks:' + k.clicks + " | imp:" + k.imp + " | CTR:" + k.ctr + "% | pos:" + k.pos + "\n"; });
+  ctx += "\n";
   if (pages?.length) {
-    ctx += `TOP 20 PÁGINAS GA4 (30d):\n`;
-    pages.slice(0, 20).forEach((p: any) => {
-      const path = p.dimensionValues?.[0]?.value || p.page;
-      const sessions = p.metricValues?.[0]?.value || p.sessions;
-      const rev = p.metricValues?.[4]?.value || p.revenue || "0";
-      ctx += `- ${path} | sesiones:${sessions} | revenue:${parseFloat(rev).toFixed(0)}€\n`;
-    });
-    ctx += "\n";
+    ctx += "PAGINAS GA4 (30d) - " + pages.length + " paginas:\n";
+    pages.slice(0, 30).forEach((p: any) => { ctx += p.page + " | sesiones:" + p.sessions + " | revenue:" + p.revenue + "EUR | compras:" + p.purchases + "\n"; });
   }
-
-  ctx += `INSTRUCCIONES ADICIONALES:\n`;
-  ctx += `- Identifica keywords con muchas impresiones pero CTR bajo o posición >10 (oportunidades)\n`;
-  ctx += `- Cruza páginas de GA4 con keywords de GSC para detectar content gaps\n`;
-  ctx += `- Prioriza acciones que impacten en revenue (páginas con transacciones)\n`;
-  ctx += `- Detecta problemas de enlazado interno (blog sin link a producto)\n`;
-  ctx += `- Incluye estimación de impacto económico basada en los datos reales\n`;
-
   return ctx;
-}
-
-function parseRecommendations(text: string): any[] {
-  const blocks = text.split("===REC===").filter((b) => b.includes("TITULO:"));
-  return blocks.map((block) => {
-    const get = (field: string) => {
-      const m = block.match(new RegExp(`${field}:\\s*(.+?)(?:\\n|===)`));
-      return m ? m[1].trim() : "";
-    };
-    return {
-      title: get("TITULO"),
-      priority: get("PRIORIDAD"),
-      phase: get("FASE"),
-      type: get("TIPO"),
-      impact: get("IMPACTO"),
-      effort: get("ESFUERZO"),
-      description: get("DESCRIPCION"),
-    };
-  });
 }
