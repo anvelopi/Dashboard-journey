@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/insights/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
