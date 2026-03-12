@@ -1,0 +1,26 @@
+{
+  "name": "seo-customer-journey",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "node setup-auth.js",
+    "predev": "node setup-auth.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "next-auth": "^4.24.7",
+    "googleapis": "^140.0.1",
+    "chart.js": "^4.4.1",
+    "@anthropic-ai/sdk": "^0.32.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "typescript": "^5"
+  }
+}
