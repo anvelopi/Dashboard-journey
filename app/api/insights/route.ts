@@ -67,7 +67,7 @@ Genera JSON con: archetypes (4, basados en clusters reales), pain_points (8, fra
       },
       body: JSON.stringify({
         model: "claude-opus-4-6",
-        max_tokens: 8000,
+        max_tokens: 4000,
         system: PROMPT,
         messages: [{ role: "user", content: prompt }],
       }),
