@@ -64,10 +64,10 @@ Devuelve SOLO JSON válido (sin texto, sin backticks):
 
 {
   "archetypes": [
-    {"id":"A1","name":"nombre MUY específico del sector piscinas","icon":"emoji","desc":"2-3 frases: qué busca exactamente, en qué época del año, ticket medio, cómo se comporta. BASADO EN LOS CLUSTERS REALES.","pct":35,"color":"#00b4d8"},
-    {"id":"A2","name":"...","icon":"...","desc":"...","pct":25,"color":"#0d6e5b"},
-    {"id":"A3","name":"...","icon":"...","desc":"...","pct":25,"color":"#d97706"},
-    {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#7c3aed"}
+    {"id":"A1","name":"nombre MUY específico del sector piscinas","icon":"emoji","desc":"2-3 frases: qué busca exactamente, en qué época del año, ticket medio, cómo se comporta. BASADO EN LOS CLUSTERS REALES.","pct":35,"color":"#18181b"},
+    {"id":"A2","name":"...","icon":"...","desc":"...","pct":25,"color":"#52525b"},
+    {"id":"A3","name":"...","icon":"...","desc":"...","pct":25,"color":"#71717a"},
+    {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#a1a1aa"}
   ],
   "pain_points": [
     {"title":"frase que diría el USUARIO buscando en Google, NO jerga SEO","desc":"dato real: impresiones, posición, CTR o gap vs competidor","phases":["Evaluación"],"archs":["A1"],"sev":5}
