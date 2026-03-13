@@ -27,6 +27,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 2500,
+        temperature: 0,
         system: PROMPT,
         messages: [{ role: "user", content: `DOMINIO: ${domain}\nRevenue 30d: EUR${revenue.total || 0}, ${revenue.transactions || 0} transacciones\n\n${clusterSummary}\n\n${phaseSummary}\n\n${patterns}\n\nGenera el JSON.` }],
       }),
@@ -64,10 +65,12 @@ Devuelve SOLO JSON válido (sin texto, sin backticks):
 
 {
   "archetypes": [
-    {"id":"A1","name":"nombre MUY específico del sector piscinas","icon":"emoji","desc":"2-3 frases: qué busca exactamente, en qué época del año, ticket medio, cómo se comporta. BASADO EN LOS CLUSTERS REALES.","pct":35,"color":"#18181b"},
-    {"id":"A2","name":"...","icon":"...","desc":"...","pct":25,"color":"#52525b"},
-    {"id":"A3","name":"...","icon":"...","desc":"...","pct":25,"color":"#71717a"},
-    {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#a1a1aa"}
+    {"id":"A1","name":"nombre MUY específico del sector piscinas","icon":"emoji","desc":"2-3 frases basadas en clusters reales: qué busca, cuándo, ticket, comportamiento","pct":25,"color":"#18181b"},
+    {"id":"A2","name":"...","icon":"...","desc":"...","pct":20,"color":"#3f3f46"},
+    {"id":"A3","name":"...","icon":"...","desc":"...","pct":18,"color":"#52525b"},
+    {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#71717a"},
+    {"id":"A5","name":"...","icon":"...","desc":"...","pct":12,"color":"#a1a1aa"},
+    {"id":"A6","name":"...","icon":"...","desc":"...","pct":10,"color":"#d4d4d8"}
   ],
   "pain_points": [
     {"title":"frase que diría el USUARIO buscando en Google, NO jerga SEO","desc":"dato real: impresiones, posición, CTR o gap vs competidor","phases":["Evaluación"],"archs":["A1"],"sev":5}
