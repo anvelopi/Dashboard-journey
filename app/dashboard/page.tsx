@@ -26,7 +26,6 @@ export default function DashboardPage() {
   const [domainOverview, setDomainOverview] = useState<any>(null);
   const [compLoading, setCompLoading] = useState(false);
   const [compInput, setCompInput] = useState("");
-  const insightsCalled = useRef(false);
 
   useEffect(() => { if (status === "unauthenticated") router.push("/"); }, [status, router]);
 
@@ -77,12 +76,119 @@ export default function DashboardPage() {
   }
   function removeComp(d: string) { setCompetitors(prev => prev.filter(c => c.domain !== d)); }
 
+  const fetchInsights = useCallback(async (fullData: any) => {
+    setAiLoading(true);
+    try {
+      // Build FULL keyword universe: GSC + competitor gaps + competitor shared
+      const allKws: any[] = [...(fullData.keywords || [])];
+      const compGaps = fullData.compGaps || {};
+      const compShared = fullData.compShared || {};
+      // Add gap keywords (competitor ranks, quimipool doesn't)
+      Object.entries(compGaps).forEach(([dom, gaps]: [string, any]) => {
+        (gaps || []).forEach((g: any) => {
+          if (!allKws.find((k: any) => k.kw === g.kw)) {
+            allKws.push({ kw: g.kw, clicks: 0, imp: g.vol || 0, ctr: 0, pos: 0, source: "gap:" + dom, kd: g.kd || 0 });
+          }
+        });
+      });
+      // Add shared keywords with competitor positions
+      Object.entries(compShared).forEach(([dom, shared]: [string, any]) => {
+        (shared || []).forEach((s: any) => {
+          const existing = allKws.find((k: any) => k.kw === s.kw);
+          if (existing) { existing.posComp = s.posC; existing.compDomain = dom; }
+          else { allKws.push({ kw: s.kw, clicks: 0, imp: s.vol || 0, ctr: 0, pos: s.posQ || 0, source: "shared:" + dom, posComp: s.posC }); }
+        });
+      });
+
+      // Classify all keywords
+      const classified = allKws.map((k: any) => ({
+        ...k,
+        phase: classifyPhase(k.kw, k.pos),
+        intent: classifyIntent(k.kw),
+        archs: classifyArchs(k.kw),
+        cluster: classifyCluster(k.kw),
+      }));
+
+      // Build cluster summary (compact text for Claude)
+      const clusterMap: Record<string, any[]> = {};
+      classified.forEach((k: any) => { if (!clusterMap[k.cluster]) clusterMap[k.cluster] = []; clusterMap[k.cluster].push(k); });
+
+      const clusterLines = Object.entries(clusterMap)
+        .map(([name, items]) => {
+          const imp = items.reduce((s: number, k: any) => s + k.imp, 0);
+          const clicks = items.reduce((s: number, k: any) => s + k.clicks, 0);
+          const avgPos = items.filter((k: any) => k.pos > 0).length ? +(items.filter((k: any) => k.pos > 0).reduce((s: number, k: any) => s + k.pos, 0) / items.filter((k: any) => k.pos > 0).length).toFixed(1) : 0;
+          const gscCount = items.filter((k: any) => !k.source).length;
+          const gapCount = items.filter((k: any) => k.source?.startsWith("gap:")).length;
+          const top3 = [...items].sort((a, b) => b.imp - a.imp).slice(0, 3).map((k: any) => '"' + k.kw + '" ' + k.imp + 'imp' + (k.pos > 0 ? ' pos.' + k.pos.toFixed?.(1) : ' [gap]'));
+          const weak = items.filter((k: any) => k.imp > 100 && k.pos > 15).slice(0, 2).map((k: any) => '"' + k.kw + '" pos.' + k.pos.toFixed?.(1) + ' ' + k.imp + 'imp');
+          return { name, count: items.length, imp, clicks, avgPos, gscCount, gapCount, top3, weak };
+        })
+        .sort((a, b) => b.imp - a.imp)
+        .slice(0, 12);
+
+      let clusterSummary = "=== CLUSTERS SEMANTICOS (GSC + gaps competidores) ===\n";
+      clusterLines.forEach(cl => {
+        clusterSummary += cl.name + ": " + cl.count + "kw (" + cl.gscCount + " GSC + " + cl.gapCount + " gaps), " + cl.imp + "imp, " + cl.clicks + "cl, pos." + cl.avgPos + "\n";
+        clusterSummary += "  Top: " + cl.top3.join(", ") + "\n";
+        if (cl.weak.length) clusterSummary += "  Oportunidad: " + cl.weak.join(", ") + "\n";
+      });
+
+      // Phase summary
+      const phases: Record<string, { count: number; clicks: number; imp: number }> = {};
+      classified.forEach((k: any) => {
+        if (!phases[k.phase]) phases[k.phase] = { count: 0, clicks: 0, imp: 0 };
+        phases[k.phase].count++; phases[k.phase].clicks += k.clicks; phases[k.phase].imp += k.imp;
+      });
+      let phaseSummary = "=== FASES ===\n";
+      Object.entries(phases).forEach(([p, d]) => { phaseSummary += p + ": " + d.count + "kw, " + d.clicks + "cl, " + d.imp + "imp\n"; });
+
+      // Patterns
+      const gapTotal = Object.values(compGaps).reduce((s: number, g: any) => s + (g?.length || 0), 0);
+      const sharedTotal = Object.values(compShared).reduce((s: number, g: any) => s + (g?.length || 0), 0);
+      let patterns = "=== PATRONES ===\n";
+      patterns += "- " + fullData.keywords.length + " keywords propias (GSC) + " + gapTotal + " gaps de competidores + " + sharedTotal + " compartidas\n";
+      patterns += "- Competidores activos: " + (fullData.competitors || []).map((c: any) => c.domain + " (ETV:" + c.etv + ")").join(", ") + "\n";
+      const intlCount = classified.filter((k: any) => /pièces|ersatz|onderdelen|duikplank|pompe|recinzione|copertura|couverture|boia|escada/.test(k.kw)).length;
+      if (intlCount) patterns += "- " + intlCount + " busquedas internacionales (FR, DE, NL, PT, IT)\n";
+      const refCount = classified.filter((k: any) => /^\d{5,}|\d{7}/.test(k.kw)).length;
+      if (refCount) patterns += "- " + refCount + " busquedas por referencia/SKU exacta\n";
+      const probCount = classified.filter((k: any) => /como |cómo |pierde agua|no arranca|eliminar algas/.test(k.kw)).length;
+      if (probCount) patterns += "- " + probCount + " busquedas de problemas/soluciones\n";
+
+      // Call insights with COMPACT body (just text summaries)
+      const res = await fetch("/api/insights", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          domain: fullData.domain,
+          revenue: fullData.revenue,
+          clusterSummary,
+          phaseSummary,
+          patterns,
+        }),
+      });
+      const json = await res.json();
+
+      // Build insights locally from classified keywords
+      const archIds = (json.archetypes || []).map((a: any) => a.id);
+      const localInsights = buildLocalInsights(classified, archIds.length ? archIds : ["A1","A2","A3","A4"]);
+
+      setJourney({
+        keywords_classified: classified,
+        archetypes: json.archetypes || defaultArchetypes(),
+        pain_points: json.pain_points || [],
+        insights: localInsights,
+        content_gaps: json.content_gaps || [],
+        recommendations: json.recommendations || [],
+      });
+    } catch (err) { console.error("Insights error:", err); }
+    setAiLoading(false);
+  }, []);
 
   const fetchData = useCallback(async () => {
     if (!selectedGsc || !selectedGa4) return;
     setDataLoading(true);
     setJourney(null);
-    insightsCalled.current = false;
     setStep("dashboard");
     const domain = selectedGsc.replace("sc-domain:", "").replace(/https?:\/\//, "").replace(/\/$/, "").replace(/^www\./, "");
     const activeComps = competitors.filter(c => c.active);
@@ -149,23 +255,12 @@ export default function DashboardPage() {
     iframeRef.current.srcdoc = html;
   }, [dashData, journey, aiEnabled, aiLoading]);
 
-  // Call Claude insights ONCE when dashData arrives (ref = no re-calls)
-  useEffect(() => {
-    if (!dashData || !aiEnabled || insightsCalled.current) return;
-    insightsCalled.current = true;
-    setAiLoading(true);
-    fetch("/api/insights", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ domain: dashData.domain, keywords: dashData.keywords, pages: dashData.ga4Pages, revenue: dashData.revenue }),
-    })
-      .then(r => r.json())
-      .then(json => { if (json.journey) setJourney(json.journey); })
-      .catch(err => console.error("Insights error:", err))
-      .finally(() => setAiLoading(false));
-  }, [dashData, aiEnabled]);
-
   // FIX: Trigger insights independently when dashData is ready
+  useEffect(() => {
+    if (dashData && aiEnabled && !journey && !aiLoading) {
+      fetchInsights(dashData);
+    }
+  }, [dashData, aiEnabled, journey, aiLoading, fetchInsights]);
 
   if (status === "loading" || loading) return <div className="loading-wrap"><div className="spinner"></div>Cargando propiedades de Google...</div>;
 
@@ -186,8 +281,8 @@ export default function DashboardPage() {
         {step === "select" && <button onClick={discoverCompetitors} disabled={compLoading} style={{ padding:"0.4rem 1.2rem",borderRadius:8,border:"none",background:"#0d6e5b",color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:"0.8rem",fontWeight:600,cursor:compLoading?"wait":"pointer",opacity:compLoading?0.6:1 }}>{compLoading ? "Descubriendo..." : "▶ Configurar competidores"}</button>}
         {step === "competitors" && <button onClick={fetchData} disabled={dataLoading} style={{ padding:"0.4rem 1.2rem",borderRadius:8,border:"none",background:"#0d6e5b",color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:"0.8rem",fontWeight:600,cursor:dataLoading?"wait":"pointer",opacity:dataLoading?0.6:1 }}>{dataLoading ? "Generando..." : `▶ Generar Dashboard (${activeCount} comp.)`}</button>}
         {step === "dashboard" && <button onClick={() => setStep("competitors")} style={{ padding:"0.4rem 1.2rem",borderRadius:8,border:"1px solid #cdd9d4",background:"transparent",color:"#4a5e5c",fontFamily:"'DM Sans',sans-serif",fontSize:"0.8rem",fontWeight:600,cursor:"pointer" }}>⚙️ Competidores</button>}
-<span className={"ai-badge " + (aiEnabled ? "on" : "off")}>{aiEnabled ? "🤖 IA ON" : "🤖 IA OFF"}</span>
-{step==="dashboard"&&dashData&&aiEnabled&&!journey&&<button onClick={()=>{setAiLoading(true);fetch("/api/insights",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({domain:dashData.domain,keywords:dashData.keywords,pages:dashData.ga4Pages,revenue:dashData.revenue})}).then(r=>r.json()).then(j=>{if(j.journey)setJourney(j.journey);setAiLoading(false)}).catch(()=>setAiLoading(false))}} style={{padding:"0.4rem 1rem",borderRadius:8,border:"none",background:"#00b4d8",color:"#fff",fontFamily:"'DM Sans',sans-serif",fontSize:"0.75rem",fontWeight:600,cursor:"pointer"}}>{aiLoading?"Analizando...":"🤖 Generar Arquetipos IA"}</button>}        <button className="logout-btn" onClick={() => signOut({ callbackUrl: "/" })}>Cerrar sesión</button>
+        <span className={"ai-badge " + (aiEnabled ? "on" : "off")}>{aiEnabled ? "🤖 IA ON" : "🤖 IA OFF"}</span>
+        <button className="logout-btn" onClick={() => signOut({ callbackUrl: "/" })}>Cerrar sesión</button>
       </div>
       {step === "competitors" && (
         <div style={{ padding:"1.5rem 2rem",maxWidth:900,margin:"0 auto",width:"100%" }}>
@@ -221,6 +316,94 @@ export default function DashboardPage() {
       {step==="select"&&<div className="loading-wrap" style={{ flex:1 }}><div style={{ textAlign:"center",color:"#4a5e5c" }}><div style={{ fontSize:"3rem",marginBottom:"1rem" }}>📊</div><div style={{ fontSize:"1rem",fontWeight:600,marginBottom:"0.5rem" }}>Selecciona tus propiedades y pulsa &quot;Configurar competidores&quot;</div><div style={{ fontSize:"0.8rem" }}>El sistema descubrirá automáticamente tus competidores con DataForSEO</div></div></div>}
     </div>
   );
+}
+
+
+// ═══ CLIENT-SIDE CLASSIFICATION ═══
+function classifyPhase(kw: string, pos: number): string {
+  const k = (kw || "").toLowerCase();
+  if (/recambio|repuesto|manual|pieza|part|replacement|invern/.test(k)) return "Post-venta";
+  if (/quimipool|quimpool|quimipol/.test(k)) return "Compra";
+  if (/precio|cuanto|cuánto|barato|oferta|comparar|opiniones/.test(k)) return "Evaluación";
+  if (/como |cómo |que es|qué es|diferencia|mejor |cual |cuál |tutorial|guia|guía/.test(k)) return "Investigación";
+  if (/limpiafondos|clorador|depuradora|filtro|robot|cubierta|bomba|valla|escalera|gresite/.test(k)) return "Evaluación";
+  return "Descubrimiento";
+}
+function classifyIntent(kw: string): string {
+  const k = (kw || "").toLowerCase();
+  if (/quimipool|astralpool|espa |seko |zodiac |kripsol|poolex/.test(k)) return "Navegacional";
+  if (/comprar|precio|barato|oferta|tienda/.test(k)) return "Transaccional";
+  if (/mejor|comparar|comparativa|vs |opiniones|review|alternativa/.test(k)) return "Comercial";
+  if (/como |cómo |que es|qué es|tutorial|guia|guía|diferencia/.test(k)) return "Informacional";
+  return "Comercial";
+}
+function classifyArchs(kw: string): string[] {
+  const k = (kw || "").toLowerCase();
+  if (/quimipool/.test(k)) return ["A1","A2","A3","A4"];
+  const a: string[] = [];
+  if (/seko|tekna|dosificadora|fotometro|fotómetro|orp|kontrol|etatron|poollab|lovibond|hanna|turbidimetro|cuadro.*electr/.test(k)) a.push("A4");
+  if (/robot|dolphin|wybot|beatbot|zodiac|sin cable|clorador salino|cubierta.*auto|liberty|sora|aquasense/.test(k)) a.push("A3");
+  if (/recambio|repuesto|part|manual|despiece|diagram|ersatz|pièces|spare|replacement|\d{7}/.test(k)) a.push("A2");
+  if (/depuradora|mantenimiento|cloro|filtro piscina|como |cómo |gresite|valla|escalera|desmontable|gre |productos.*pisc/.test(k)) a.push("A1");
+  return a.length ? a : ["A1"];
+}
+function classifyCluster(kw: string): string {
+  const k = (kw || "").toLowerCase();
+  if (/limpiafondos|robot.*pisc|dolphin|zodiac|wybot|beatbot|aquabot|aquasense|sora|osprey|carrera|liberty|skimmi|navigator|tiger/.test(k)) return "Robots y limpiafondos";
+  if (/depuradora|filtro.*arena|filtro.*pisc|aster|star.*plus|vidrio.*filtrante|brio/.test(k)) return "Filtración";
+  if (/clorador|cloro|sal.*pisc|innowater|smc|idegis|bspool|ph.*pisc|regulador.*ph|dosificador|bomba.*dos|seko|tekna|kontrol|orp|redox/.test(k)) return "Tratamiento";
+  if (/fotometro|fotómetro|poollab|aquachek|lovibond|hanna|turbidimetro|medidor|test.*agua/.test(k)) return "Análisis";
+  if (/cubierta|cobertor|invern|lona|manta.*termic/.test(k)) return "Cubiertas";
+  if (/bomba.*pisc|bomba.*espa|espa.*silen|espa.*iris|kripsol|hayward|aquagem|presscontrol/.test(k)) return "Bombas";
+  if (/valla.*pisc|pool.*alarm|alarma|recinzione|pool.*zaun/.test(k)) return "Seguridad";
+  if (/gresite|escalera|bordadura|trampolim|duikplank|plato.*ducha|foco.*pisc|lumiplus|liner|sika/.test(k)) return "Accesorios";
+  if (/desmontable|gre|intex|composite|tubular|pvc.*pisc|acero/.test(k)) return "Desmontables";
+  if (/recambio|repuesto|part|pièces|ersatz|spare|replacement|\d{7,}/.test(k)) return "Recambios";
+  if (/quimipool|astralpool|kripsol|poolex|fluidra|qp/.test(k)) return "Marca";
+  return "Otros";
+}
+function defaultArchetypes() {
+  return [
+    {id:"A1",name:"El Preparador de Temporada",icon:"🏊",desc:"Propietario que activa su piscina en abril-mayo. Depuradoras, filtros, químicos. Ticket €200-600.",pct:35,color:"#00b4d8"},
+    {id:"A2",name:"El Manitas Reparador",icon:"🔧",desc:"Busca recambios exactos por referencia. Compra recurrente. Ticket €30-150.",pct:25,color:"#0d6e5b"},
+    {id:"A3",name:"El Automatizador Premium",icon:"⚡",desc:"Robots sin cable, cloradores salinos. Investiga mucho. Ticket €400-1.200.",pct:25,color:"#d97706"},
+    {id:"A4",name:"El Técnico Profesional",icon:"🏗️",desc:"Bombas dosificadoras Seko, fotómetros. B2B.",pct:15,color:"#7c3aed"},
+  ];
+}
+function buildLocalInsights(kws: any[], archIds: string[]) {
+  const PH = ["Descubrimiento","Investigación","Evaluación","Decisión","Compra","Post-venta"];
+  const archFeel: Record<string,string> = {A1:"Abrumado por tantas opciones",A2:"Frustrado si no encuentra la pieza",A3:"Dispuesto a invertir pero necesita estar seguro",A4:"Profesional, busca fiabilidad"};
+  const phaseFeel: Record<string,string> = {"Descubrimiento":"Empieza a buscar, aún no sabe qué necesita","Investigación":"Compara opciones y tecnologías","Evaluación":"Compara precios y modelos concretos","Decisión":"Sabe lo que quiere, busca la mejor oferta","Compra":"Busca la tienda directamente","Post-venta":"Necesita soporte o recambios"};
+  const ins: Record<string,any> = {};
+  archIds.forEach(aid => {
+    ins[aid] = {};
+    const aKws = kws.filter((k: any) => k.archs?.includes(aid));
+    PH.forEach(ph => {
+      const pKws = aKws.filter((k: any) => k.phase === ph);
+      const top = pKws.length ? [...pKws].sort((a: any, b: any) => b.imp - a.imp)[0] : null;
+      const totalImp = pKws.reduce((s: number, k: any) => s + k.imp, 0);
+      const avgPos = pKws.filter((k: any) => k.pos > 0).length ? +(pKws.filter((k: any) => k.pos > 0).reduce((s: number, k: any) => s + k.pos, 0) / pKws.filter((k: any) => k.pos > 0).length).toFixed(1) : 0;
+      const pains: string[] = []; const gains: string[] = [];
+      if (!pKws.length) { pains.push("Sin presencia en esta fase"); gains.push("Oportunidad de crear contenido"); }
+      else {
+        if (avgPos > 20) pains.push("Pos. media " + avgPos + " — baja visibilidad");
+        else if (avgPos > 10) pains.push("Pos. media " + avgPos + " — fuera de página 1");
+        const gapKws = pKws.filter((k: any) => k.source?.startsWith("gap:"));
+        if (gapKws.length) pains.push(gapKws.length + " keywords donde competidores rankean y tú no");
+        if (top && top.pos > 0 && top.pos <= 5) gains.push('"' + top.kw + '" en pos.' + top.pos);
+        if (totalImp > 500) gains.push(totalImp.toLocaleString() + " imp/mes");
+        if (pKws.length > 3) gains.push(pKws.length + " keywords activas");
+      }
+      if (!pains.length) pains.push("Sin problemas destacados");
+      if (!gains.length) gains.push("Potencial por explorar");
+      ins[aid][ph] = {
+        t: top ? 'Busca "' + top.kw + '". ' + (phaseFeel[ph] || '') + '.' : (phaseFeel[ph] || '') + '.',
+        f: archFeel[aid] || "Necesita orientación",
+        p: pains, g: gains,
+      };
+    });
+  });
+  return ins;
 }
 
 function generateDashboardHTML(data: any, journey: any, aiEnabled: boolean, aiLoading: boolean): string {
