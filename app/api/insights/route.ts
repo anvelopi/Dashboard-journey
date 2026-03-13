@@ -25,84 +25,45 @@ export async function POST(req: Request) {
     }));
 
     // ═══ BUILD CLUSTER AGGREGATION ═══
-    const clusters: Record<string, any[]> = {};
+    const clusterMap: Record<string, any[]> = {};
     classified.forEach((k: any) => {
-      if (!clusters[k.cluster]) clusters[k.cluster] = [];
-      clusters[k.cluster].push(k);
+      if (!clusterMap[k.cluster]) clusterMap[k.cluster] = [];
+      clusterMap[k.cluster].push(k);
     });
 
-    const sortedClusters = Object.entries(clusters)
+    const sortedClusters = Object.entries(clusterMap)
       .map(([name, items]) => {
         const imp = items.reduce((s: number, k: any) => s + k.imp, 0);
         const clicks = items.reduce((s: number, k: any) => s + k.clicks, 0);
         const avgPos = +(items.reduce((s: number, k: any) => s + k.pos, 0) / items.length).toFixed(1);
         const avgCtr = imp > 0 ? +(clicks / imp * 100).toFixed(2) : 0;
         const sorted = [...items].sort((a, b) => b.imp - a.imp);
-        const top5 = sorted.slice(0, 5).map((k: any) => `"${k.kw}" (${k.imp}imp, pos.${k.pos.toFixed(1)}, ${k.clicks}cl)`);
-        const weak = sorted.filter((k: any) => k.imp > 100 && k.pos > 15).slice(0, 3).map((k: any) => `"${k.kw}" pos.${k.pos.toFixed(1)} con ${k.imp}imp`);
-        const phases: Record<string, number> = {};
-        items.forEach((k: any) => { phases[k.phase] = (phases[k.phase] || 0) + k.clicks; });
-        return { name, count: items.length, imp, clicks, avgPos, avgCtr, top5, weak, phases };
+        const top5 = sorted.slice(0, 5).map((k: any) => `"${k.kw}" (${k.imp}imp, pos.${k.pos.toFixed(1)})`);
+        const weak = sorted.filter((k: any) => k.imp > 100 && k.pos > 15).slice(0, 3);
+        return { name, count: items.length, imp, clicks, avgPos, avgCtr, top5, weak };
       })
       .sort((a, b) => b.imp - a.imp);
 
-    // ═══ BUILD PHASE SUMMARY ═══
-    const phaseSums: Record<string, { count: number; clicks: number; imp: number; avgPos: number }> = {};
-    classified.forEach((k: any) => {
-      if (!phaseSums[k.phase]) phaseSums[k.phase] = { count: 0, clicks: 0, imp: 0, avgPos: 0 };
-      phaseSums[k.phase].count++;
-      phaseSums[k.phase].clicks += k.clicks;
-      phaseSums[k.phase].imp += k.imp;
-      phaseSums[k.phase].avgPos += k.pos;
-    });
-    Object.values(phaseSums).forEach((p: any) => { if (p.count) p.avgPos = +(p.avgPos / p.count).toFixed(1); });
-
-    // ═══ BUILD PATTERNS ═══
-    const intlCount = classified.filter((k: any) => /pièces|ersatz|onderdelen|duikplank|glijbaan|zwembad|pompe|recinzione|copertura|couverture|boia|escada|pedra|piscine/.test(k.kw)).length;
-    const refCount = classified.filter((k: any) => /^\d{5,}|^[a-z]{2,3}\d{3,}|\d{7}/.test(k.kw)).length;
-    const problemCount = classified.filter((k: any) => /como |cómo |pierde agua|no arranca|eliminar algas|limpiar filtro|cambiar arena|que es el/.test(k.kw)).length;
-    const brandKws = classified.filter((k: any) => /quimipool|quimpool|quimipol/.test(k.kw));
-    const brandClicks = brandKws.reduce((s: number, k: any) => s + k.clicks, 0);
-
+    // ═══ BUILD COMPACT CONTEXT ═══
     const totalClicks = classified.reduce((s: number, k: any) => s + k.clicks, 0);
     const totalImp = classified.reduce((s: number, k: any) => s + k.imp, 0);
 
-    // ═══ BUILD RICH CONTEXT ═══
-    let ctx = `DOMINIO: ${domain}
-TOTAL: ${classified.length} keywords, ${totalClicks.toLocaleString()} clicks, ${totalImp.toLocaleString()} impresiones (28d)
-REVENUE 30d: EUR${revenue.total || 0}, ${revenue.transactions || 0} transacciones, ${revenue.sessions || 0} sesiones
-SECTOR: tienda online de piscinas en España
-
-=== CLUSTERS SEMANTICOS ===
-`;
-    sortedClusters.forEach(cl => {
-      ctx += `\n▸ ${cl.name}: ${cl.count}kws, ${cl.imp.toLocaleString()}imp, ${cl.clicks}cl, pos.${cl.avgPos}, CTR ${cl.avgCtr}%\n`;
-      ctx += `  Top: ${cl.top5.join(" | ")}\n`;
-      if (cl.weak.length) ctx += `  ⚠ Oportunidad: ${cl.weak.join(" | ")}\n`;
-      ctx += `  Fases: ${Object.entries(cl.phases).map(([p, c]) => `${p}:${c}cl`).join(", ")}\n`;
-    });
-
-    ctx += `\n=== DISTRIBUCION POR FASE ===\n`;
-    Object.entries(phaseSums).forEach(([p, d]) => {
-      ctx += `${p}: ${d.count}kws, ${d.clicks}cl, ${d.imp.toLocaleString()}imp, pos.${d.avgPos}\n`;
+    let ctx = `DOMINIO: ${domain}\n${classified.length} keywords, ${totalClicks} clicks, ${totalImp} impresiones (28d)\n`;
+    if (revenue.total) ctx += `Revenue: EUR${revenue.total}, ${revenue.transactions} transacciones\n`;
+    ctx += `\nCLUSTERS:\n`;
+    sortedClusters.slice(0, 10).forEach(cl => {
+      ctx += `${cl.name}: ${cl.count}kws, ${cl.imp}imp, ${cl.clicks}cl, pos.${cl.avgPos}, CTR ${cl.avgCtr}%\n`;
+      ctx += `  Top: ${cl.top5.slice(0, 3).join(", ")}\n`;
+      if (cl.weak.length) ctx += `  Oportunidad: ${cl.weak.map((k: any) => `"${k.kw}" pos.${k.pos.toFixed(1)} ${k.imp}imp`).join(", ")}\n`;
     });
 
     if (pages.length) {
-      ctx += `\n=== TOP PAGINAS GA4 ===\n`;
-      pages.slice(0, 12).forEach((p: any) => {
-        ctx += `${p.page} | ses:${p.sessions} rev:EUR${p.revenue}\n`;
-      });
+      ctx += `\nTOP PAGINAS: ${pages.slice(0, 8).map((p: any) => `${p.page} ses:${p.sessions} rev:${p.revenue}`).join(" | ")}\n`;
     }
 
-    ctx += `\n=== PATRONES ===\n`;
-    if (intlCount) ctx += `- ${intlCount} busquedas internacionales (FR, DE, NL, PT, IT)\n`;
-    if (refCount) ctx += `- ${refCount} busquedas por referencia/SKU exacta (usuarios expertos)\n`;
-    if (problemCount) ctx += `- ${problemCount} busquedas de problemas/soluciones\n`;
-    ctx += `- ${brandKws.length} busquedas marca (${brandClicks}cl) vs ${classified.length - brandKws.length} genericas (${totalClicks - brandClicks}cl)\n`;
+    ctx += `\nGenera el JSON.`;
 
-    ctx += `\nGenera el JSON basandote en estos datos reales.`;
-
-    // ═══ CALL CLAUDE SONNET ═══
+    // ═══ CALL SONNET (reduced output - no insight cells) ═══
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -112,7 +73,7 @@ SECTOR: tienda online de piscinas en España
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 6000,
+        max_tokens: 3000,
         system: PROMPT,
         messages: [{ role: "user", content: ctx }],
       }),
@@ -120,8 +81,8 @@ SECTOR: tienda online de piscinas en España
 
     if (!res.ok) {
       const err = await res.text();
-      console.error("Anthropic:", res.status, err.slice(0, 300));
-      return NextResponse.json({ enabled: true, journey: { keywords_classified: classified, archetypes: defaultArchs(), pain_points: [], insights: {}, content_gaps: [], recommendations: [] } });
+      console.error("Anthropic:", res.status, err.slice(0, 200));
+      return NextResponse.json({ enabled: true, journey: buildFallback(classified, domain) });
     }
 
     const data = await res.json();
@@ -130,9 +91,11 @@ SECTOR: tienda online de piscinas en España
     try {
       const m = text.match(/\{[\s\S]*\}/);
       if (m) ai = JSON.parse(m[0]);
-    } catch (e) {
-      console.error("JSON parse failed, text length:", text.length);
-    }
+    } catch { console.error("JSON parse failed, length:", text.length); }
+
+    // ═══ BUILD INSIGHTS LOCALLY (fast, no API) ═══
+    const archIds = (ai?.archetypes || defaultArchs()).map((a: any) => a.id);
+    const insights = buildInsightsLocally(classified, clusterMap, archIds);
 
     return NextResponse.json({
       enabled: true,
@@ -140,7 +103,7 @@ SECTOR: tienda online de piscinas en España
         keywords_classified: classified,
         archetypes: ai?.archetypes || defaultArchs(),
         pain_points: ai?.pain_points || [],
-        insights: ai?.insights || {},
+        insights,
         content_gaps: ai?.content_gaps || [],
         recommendations: ai?.recommendations || [],
       },
@@ -151,7 +114,77 @@ SECTOR: tienda online de piscinas en España
   }
 }
 
-// ═══ CLASSIFICATION FUNCTIONS ═══
+// ═══ BUILD INSIGHTS LOCALLY FROM CLUSTER DATA ═══
+function buildInsightsLocally(kws: any[], clusterMap: Record<string, any[]>, archIds: string[]): Record<string, any> {
+  const phases = ["Descubrimiento", "Investigación", "Evaluación", "Decisión", "Compra", "Post-venta"];
+  const insights: Record<string, any> = {};
+
+  const archDescMap: Record<string, { think: string; feel: string }> = {
+    A1: { think: "Necesito equipar mi piscina para la temporada", feel: "Abrumado por tantas opciones" },
+    A2: { think: "Necesito encontrar esta pieza exacta", feel: "Frustrado si no la encuentro rápido" },
+    A3: { think: "Quiero automatizar el mantenimiento", feel: "Dispuesto a invertir si merece la pena" },
+    A4: { think: "Necesito equipos técnicos profesionales", feel: "Busco fiabilidad y soporte técnico" },
+  };
+
+  const phaseThink: Record<string, string> = {
+    "Descubrimiento": "Empieza a buscar información general",
+    "Investigación": "Compara opciones y lee sobre tecnologías",
+    "Evaluación": "Compara precios y modelos concretos",
+    "Decisión": "Ya sabe lo que quiere, busca la mejor oferta",
+    "Compra": "Busca la tienda directamente para comprar",
+    "Post-venta": "Necesita soporte, recambios o mantenimiento",
+  };
+
+  archIds.forEach(archId => {
+    insights[archId] = {};
+    const archKws = kws.filter((k: any) => k.archs && k.archs.includes(archId));
+    const archBase = archDescMap[archId] || { think: "Busca productos", feel: "Necesita orientación" };
+
+    phases.forEach(phase => {
+      const phaseKws = archKws.filter((k: any) => k.phase === phase);
+      const topKw = phaseKws.length > 0
+        ? [...phaseKws].sort((a, b) => b.imp - a.imp)[0]
+        : null;
+
+      const totalImp = phaseKws.reduce((s: number, k: any) => s + k.imp, 0);
+      const avgPos = phaseKws.length
+        ? +(phaseKws.reduce((s: number, k: any) => s + k.pos, 0) / phaseKws.length).toFixed(1)
+        : 0;
+
+      const pains: string[] = [];
+      const gains: string[] = [];
+
+      if (phaseKws.length === 0) {
+        pains.push("Sin presencia en esta fase del journey");
+        gains.push("Oportunidad de crear contenido para esta fase");
+      } else {
+        if (avgPos > 20) pains.push(`Posición media ${avgPos} — muy baja visibilidad`);
+        else if (avgPos > 10) pains.push(`Posición media ${avgPos} — fuera de primera página`);
+
+        const lowCtr = phaseKws.filter((k: any) => k.imp > 100 && k.ctr < 2);
+        if (lowCtr.length > 0) pains.push(`${lowCtr.length} keywords con CTR < 2% pese a impresiones`);
+
+        if (topKw && topKw.pos <= 5) gains.push(`"${topKw.kw}" en pos.${topKw.pos} — mantener`);
+        if (totalImp > 1000) gains.push(`${totalImp.toLocaleString()} impresiones/mes en esta fase`);
+        if (phaseKws.length > 5) gains.push(`${phaseKws.length} keywords activas — buena cobertura`);
+      }
+
+      if (pains.length === 0) pains.push("Sin problemas detectados en datos");
+      if (gains.length === 0) gains.push("Potencial por explorar");
+
+      insights[archId][phase] = {
+        t: topKw ? `Busca "${topKw.kw}" y similares. ${phaseThink[phase]}.` : `${phaseThink[phase]}.`,
+        f: archBase.feel,
+        p: pains,
+        g: gains,
+      };
+    });
+  });
+
+  return insights;
+}
+
+// ═══ CLASSIFICATION ═══
 function getPhase(kw: string, pos: number): string {
   const k = (kw || "").toLowerCase();
   if (/recambio|repuesto|manual|pieza|part|replacement|invern/.test(k)) return "Post-venta";
@@ -200,53 +233,42 @@ function getCluster(kw: string): string {
 
 function defaultArchs() {
   return [
-    { id: "A1", name: "El Preparador de Temporada", icon: "🏊", desc: "Propietario que activa su piscina en abril-mayo. Busca depuradoras, filtros, químicos básicos. Ticket €200-600. Necesita guías y packs por m³.", pct: 35, color: "#00b4d8" },
-    { id: "A2", name: "El Manitas Reparador", icon: "🔧", desc: "Veterano que busca recambios exactos por referencia y despieces. Compra recurrente de piezas Astralpool, ESPA, Seko. Ticket bajo €30-150.", pct: 25, color: "#0d6e5b" },
-    { id: "A3", name: "El Automatizador Premium", icon: "⚡", desc: "Quiere robots sin cable (Dolphin, Wybot, Beatbot), cloradores salinos Innowater, cubiertas automáticas. Investiga mucho. Ticket alto €400-1.200.", pct: 25, color: "#d97706" },
-    { id: "A4", name: "El Técnico Profesional", icon: "🏗️", desc: "Instalador o piscinero. Bombas dosificadoras Seko, fotómetros Hanna/Lovibond, controladores ORP. Compra técnica B2B.", pct: 15, color: "#7c3aed" },
+    { id: "A1", name: "El Preparador de Temporada", icon: "🏊", desc: "Propietario que activa su piscina en abril-mayo. Busca depuradoras, filtros, químicos básicos. Ticket €200-600.", pct: 35, color: "#00b4d8" },
+    { id: "A2", name: "El Manitas Reparador", icon: "🔧", desc: "Veterano que busca recambios exactos por referencia y despieces. Compra recurrente. Ticket €30-150.", pct: 25, color: "#0d6e5b" },
+    { id: "A3", name: "El Automatizador Premium", icon: "⚡", desc: "Quiere robots sin cable, cloradores salinos, cubiertas automáticas. Investiga mucho. Ticket €400-1.200.", pct: 25, color: "#d97706" },
+    { id: "A4", name: "El Técnico Profesional", icon: "🏗️", desc: "Instalador o piscinero. Bombas dosificadoras Seko, fotómetros Hanna/Lovibond. B2B.", pct: 15, color: "#7c3aed" },
   ];
 }
 
-const PROMPT = `Eres un consultor SEO senior especializado en e-commerce de piscinas. Analizas datos REALES de Search Console y Analytics.
+function buildFallback(classified: any[], domain: string) {
+  return {
+    keywords_classified: classified,
+    archetypes: defaultArchs(),
+    pain_points: [],
+    insights: buildInsightsLocally(classified, {}, ["A1", "A2", "A3", "A4"]),
+    content_gaps: [],
+    recommendations: [],
+  };
+}
 
-Devuelve SOLO un JSON válido (sin texto, sin backticks, sin explicación):
+const PROMPT = `Eres consultor SEO de e-commerce de piscinas en España. Analiza los clusters de búsqueda reales y devuelve SOLO JSON válido (sin texto, sin backticks):
 
 {
   "archetypes": [
-    {"id":"A1","name":"nombre MUY específico del sector piscinas","icon":"emoji","desc":"2-3 frases específicas: qué busca exactamente, en qué época, ticket medio, comportamiento de compra. Basado en los CLUSTERS REALES que ves en los datos.","pct":35,"color":"#00b4d8"},
+    {"id":"A1","name":"nombre MUY específico basado en clusters","icon":"emoji","desc":"2-3 frases: qué busca, cuándo, ticket, comportamiento. BASADO EN LOS DATOS.","pct":35,"color":"#00b4d8"},
     {"id":"A2","name":"...","icon":"...","desc":"...","pct":25,"color":"#0d6e5b"},
     {"id":"A3","name":"...","icon":"...","desc":"...","pct":25,"color":"#d97706"},
     {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#7c3aed"}
   ],
   "pain_points": [
-    {"title":"frase que diría el USUARIO, NO el SEO","desc":"1-2 frases con datos reales: posiciones, impresiones, CTR del cluster","phases":["Evaluación"],"archs":["A1"],"sev":5}
+    {"title":"frase del USUARIO no del SEO","desc":"datos reales del cluster","phases":["Evaluación"],"archs":["A1"],"sev":5}
   ],
-  "insights": {
-    "A1": {
-      "Descubrimiento":{"t":"qué busca/piensa","f":"cómo se siente","p":["pain concreto"],"g":["oportunidad para la tienda"]},
-      "Investigación":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Evaluación":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Decisión":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Compra":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Post-venta":{"t":"...","f":"...","p":["..."],"g":["..."]}
-    },
-    "A2":{...las 6 fases...},
-    "A3":{...las 6 fases...},
-    "A4":{...las 6 fases...}
-  },
   "content_gaps": [
-    {"arch":"A1","phase":"Evaluación","title":"título descriptivo","kws":"keywords relevantes","prio":"alta"}
+    {"arch":"A1","phase":"Evaluación","title":"título","kws":"keywords","prio":"alta"}
   ],
   "recommendations": [
-    {"title":"acción concreta y específica","priority":"ALTA","phase":"Evaluación","type":"CONTENIDO","impact":"estimación en EUR/mes o clicks","effort":"2-4h","description":"1-2 frases accionables con URLs y keywords específicas del dominio"}
+    {"title":"acción concreta","priority":"ALTA","phase":"Evaluación","type":"SEO","impact":"impacto EUR","effort":"2h","description":"1-2 frases accionables"}
   ]
 }
 
-REGLAS:
-1. ARQUETIPOS: Deben reflejar los clusters de búsqueda reales. Si ves un cluster gordo de robots/limpiafondos, un arquetipo debe ser ese usuario. Nombres específicos del sector piscinas, NO genéricos.
-2. PAIN POINTS (8-10): Frases del USUARIO. Mal: "Posición 93 para limpiafondos". Bien: "Quiero un robot pero no sé cuál elegir entre Dolphin, Zodiac y Wybot". Usa CTR bajo + muchas impresiones = frustración.
-3. INSIGHTS: 1 frase CONCISA por campo (t, f, p, g). 4 arquetipos × 6 fases = 24 celdas. Sé breve.
-4. CONTENT GAPS (10-15): Oportunidades reales basadas en keywords con pos>15 y muchas impresiones.
-5. RECOMENDACIONES (6-8): Accionables con impacto en EUR si posible. Ordenadas por impacto.
-6. Fases EXACTAS: Descubrimiento, Investigación, Evaluación, Decisión, Compra, Post-venta.
-7. Solo JSON válido. Nada más.`;
+REGLAS: Arquetipos del sector piscinas basados en clusters reales. 8-10 pain points como frases del usuario (ej: "No sé qué depuradora necesito"). 10 content gaps. 6 recomendaciones con impacto. Solo JSON.`;
