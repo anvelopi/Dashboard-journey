@@ -26,6 +26,7 @@ export default function DashboardPage() {
   const [domainOverview, setDomainOverview] = useState<any>(null);
   const [compLoading, setCompLoading] = useState(false);
   const [compInput, setCompInput] = useState("");
+  const insightsCalled = useRef(false);
 
   useEffect(() => { if (status === "unauthenticated") router.push("/"); }, [status, router]);
 
@@ -76,21 +77,12 @@ export default function DashboardPage() {
   }
   function removeComp(d: string) { setCompetitors(prev => prev.filter(c => c.domain !== d)); }
 
-  const fetchInsights = useCallback(async (data: any) => {
-    setAiLoading(true);
-    try {
-      const res = await fetch("/api/insights", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain: data.domain, keywords: data.keywords, pages: data.ga4Pages, revenue: data.revenue }) });
-      const json = await res.json();
-      if (json.journey) setJourney(json.journey);
-    } catch (err) { console.error("Insights error:", err); }
-    setAiLoading(false);
-  }, []);
 
   const fetchData = useCallback(async () => {
     if (!selectedGsc || !selectedGa4) return;
     setDataLoading(true);
     setJourney(null);
+    insightsCalled.current = false;
     setStep("dashboard");
     const domain = selectedGsc.replace("sc-domain:", "").replace(/https?:\/\//, "").replace(/\/$/, "").replace(/^www\./, "");
     const activeComps = competitors.filter(c => c.active);
@@ -147,10 +139,8 @@ export default function DashboardPage() {
       };
       setDashData(data);
       setDataLoading(false);
-      // Call insights with delay to ensure state is set
-      if (aiEnabled) { const d = data; setTimeout(() => fetchInsights(d), 300); }
     } catch (err) { console.error(err); setDataLoading(false); }
-  }, [selectedGsc, selectedGa4, competitors, domainOverview, aiEnabled, fetchInsights]);
+  }, [selectedGsc, selectedGa4, competitors, domainOverview]);
 
   // Render iframe when data changes
   useEffect(() => {
@@ -159,7 +149,23 @@ export default function DashboardPage() {
     iframeRef.current.srcdoc = html;
   }, [dashData, journey, aiEnabled, aiLoading]);
 
+  // Call Claude insights ONCE when dashData arrives (ref = no re-calls)
+  useEffect(() => {
+    if (!dashData || !aiEnabled || insightsCalled.current) return;
+    insightsCalled.current = true;
+    setAiLoading(true);
+    fetch("/api/insights", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ domain: dashData.domain, keywords: dashData.keywords, pages: dashData.ga4Pages, revenue: dashData.revenue }),
+    })
+      .then(r => r.json())
+      .then(json => { if (json.journey) setJourney(json.journey); })
+      .catch(err => console.error("Insights error:", err))
+      .finally(() => setAiLoading(false));
+  }, [dashData, aiEnabled]);
 
+  // FIX: Trigger insights independently when dashData is ready
 
   if (status === "loading" || loading) return <div className="loading-wrap"><div className="spinner"></div>Cargando propiedades de Google...</div>;
 
