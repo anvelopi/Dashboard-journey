@@ -137,7 +137,7 @@ export default function DashboardPage() {
       };
       setDashData(data);
       setDataLoading(false);
-      if (aiEnabled) fetchInsights(data);
+      try { if (aiEnabled) fetchInsights(data); } catch (e) { console.error("Insights trigger error:", e); }
     } catch (err) { console.error(err); setDataLoading(false); }
   }, [selectedGsc, selectedGa4, aiEnabled, competitors, domainOverview]);
 
