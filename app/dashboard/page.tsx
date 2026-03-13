@@ -147,8 +147,10 @@ export default function DashboardPage() {
       };
       setDashData(data);
       setDataLoading(false);
+      // Call insights with delay to ensure state is set
+      if (aiEnabled) { const d = data; setTimeout(() => fetchInsights(d), 300); }
     } catch (err) { console.error(err); setDataLoading(false); }
-  }, [selectedGsc, selectedGa4, competitors, domainOverview]);
+  }, [selectedGsc, selectedGa4, competitors, domainOverview, aiEnabled, fetchInsights]);
 
   // Render iframe when data changes
   useEffect(() => {
@@ -157,12 +159,7 @@ export default function DashboardPage() {
     iframeRef.current.srcdoc = html;
   }, [dashData, journey, aiEnabled, aiLoading]);
 
-  // FIX: Trigger insights independently when dashData is ready
-  useEffect(() => {
-    if (dashData && aiEnabled && !journey && !aiLoading) {
-      fetchInsights(dashData);
-    }
-  }, [dashData, aiEnabled, journey, aiLoading, fetchInsights]);
+
 
   if (status === "loading" || loading) return <div className="loading-wrap"><div className="spinner"></div>Cargando propiedades de Google...</div>;
 
