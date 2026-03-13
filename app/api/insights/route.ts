@@ -159,35 +159,25 @@ function defaultArchs() {
   ];
 }
 
-const PROMPT = `Eres consultor SEO de e-commerce de piscinas en Espa\u00f1a. Devuelve SOLO JSON:
+const PROMPT = `Eres consultor SEO de e-commerce de piscinas en España. Devuelve SOLO JSON:
 
 {
   "archetypes": [
-    {"id":"A1","name":"nombre especifico","icon":"emoji","desc":"2 frases basadas en clusters reales","pct":35,"color":"#00b4d8"},
+    {"id":"A1","name":"nombre especifico","icon":"emoji","desc":"2-3 frases MUY especificas basadas en clusters reales: qué busca, cuándo, ticket medio, comportamiento","pct":35,"color":"#00b4d8"},
     {"id":"A2","name":"...","icon":"...","desc":"...","pct":25,"color":"#0d6e5b"},
     {"id":"A3","name":"...","icon":"...","desc":"...","pct":25,"color":"#d97706"},
     {"id":"A4","name":"...","icon":"...","desc":"...","pct":15,"color":"#7c3aed"}
   ],
   "pain_points": [
-    {"title":"frase del USUARIO","desc":"con datos reales","phases":["Fase"],"archs":["A1"],"sev":5}
+    {"title":"frase que diría el USUARIO no el SEO","desc":"con datos reales del cluster","phases":["Fase"],"archs":["A1"],"sev":5}
   ],
-  "insights": {
-    "A1": {
-      "Descubrimiento":{"t":"piensa","f":"siente","p":["pain"],"g":["gain"]},
-      "Investigaci\u00f3n":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Evaluaci\u00f3n":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Decisi\u00f3n":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Compra":{"t":"...","f":"...","p":["..."],"g":["..."]},
-      "Post-venta":{"t":"...","f":"...","p":["..."],"g":["..."]}
-    },
-    "A2":{...6 fases...},"A3":{...6 fases...},"A4":{...6 fases...}
-  },
+  "insights": {},
   "content_gaps": [
     {"arch":"A1","phase":"Descubrimiento","title":"titulo","kws":"keywords","prio":"alta"}
   ],
   "recommendations": [
-    {"title":"accion","priority":"ALTA","phase":"Fase","type":"SEO","impact":"impacto","effort":"2h","description":"descripcion"}
+    {"title":"accion concreta","priority":"ALTA","phase":"Fase","type":"SEO","impact":"impacto en EUR","effort":"2h","description":"1-2 frases accionables"}
   ]
 }
 
-REGLAS: Arquetipos basados en clusters reales. Pain points como frases del usuario. Fases EXACTAS: Descubrimiento, Investigaci\u00f3n, Evaluaci\u00f3n, Decisi\u00f3n, Compra, Post-venta. Solo JSON.`;
+REGLAS: Arquetipos basados en clusters reales. Pain points como frases del usuario (ej: "No sé qué depuradora necesito"). 8-10 pain points con sev 1-5. 10-15 content gaps. 6-8 recomendaciones. Solo JSON.`;
