@@ -175,7 +175,7 @@ export default function DashboardPage() {
 
       setJourney({
         keywords_classified: classified,
-        archetypes: json.archetypes || defaultArchetypes(),
+        archetypes: padTo6(json.archetypes),
         pain_points: json.pain_points || [],
         insights: localInsights,
         content_gaps: json.content_gaps || [],
@@ -374,6 +374,18 @@ function defaultArchetypes() {
     {id:"A6",name:"El Buscador Internacional",icon:"🌍",desc:"Busca en FR, DE, NL, PT, IT. Pièces détachées, Ersatzteile. Cross-border.",pct:10,color:"#d4d4d8"},
   ];
 }
+function padTo6(archs: any[]|null|undefined) {
+  const defs = defaultArchetypes();
+  const colors = ["#18181b","#3f3f46","#52525b","#71717a","#a1a1aa","#d4d4d8"];
+  if (!archs || archs.length === 0) return defs;
+  const result: any[] = [];
+  for (let i = 0; i < 6; i++) {
+    const id = "A" + (i + 1);
+    const src = archs[i] || defs[i];
+    result.push({ ...src, id, color: colors[i] });
+  }
+  return result;
+}
 function buildLocalInsights(kws: any[], archIds: string[]) {
   const PH = ["Descubrimiento","Investigación","Evaluación","Decisión","Compra","Post-venta"];
   const archFeel: Record<string,string> = {A1:"Abrumado por tantas opciones",A2:"Frustrado si no encuentra la pieza",A3:"Dispuesto a invertir pero necesita estar seguro",A4:"Profesional, busca fiabilidad"};
@@ -500,7 +512,7 @@ header p{color:#a1a1aa;font-size:.8rem;margin-top:.15rem}
 .rec-card .rc-desc{font-size:.75rem;color:var(--text3);line-height:1.5;margin-top:.15rem}
 .rec-card .rc-meta{display:flex;gap:.35rem;margin-top:.3rem;font-size:.65rem;color:var(--text4);flex-wrap:wrap}
 .rec-card .rc-meta span{padding:.1rem .35rem;border-radius:4px;background:var(--surface2)}
-.kw-table-wrap{max-height:500px;overflow:auto;scrollbar-width:thin;border:1px solid var(--border);border-radius:var(--radius)}
+.kw-table-wrap{overflow:auto;scrollbar-width:thin;border:1px solid var(--border);border-radius:var(--radius)}
 .kw-table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:700px}
 .kw-table thead{position:sticky;top:0;z-index:5}
 .kw-table th{background:var(--surface2);padding:.6rem .5rem;text-align:left;font-size:.7rem;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap}
@@ -571,7 +583,7 @@ ${activeComps.map((c:any,i:number)=>`<tr style="cursor:pointer" onclick="toggleD
 <div id="sovBarsArea"></div>
 <div id="compDetailArea"></div>
 </div></div></div>`:""}
-<div class="tab-pnl" id="tab-keywords"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot"></span>Keywords \u00b7 <span id="tableCount" style="color:var(--accent)"></span></div><div class="kw-table-wrap"><table class="kw-table" id="kwTable"><thead><tr></tr></thead><tbody></tbody></table></div></div></div></div>
+<div class="tab-pnl" id="tab-keywords"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot"></span>Keywords \u00b7 <span id="tableCount" style="color:var(--accent)"></span></div><div class="kw-table-wrap" style="max-height:500px"><table class="kw-table" id="kwTable"><thead><tr></tr></thead><tbody></tbody></table></div></div></div></div>
 <div class="tab-pnl" id="tab-revenue"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--success)"></span>Revenue estimado</div><div id="revenueContent"></div></div></div></div>
 ${activeComps.length?`<div class="tab-pnl" id="tab-gaps"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>Gaps por competidor (DataForSEO)</div><div id="dfsGapList"></div></div></div></div>`:""}
 ${recs.length||aiLoading?`<div class="tab-pnl" id="tab-recs"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>\ud83e\udd16 Recomendaciones IA</div><div id="recsContent">${aiLoading?'<div class="ai-loading"><span class="spinner"></span>Generando...</div>':''}</div></div></div></div>`:""}
