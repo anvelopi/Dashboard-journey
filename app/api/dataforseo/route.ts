@@ -16,7 +16,7 @@ async function dfs(endpoint: string, body: unknown[]): Promise<any> {
   });
   const text = await res.text();
   let data;
-  try { data = JSON.parse(text); } catch { throw new Error(`DFS parse error: ${text.slice(0, 200)}`); }
+  try { data = JSON.parse(text); } catch { throw new Error(`DFS parse error: ${text.slice(0, 300)}`); }
   const task = data.tasks?.[0];
   if (!task) throw new Error("DFS: no tasks in response");
   if (task.status_code !== 20000) throw new Error(`DFS ${task.status_code}: ${task.status_message}`);
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
 
     // ═══ DISCOVER COMPETITORS ═══
     if (action === "discover") {
-      // 1. Domain overview
       let domainData = { etv: 0, count: 0, cost: 0, top10: 0 };
       try {
         const ovResult = await dfs("/dataforseo_labs/google/domain_rank_overview/live", [
@@ -45,7 +44,6 @@ export async function POST(req: NextRequest) {
         };
       } catch (e: any) { console.error("Domain overview error:", e.message); }
 
-      // 2. Competitors
       let competitors: any[] = [];
       try {
         const compResult = await dfs("/dataforseo_labs/google/competitors_domain/live", [
@@ -79,7 +77,7 @@ export async function POST(req: NextRequest) {
     if (action === "gap" && competitorDomain) {
       try {
         const result = await dfs("/dataforseo_labs/google/page_intersection/live", [{
-          pages: [`https://www.${competitorDomain}/*`],
+          pages: { "1": `https://www.${competitorDomain}/*` },
           exclude_pages: [`https://www.${domain}/*`],
           language_code: "es",
           location_name: "Spain",
@@ -95,8 +93,8 @@ export async function POST(req: NextRequest) {
         }).filter((g: any) => g.vol > 0);
         return NextResponse.json({ gaps });
       } catch (e: any) {
-        console.error(`Gap error for ${competitorDomain}:`, e.message);
-        return NextResponse.json({ gaps: [], error: e.message });
+        console.error("Gap error for " + competitorDomain + ":", e.message);
+        return NextResponse.json({ gaps: [] });
       }
     }
 
@@ -104,8 +102,7 @@ export async function POST(req: NextRequest) {
     if (action === "shared" && competitorDomain) {
       try {
         const result = await dfs("/dataforseo_labs/google/page_intersection/live", [{
-          pages: [`https://www.${domain}/*`, `https://www.${competitorDomain}/*`],
-          intersection_mode: "intersect",
+          pages: { "1": `https://www.${domain}/*`, "2": `https://www.${competitorDomain}/*` },
           language_code: "es",
           location_name: "Spain",
           limit: 50,
@@ -121,8 +118,8 @@ export async function POST(req: NextRequest) {
         }).filter((s: any) => s.vol > 0);
         return NextResponse.json({ shared });
       } catch (e: any) {
-        console.error(`Shared error for ${competitorDomain}:`, e.message);
-        return NextResponse.json({ shared: [], error: e.message });
+        console.error("Shared error for " + competitorDomain + ":", e.message);
+        return NextResponse.json({ shared: [] });
       }
     }
 
@@ -144,7 +141,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ keywords: enriched });
       } catch (e: any) {
         console.error("Keywords error:", e.message);
-        return NextResponse.json({ keywords: [], error: e.message });
+        return NextResponse.json({ keywords: [] });
       }
     }
 
