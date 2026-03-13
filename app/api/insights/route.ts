@@ -66,7 +66,7 @@ Genera JSON con: archetypes (4, basados en clusters reales), pain_points (8, fra
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
+        model: "claude-sonnet-4-20250514",
         max_tokens: 4000,
         system: PROMPT,
         messages: [{ role: "user", content: prompt }],
