@@ -513,7 +513,7 @@ header p{color:#a1a1aa;font-size:.8rem;margin-top:.15rem}
 .rec-card .rc-meta{display:flex;gap:.35rem;margin-top:.3rem;font-size:.65rem;color:var(--text4);flex-wrap:wrap}
 .rec-card .rc-meta span{padding:.1rem .35rem;border-radius:4px;background:var(--surface2)}
 .kw-table-wrap{overflow:auto;scrollbar-width:thin;border:1px solid var(--border);border-radius:var(--radius)}
-.kw-table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:700px}
+.kw-table{width:100%;border-collapse:collapse;font-size:.8rem}
 .kw-table thead{position:sticky;top:0;z-index:5}
 .kw-table th{background:var(--surface2);padding:.6rem .5rem;text-align:left;font-size:.7rem;font-weight:600;color:var(--text3);border-bottom:1px solid var(--border);cursor:pointer;white-space:nowrap}
 .kw-table th:hover{color:var(--text)}
@@ -576,14 +576,14 @@ ${pains.length?'<div class="card full"><div class="card-title"><span class="dot"
 </div></div>
 ${activeComps.length?`<div class="tab-pnl" id="tab-comps"><div class="dashboard">
 <div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>Competidores \u2014 Share of Voice + Detalle</div>
-<div class="kw-table-wrap" style="max-height:none;margin-bottom:12px"><table class="kw-table"><tr style="background:rgba(9,9,11,.06)"><th style="text-align:left">Dominio</th><th style="text-align:right">ETV</th><th style="text-align:right">KWs</th><th style="text-align:right">Shared</th></tr>
+<div style="margin-bottom:12px"><table class="kw-table"><tr style="background:rgba(9,9,11,.06)"><th style="text-align:left">Dominio</th><th style="text-align:right">ETV</th><th style="text-align:right">KWs</th><th style="text-align:right">Shared</th></tr>
 <tr style="background:rgba(9,9,11,.04)"><td style="font-weight:700">${data.domain}</td><td style="text-align:right;font-family:var(--mono)">${(domOvw.etv||0).toLocaleString()}</td><td style="text-align:right;font-family:var(--mono)">${(domOvw.count||0).toLocaleString()}</td><td style="text-align:right">\u2014</td></tr>
 ${activeComps.map((c:any,i:number)=>`<tr style="cursor:pointer" onclick="toggleDetail('${c.domain}')"><td ><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${CC[i%CC.length]};margin-right:5px"></span>${c.domain}</td><td style="text-align:right;font-family:var(--mono)">${(c.etv||0).toLocaleString()}</td><td style="text-align:right;font-family:var(--mono)">${(c.count||0).toLocaleString()}</td><td style="text-align:right;font-family:var(--mono)">${(c.shared||0).toLocaleString()}</td></tr>`).join("")}
 </table></div>
 <div id="sovBarsArea"></div>
 <div id="compDetailArea"></div>
 </div></div></div>`:""}
-<div class="tab-pnl" id="tab-keywords"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot"></span>Keywords \u00b7 <span id="tableCount" style="color:var(--accent)"></span></div><div class="kw-table-wrap" style="max-height:500px"><table class="kw-table" id="kwTable"><thead><tr></tr></thead><tbody></tbody></table></div></div></div></div>
+<div class="tab-pnl" id="tab-keywords"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot"></span>Keywords \u00b7 <span id="tableCount" style="color:var(--accent)"></span></div><div class="kw-table-wrap" style="max-height:500px"><table class="kw-table" id="kwTable" style="min-width:700px"><thead><tr></tr></thead><tbody></tbody></table></div></div></div></div>
 <div class="tab-pnl" id="tab-revenue"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--success)"></span>Revenue estimado</div><div id="revenueContent"></div></div></div></div>
 ${activeComps.length?`<div class="tab-pnl" id="tab-gaps"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>Gaps por competidor (DataForSEO)</div><div id="dfsGapList"></div></div></div></div>`:""}
 ${recs.length||aiLoading?`<div class="tab-pnl" id="tab-recs"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>\ud83e\udd16 Recomendaciones IA</div><div id="recsContent">${aiLoading?'<div class="ai-loading"><span class="spinner"></span>Generando...</div>':''}</div></div></div></div>`:""}
@@ -663,7 +663,7 @@ h+='<div style="font-weight:600;margin-bottom:8px">'+domain+' vs tu dominio<\/di
 if(shared.length){h+='<div style="font-weight:600;color:var(--text2);margin-bottom:6px">Win / Loss<\/div><div class="wl-grid"><div class="wl-box"><div class="wl-v" style="color:var(--success)">'+wins+'<\/div><div class="wl-l">Ganas t\u00fa<\/div><\/div><div class="wl-box"><div class="wl-v" style="color:#dc2626">'+losses+'<\/div><div class="wl-l">Gana '+dn+'<\/div><\/div><div class="wl-box"><div class="wl-v">'+fmt(bvol)+'<\/div><div class="wl-l">Vol. disputado<\/div><\/div><\/div>';
 h+='<table class="kw-table"><tr><th style="text-align:left">KW<\/th><th style="text-align:right">Vol<\/th><th style="text-align:right">T\u00fa<\/th><th style="text-align:right">'+dn+'<\/th><\/tr>';
 shared.sort(function(a,b){return b.vol-a.vol}).slice(0,10).forEach(function(s){var w=s.posQ>0&&s.posQ<=s.posC;h+='<tr><td >'+s.kw+'<\/td><td style="text-align:right;font-family:var(--mono)">'+s.vol.toLocaleString()+'<\/td><td style="text-align:right;font-family:var(--mono);color:'+(w?'var(--success)':'var(--danger)')+'">'+(s.posQ||'\u2014')+'<\/td><td style="text-align:right;font-family:var(--mono);color:'+(w?'var(--danger)':'var(--success)')+'">'+s.posC+'<\/td><\/tr>'});h+='<\/table>'}
-if(gapKws.length){h+='<div style="font-weight:600;color:var(--text2);margin-bottom:6px;margin-top:8px">Gap exclusivo ('+fmt(gvol)+'/mes)<\/div><div class="kw-table-wrap" style="max-height:200px"><table class="kw-table"><thead><tr><th>Keyword<\/th><th style="text-align:right">Vol.<\/th><\/tr><\/thead><tbody>';gapKws.sort(function(a,b){return b.vol-a.vol}).slice(0,10).forEach(function(g){h+='<tr><td>'+g.kw+'<\/td><td style="text-align:right;font-family:var(--mono);font-weight:600">'+g.vol.toLocaleString()+'<\/td><\/tr>'});h+='<\/tbody><\/table><\/div>'}
+if(gapKws.length){h+='<div style="font-weight:600;color:var(--text2);margin-bottom:6px;margin-top:8px">Gap exclusivo ('+fmt(gvol)+'/mes)<\/div><div class="kw-table-wrap"><table class="kw-table"><thead><tr><th>Keyword<\/th><th style="text-align:right">Vol.<\/th><\/tr><\/thead><tbody>';gapKws.sort(function(a,b){return b.vol-a.vol}).slice(0,10).forEach(function(g){h+='<tr><td>'+g.kw+'<\/td><td style="text-align:right;font-family:var(--mono);font-weight:600">'+g.vol.toLocaleString()+'<\/td><\/tr>'});h+='<\/tbody><\/table><\/div>'}
 h+='<\/div>';area.innerHTML=h}
 
 function tog(id,btn){var el=document.getElementById(id);if(!el)return;var o=el.classList.toggle('open');btn.innerHTML=o?'\u2630 Ocultar':'\u2630 Insight'}
