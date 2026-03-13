@@ -76,6 +76,17 @@ export default function DashboardPage() {
   }
   function removeComp(d: string) { setCompetitors(prev => prev.filter(c => c.domain !== d)); }
 
+  const fetchInsights = useCallback(async (data: any) => {
+    setAiLoading(true);
+    try {
+      const res = await fetch("/api/insights", { method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain: data.domain, keywords: data.keywords, pages: data.ga4Pages, revenue: data.revenue }) });
+      const json = await res.json();
+      if (json.journey) setJourney(json.journey);
+    } catch (err) { console.error("Insights error:", err); }
+    setAiLoading(false);
+  }, []);
+
   const fetchData = useCallback(async () => {
     if (!selectedGsc || !selectedGa4) return;
     setDataLoading(true);
@@ -96,7 +107,7 @@ export default function DashboardPage() {
         duration: +parseFloat(r.metricValues[2].value).toFixed(0), purchases: +r.metricValues[3].value, revenue: +parseFloat(r.metricValues[4].value).toFixed(2),
       }));
 
-      // FIX 1: Enrich top keywords with KD from DataForSEO
+      // Enrich top keywords with KD from DataForSEO
       const topKwNames = keywords.slice(0, 200).map((k: any) => k.kw);
       let kwEnrichMap: Record<string, any> = {};
       if (topKwNames.length > 0) {
@@ -106,7 +117,6 @@ export default function DashboardPage() {
           (enRes.keywords || []).forEach((ek: any) => { kwEnrichMap[ek.kw.toLowerCase()] = ek; });
         } catch (e) { console.warn("KW enrichment failed:", e); }
       }
-      // Merge KD into keywords
       keywords.forEach((k: any) => {
         const en = kwEnrichMap[k.kw.toLowerCase()];
         if (en) { k.kd = en.kd || 0; k.vol = en.vol || k.imp; k.cpcDfs = en.cpc || 0; k.intentDfs = en.intent || ""; }
@@ -137,26 +147,22 @@ export default function DashboardPage() {
       };
       setDashData(data);
       setDataLoading(false);
-      try { if (aiEnabled) fetchInsights(data); } catch (e) { console.error("Insights trigger error:", e); }
     } catch (err) { console.error(err); setDataLoading(false); }
-  }, [selectedGsc, selectedGa4, aiEnabled, competitors, domainOverview]);
+  }, [selectedGsc, selectedGa4, competitors, domainOverview]);
 
-  const fetchInsights = async (data: any) => {
-    setAiLoading(true);
-    try {
-      const res = await fetch("/api/insights", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ domain: data.domain, keywords: data.keywords, pages: data.ga4Pages, revenue: data.revenue }) });
-      const json = await res.json();
-      if (json.journey) setJourney(json.journey);
-    } catch (err) { console.error(err); }
-    setAiLoading(false);
-  };
-
+  // Render iframe when data changes
   useEffect(() => {
     if (!dashData || !iframeRef.current) return;
     const html = generateDashboardHTML(dashData, journey, aiEnabled, aiLoading);
     iframeRef.current.srcdoc = html;
   }, [dashData, journey, aiEnabled, aiLoading]);
+
+  // FIX: Trigger insights independently when dashData is ready
+  useEffect(() => {
+    if (dashData && aiEnabled && !journey && !aiLoading) {
+      fetchInsights(dashData);
+    }
+  }, [dashData, aiEnabled, journey, aiLoading, fetchInsights]);
 
   if (status === "loading" || loading) return <div className="loading-wrap"><div className="spinner"></div>Cargando propiedades de Google...</div>;
 
@@ -190,7 +196,7 @@ export default function DashboardPage() {
             <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10 }}><strong style={{ fontSize:".8rem",color:"#4a5e5c",textTransform:"uppercase",letterSpacing:".06em" }}>Competidores</strong><span style={{ fontSize:".7rem",color:"#7a9190" }}>{manualCount}/5 manuales · {activeCount} activos</span></div>
             <div style={{ display:"flex",gap:8,marginBottom:12 }}><input type="text" value={compInput} onChange={e => setCompInput(e.target.value)} onKeyDown={e => e.key==="Enter"&&addComp()} placeholder="Añadir competidor manual..." disabled={manualCount>=5} style={{ flex:1,padding:"8px 12px",borderRadius:8,border:"1px solid #cdd9d4",background:"#f5f8f7",fontSize:".82rem",fontFamily:"'DM Sans',sans-serif",outline:"none" }} /><button onClick={addComp} disabled={manualCount>=5} style={{ padding:"8px 16px",borderRadius:8,border:"none",background:"#0d6e5b",color:"#fff",fontSize:".82rem",fontWeight:600,cursor:"pointer",fontFamily:"'DM Sans',sans-serif" }}>+ Añadir</button></div>
             <div style={{ display:"flex",flexDirection:"column",gap:6,maxHeight:360,overflowY:"auto" }}>
-              {competitors.map((c, i) => (
+              {competitors.map(c => (
                 <div key={c.domain} onClick={() => toggleComp(c.domain)} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:8,border:`1px solid ${c.active?"rgba(13,110,91,.3)":"#cdd9d4"}`,background:c.active?"rgba(13,110,91,.04)":"#f5f8f7",cursor:"pointer",opacity:c.active?1:0.5,transition:"all .15s" }}>
                   <div>
                     <div style={{ display:"flex",alignItems:"center",gap:6 }}><span style={{ fontSize:".82rem",fontWeight:600 }}>{c.domain}</span><span style={{ fontSize:".55rem",padding:"1px 5px",borderRadius:3,fontWeight:700,background:c.source==="manual"?"rgba(13,110,91,.12)":"rgba(0,0,0,.06)",color:c.source==="manual"?"#0d6e5b":"#7a9190" }}>{c.source==="manual"?"MANUAL":"AUTO"}</span>{c.type!=="Unknown"&&<span style={{ fontSize:".55rem",color:"#7a9190" }}>{c.type}</span>}</div>
