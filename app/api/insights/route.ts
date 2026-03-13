@@ -67,7 +67,7 @@ Genera JSON con: archetypes (4, basados en clusters reales), pain_points (8, fra
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
+        max_tokens: 8000,
         system: PROMPT,
         messages: [{ role: "user", content: prompt }],
       }),
