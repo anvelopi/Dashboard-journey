@@ -388,8 +388,22 @@ function padTo6(archs: any[]|null|undefined) {
 }
 function buildLocalInsights(kws: any[], archIds: string[]) {
   const PH = ["Descubrimiento","Investigación","Evaluación","Decisión","Compra","Post-venta"];
-  const archFeel: Record<string,string> = {A1:"Abrumado por tantas opciones",A2:"Frustrado si no encuentra la pieza",A3:"Dispuesto a invertir pero necesita estar seguro",A4:"Profesional, busca fiabilidad"};
-  const phaseFeel: Record<string,string> = {"Descubrimiento":"Empieza a buscar, aún no sabe qué necesita","Investigación":"Compara opciones y tecnologías","Evaluación":"Compara precios y modelos concretos","Decisión":"Sabe lo que quiere, busca la mejor oferta","Compra":"Busca la tienda directamente","Post-venta":"Necesita soporte o recambios"};
+  const archMeta: Record<string,{feel:string,goal:string}> = {
+    A1:{feel:"Abrumado por tantas opciones, no sabe por dónde empezar",goal:"Equipar su piscina para la temporada"},
+    A2:{feel:"Emocionado con la tecnología pero indeciso entre marcas",goal:"Encontrar el mejor robot limpiafondos sin cable"},
+    A3:{feel:"Frustrado si no encuentra la pieza exacta rápido",goal:"Localizar el recambio correcto por referencia"},
+    A4:{feel:"Profesional, busca fiabilidad y rapidez en el pedido",goal:"Equipar instalaciones de clientes con material técnico"},
+    A5:{feel:"Sensible al precio, busca soluciones económicas",goal:"Montar o mantener su piscina desmontable con poco presupuesto"},
+    A6:{feel:"Busca en su idioma, frustrado si la web no lo soporta",goal:"Encontrar piezas o productos desde otro país"}
+  };
+  const phaseMeta: Record<string,{think:string,action:string}> = {
+    "Descubrimiento":{think:"Empieza a buscar sin saber exactamente qué necesita",action:"Busca términos genéricos en Google"},
+    "Investigación":{think:"Compara tecnologías, lee sobre materiales y marcas",action:"Lee guías, comparativas, fichas técnicas"},
+    "Evaluación":{think:"Ya tiene candidatos, compara precios y modelos concretos",action:"Abre varias pestañas, compara tiendas"},
+    "Decisión":{think:"Sabe lo que quiere, busca la mejor oferta y disponibilidad",action:"Busca modelo exacto + precio/envío"},
+    "Compra":{think:"Busca la tienda directamente para comprar",action:"Busca marca/tienda por nombre"},
+    "Post-venta":{think:"Necesita soporte, recambios o instrucciones de mantenimiento",action:"Busca manuales, recambios, solución a problemas"}
+  };
   const ins: Record<string,any> = {};
   archIds.forEach(aid => {
     ins[aid] = {};
@@ -398,24 +412,40 @@ function buildLocalInsights(kws: any[], archIds: string[]) {
       const pKws = aKws.filter((k: any) => k.phase === ph);
       const top = pKws.length ? [...pKws].sort((a: any, b: any) => b.imp - a.imp)[0] : null;
       const totalImp = pKws.reduce((s: number, k: any) => s + k.imp, 0);
+      const totalClicks = pKws.reduce((s: number, k: any) => s + k.clicks, 0);
       const avgPos = pKws.filter((k: any) => k.pos > 0).length ? +(pKws.filter((k: any) => k.pos > 0).reduce((s: number, k: any) => s + k.pos, 0) / pKws.filter((k: any) => k.pos > 0).length).toFixed(1) : 0;
-      const pains: string[] = []; const gains: string[] = [];
-      if (!pKws.length) { pains.push("Sin presencia en esta fase"); gains.push("Oportunidad de crear contenido"); }
-      else {
-        if (avgPos > 20) pains.push("Pos. media " + avgPos + " — baja visibilidad");
-        else if (avgPos > 10) pains.push("Pos. media " + avgPos + " — fuera de página 1");
-        const gapKws = pKws.filter((k: any) => k.source?.startsWith("gap:"));
-        if (gapKws.length) pains.push(gapKws.length + " keywords donde competidores rankean y tú no");
-        if (top && top.pos > 0 && top.pos <= 5) gains.push('"' + top.kw + '" en pos.' + top.pos);
-        if (totalImp > 500) gains.push(totalImp.toLocaleString() + " imp/mes");
-        if (pKws.length > 3) gains.push(pKws.length + " keywords activas");
+      const gapKws = pKws.filter((k: any) => k.source?.startsWith("gap:"));
+      const clusters: Record<string,number> = {};
+      pKws.forEach((k: any) => { clusters[k.cluster] = (clusters[k.cluster]||0) + k.imp; });
+      const topCluster = Object.entries(clusters).sort((a,b) => (b[1] as number)-(a[1] as number))[0];
+      const am = archMeta[aid] || {feel:"Necesita orientación",goal:"Encontrar productos"};
+      const pm = phaseMeta[ph] || {think:"Busca información",action:"Navega por la web"};
+      const pains: string[] = [];
+      const gains: string[] = [];
+      if (!pKws.length) {
+        pains.push("Sin presencia en esta fase — el usuario no te encuentra");
+        pains.push("Competidores cubren esta fase y captan ese tráfico");
+        gains.push("Oportunidad de crear contenido específico para esta fase");
+      } else {
+        if (avgPos > 20) pains.push("Posición media " + avgPos + " — prácticamente invisible en Google");
+        else if (avgPos > 10) pains.push("Posición media " + avgPos + " — fuera de primera página, CTR < 2%");
+        else if (avgPos > 5) pains.push("Posición media " + avgPos + " — visible pero lejos del top 3");
+        if (gapKws.length > 0) pains.push(gapKws.length + " keywords donde competidores rankean y tú no");
+        const lowCtr = pKws.filter((k: any) => k.imp > 100 && k.ctr < 2);
+        if (lowCtr.length > 2) pains.push(lowCtr.length + " keywords con muchas impresiones pero CTR < 2% — títulos/metas por optimizar");
+        if (top && top.pos > 0 && top.pos <= 3) gains.push('"' + top.kw + '" en pos.' + top.pos + ' — proteger y expandir');
+        if (top && top.pos > 3 && top.pos <= 10) gains.push('"' + top.kw + '" en pos.' + top.pos + ' — a tiro de top 3 con optimización');
+        if (totalImp > 1000) gains.push(totalImp.toLocaleString() + " impresiones/mes — volumen significativo");
+        if (pKws.length > 5) gains.push(pKws.length + " keywords activas — buena cobertura semántica");
+        if (topCluster) gains.push("Cluster dominante: " + topCluster[0]);
       }
-      if (!pains.length) pains.push("Sin problemas destacados");
-      if (!gains.length) gains.push("Potencial por explorar");
+      if (pains.length === 0) pains.push("Sin problemas críticos detectados");
+      if (gains.length === 0) gains.push("Potencial por explorar con contenido nuevo");
       ins[aid][ph] = {
-        t: top ? 'Busca "' + top.kw + '". ' + (phaseFeel[ph] || '') + '.' : (phaseFeel[ph] || '') + '.',
-        f: archFeel[aid] || "Necesita orientación",
-        p: pains, g: gains,
+        t: top ? pm.think + '. Busca "' + top.kw + '" (' + (top.imp||0).toLocaleString() + ' imp).' : pm.think + '.',
+        f: am.feel,
+        p: pains,
+        g: gains,
       };
     });
   });
@@ -557,6 +587,7 @@ ${activeComps.length?'<button class="tab-btn" data-tab="comps">Competidores</but
 <button class="tab-btn" data-tab="revenue">Revenue</button>
 ${activeComps.length?'<button class="tab-btn" data-tab="gaps">Gaps</button>':""}
 <button class="tab-btn" data-tab="editorial">Editorial</button>
+<button class="tab-btn" data-tab="forecast">Forecast</button>
 ${recs.length||aiLoading?'<button class="tab-btn" data-tab="recs">IA</button>':""}
 </div>
 <div class="filters"><div class="filter-group"><label>Arquetipo:</label><span id="archFilters"></span></div><div class="filter-group"><label>Fase:</label><span id="phaseFilters"></span></div><div class="filter-group" style="margin-left:auto"><input type="text" class="search-box" id="kwSearch" placeholder="Buscar keyword..."></div></div>
@@ -591,6 +622,7 @@ ${activeComps.map((c:any,i:number)=>`<tr style="cursor:pointer" onclick="toggleD
 </div></div>
 <div class="tab-pnl" id="tab-revenue"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--success)"></span>Revenue estimado</div><div id="revenueContent"></div></div></div></div>
 ${activeComps.length?`<div class="tab-pnl" id="tab-gaps"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>Gaps por competidor (DataForSEO)</div><div id="dfsGapList"></div></div></div></div>`:""}
+<div class="tab-pnl" id="tab-forecast"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--success)"></span>Forecast 12/18 meses</div><div id="forecastContent"></div></div></div></div>
 <div class="tab-pnl" id="tab-editorial"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--warn)"></span>Gap Editorial</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span style="font-size:.7rem;color:var(--text3);margin-right:4px">Filtrar:</span><span id="editArchFilters"></span><span id="editPhaseFilters" style="margin-left:8px"></span></div><div id="editorialContent"></div></div></div></div>
 ${recs.length||aiLoading?`<div class="tab-pnl" id="tab-recs"><div class="dashboard"><div class="card full"><div class="card-title"><span class="dot" style="background:var(--gold)"></span>\ud83e\udd16 Recomendaciones IA</div><div id="recsContent">${aiLoading?'<div class="ai-loading"><span class="spinner"></span>Generando...</div>':''}</div></div></div></div>`:""}
 
@@ -626,7 +658,7 @@ sCh=new Chart(scEl,{type:'bubble',data:{datasets:Object.keys(cats).map(function(
 function updateAll(){var d=fil();var tC=d.reduce(function(s,k){return s+k.clicks},0);var tI=d.reduce(function(s,k){return s+k.imp},0);
 var allGap=0;COMPS.forEach(function(c){allGap+=(COMP_GAPS[c.domain]||[]).length});
 document.getElementById('kpiStrip').innerHTML=[{v:d.length,l:'Keywords'},{v:tC.toLocaleString(),l:'Clicks'},{v:tI.toLocaleString(),l:'Impresiones'},{v:'\u20ac${data.revenue.total}',l:'Revenue 30d',c:'gold'},{v:COMPS.length,l:'Competidores'},{v:allGap,l:'Gap KWs'}].map(function(k){return '<div class="kpi"><div class="kpi-val '+(k.c||'')+'">'+k.v+'<\/div><div class="kpi-label">'+k.l+'<\/div><\/div>'}).join('');
-updAC();updBub(d);updPB(d);updIP(d);updRad(d);updHM(d);updPn();updJM(d);updGap();updRec();updTbl(d);updPages();updRev(d);updDfsGaps();updSoV();updClusters();updEditorial()}
+updAC();updBub(d);updPB(d);updIP(d);updRad(d);updHM(d);updPn();updJM(d);updGap();updRec();updTbl(d);updPages();updRev(d);updDfsGaps();updSoV();updClusters();updEditorial();updForecast()}
 
 function updAC(){document.getElementById('archCards').innerHTML=ARCHS.filter(function(a){return aA.has(a.id)}).map(function(a){return '<div class="arch-card" style="border-top:3px solid '+a.color+'"><h3 style="color:'+a.color+'">'+a.icon+' '+a.name+'<\/h3><div class="desc">'+a.desc+'<\/div><div style="display:flex;gap:.6rem"><div><div class="weight-val" style="color:'+a.color+'">'+a.pct+'%<\/div><div class="weight-lbl">Tr\u00e1fico<\/div><\/div><\/div><\/div>'}).join('')}
 function updBub(d){var t=d.slice(0,30);var mx=Math.max.apply(null,t.map(function(k){return k.imp}))||1;bC.data.datasets=[{data:t.map(function(k){return{x:k.pos,y:k.imp,r:Math.max(3,Math.sqrt(k.clicks/5)*3),label:k.kw}}),backgroundColor:'rgba(24,24,27,0.15)',borderColor:'#18181b',borderWidth:1}];bC.options.scales.y.max=mx*1.1;bC.update()}
@@ -649,6 +681,32 @@ function kwScore(k){var vol=k.vol||k.imp||0;var pos=k.pos||0;var kd=k.kd||0;var 
 function updEditorial(){var el=document.getElementById('editorialContent');if(!el)return;var gaps=[];(typeof GAPS!=='undefined'?GAPS:[]).forEach(function(g){gaps.push({title:g.title||'',kws:g.kws||'',arch:g.arch||'A1',phase:g.phase||'Descubrimiento',prio:g.prio||'media',source:'ai'})});var clMap={};KW.forEach(function(k){if(k.pos>15&&k.imp>200){var cl=k.cluster||'Otros';if(!clMap[cl])clMap[cl]={kws:[],imp:0};clMap[cl].kws.push(k);clMap[cl].imp+=k.imp}});Object.keys(clMap).sort(function(a,b){return clMap[b].imp-clMap[a].imp}).forEach(function(cl){var d=clMap[cl];if(d.kws.length>=2){var topKws=d.kws.sort(function(a,b){return b.imp-a.imp}).slice(0,5).map(function(k){return k.kw});gaps.push({title:'Hub: '+cl,kws:topKws.join(', '),arch:d.kws[0].archs?d.kws[0].archs[0]:'A1',phase:d.kws[0].phase||'Descubrimiento',prio:d.imp>5000?'alta':d.imp>1000?'media':'baja',source:'auto',imp:d.imp,count:d.kws.length})}});var compGapCl={};Object.keys(COMP_GAPS).forEach(function(dom){(COMP_GAPS[dom]||[]).forEach(function(g){var cl=classifyCluster(g.kw);if(!compGapCl[cl])compGapCl[cl]={kws:[],vol:0,doms:{}};compGapCl[cl].kws.push(g);compGapCl[cl].vol+=g.vol;compGapCl[cl].doms[dom]=true})});Object.keys(compGapCl).sort(function(a,b){return compGapCl[b].vol-compGapCl[a].vol}).forEach(function(cl){var d=compGapCl[cl];if(d.kws.length>=3){var topKws=d.kws.sort(function(a,b){return b.vol-a.vol}).slice(0,5).map(function(k){return k.kw});gaps.push({title:'Gap competitivo: '+cl+' ('+Object.keys(d.doms).length+' comp.)',kws:topKws.join(', '),arch:'A1',phase:'Evaluaci\u00f3n',prio:'alta',source:'comp',vol:d.vol,count:d.kws.length})}});var fg=gaps.filter(function(g){if(editArchFilter!=='all'&&g.arch!==editArchFilter)return false;if(editPhaseFilter!=='all'&&g.phase!==editPhaseFilter)return false;return true});if(!fg.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--text3)">Sin gaps editoriales<\/div>';return}var pc={alta:'#dc2626',media:'var(--text3)',baja:'var(--text4)'};var sl={ai:'IA',auto:'Auto',comp:'Competencia'};el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px">'+fg.map(function(g){return '<div style="border:1px solid var(--border);border-left:3px solid '+(pc[g.prio]||'var(--text3)')+';border-radius:var(--radius);padding:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><div style="font-weight:600;font-size:.82rem">'+g.title+'<\/div><div style="display:flex;gap:4px"><span class="pill" style="font-size:.65rem">'+g.prio+'<\/span><span class="pill" style="font-size:.65rem;color:'+(g.source==='comp'?'var(--warn)':g.source==='ai'?'var(--gold)':'var(--text3)')+'">'+sl[g.source]+'<\/span><\/div><\/div><div style="font-size:.75rem;color:var(--text3);line-height:1.5">'+g.kws+'<\/div><div style="display:flex;gap:6px;margin-top:6px;font-size:.7rem"><span class="pill">'+g.arch+'<\/span><span class="pill">'+g.phase+'<\/span>'+(g.count?'<span class="pill">'+g.count+' kws<\/span>':'')+(g.vol?'<span class="pill">'+g.vol.toLocaleString()+' vol<\/span>':'')+(g.imp?'<span class="pill">'+g.imp.toLocaleString()+' imp<\/span>':'')+'<\/div><\/div>'}).join('')+'<\/div>'}
 
 function buildEditFilters(){var af=document.getElementById('editArchFilters');if(!af)return;af.innerHTML='<button class="fbtn active" data-ea="all">Todos<\/button>'+ARCHS.map(function(a){return '<button class="fbtn" data-ea="'+a.id+'">'+a.icon+'<\/button>'}).join('');af.querySelectorAll('.fbtn').forEach(function(b){b.addEventListener('click',function(){af.querySelectorAll('.fbtn').forEach(function(x){x.classList.remove('active')});b.classList.add('active');editArchFilter=b.dataset.ea;updEditorial()})});var pf=document.getElementById('editPhaseFilters');if(!pf)return;pf.innerHTML='<button class="fbtn active" data-ep="all">Todas<\/button>'+PH.map(function(p){return '<button class="fbtn" data-ep="'+p+'">'+p.substring(0,6)+'<\/button>'}).join('');pf.querySelectorAll('.fbtn').forEach(function(b){b.addEventListener('click',function(){pf.querySelectorAll('.fbtn').forEach(function(x){x.classList.remove('active')});b.classList.add('active');editPhaseFilter=b.dataset.ep;updEditorial()})})}
+
+function updForecast(){var el=document.getElementById('forecastContent');if(!el)return;
+var curClicks=KW.reduce(function(s,k){return s+k.clicks},0);
+var curRev=0;var cr=0.0185,tk=224.85;KW.forEach(function(k){var vol=k.vol||k.imp||0;var ctr=k.pos>0&&k.pos<=10?0.05:0.01;curRev+=vol*ctr*cr*tk});
+curRev=Math.round(curRev);
+// Seasonal coefficients for pool industry in Spain (1=Jan...12=Dec)
+var SC=[0.4,0.5,0.7,1.0,1.4,1.6,1.5,1.3,0.9,0.6,0.4,0.3];
+var now=new Date();var curMonth=now.getMonth();
+// Growth scenarios: conservative 15%, moderate 30%, aggressive 50% annual
+var grow={conservador:0.15,moderado:0.30,agresivo:0.50};
+var labels=[];var datasets={};
+Object.keys(grow).forEach(function(sc){datasets[sc]={traffic:[],revenue:[]}});
+// Also baseline (no growth)
+datasets.actual={traffic:[],revenue:[]};
+for(var i=0;i<18;i++){var m=(curMonth+i)%12;var mName=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][m];var yr=(now.getFullYear()+Math.floor((curMonth+i)/12))%100;labels.push(mName+"'"+yr);
+var baseTraf=Math.round(curClicks*SC[m]/SC[curMonth]);
+var baseRev=Math.round(curRev*SC[m]/SC[curMonth]);
+datasets.actual.traffic.push(baseTraf);datasets.actual.revenue.push(baseRev);
+Object.keys(grow).forEach(function(sc){var g=1+grow[sc]*(i/12);datasets[sc].traffic.push(Math.round(baseTraf*g));datasets[sc].revenue.push(Math.round(baseRev*g))})}
+// Summary KPIs
+var rev12actual=datasets.actual.revenue.slice(0,12).reduce(function(s,v){return s+v},0);
+var rev12mod=datasets.moderado.revenue.slice(0,12).reduce(function(s,v){return s+v},0);
+var rev18mod=datasets.moderado.revenue.reduce(function(s,v){return s+v},0);
+el.innerHTML='<div style="display:flex;gap:16px;margin-bottom:16px"><div style="padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);flex:1;text-align:center"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600">\u20ac'+rev12actual.toLocaleString()+'<\/div><div style="font-size:.7rem;color:var(--text3)">Revenue 12m sin plan<\/div><\/div><div style="padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);flex:1;text-align:center"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--success)">\u20ac'+rev12mod.toLocaleString()+'<\/div><div style="font-size:.7rem;color:var(--text3)">Revenue 12m con plan SEO<\/div><\/div><div style="padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius);flex:1;text-align:center"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--success)">+\u20ac'+(rev12mod-rev12actual).toLocaleString()+'<\/div><div style="font-size:.7rem;color:var(--text3)">\u0394 Revenue 12m<\/div><\/div><\/div><div style="display:flex;gap:8px;margin-bottom:8px"><button class="fbtn active" onclick="drawFore(12,this)">12 meses<\/button><button class="fbtn" onclick="drawFore(18,this)">18 meses<\/button><\/div><div style="height:320px"><canvas id="foreChart"><\/canvas><\/div><p style="font-size:.7rem;color:var(--text4);margin-top:8px">Estacionalidad sector piscinas Espa\u00f1a. Crecimiento moderado: +30% anual con plan SEO. Conservador: +15%. Agresivo: +50%.<\/p>';
+window._foreLabels=labels;window._foreData=datasets;drawFore(12)}
+function drawFore(months,btn){if(btn){btn.parentElement.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('active')});btn.classList.add('active')}var L=window._foreLabels.slice(0,months);var D=window._foreData;if(window._foreChart)window._foreChart.destroy();window._foreChart=new Chart(document.getElementById('foreChart'),{type:'line',data:{labels:L,datasets:[{label:'Sin plan',data:D.actual.revenue.slice(0,months),borderColor:'#d4d4d8',backgroundColor:'#d4d4d814',fill:true,tension:.3,borderWidth:2,pointRadius:2},{label:'Conservador (+15%)',data:D.conservador.revenue.slice(0,months),borderColor:'#a1a1aa',backgroundColor:'#a1a1aa14',fill:true,tension:.3,borderWidth:2,pointRadius:2,borderDash:[4,4]},{label:'Moderado (+30%)',data:D.moderado.revenue.slice(0,months),borderColor:'#18181b',backgroundColor:'#18181b14',fill:true,tension:.3,borderWidth:3,pointRadius:3},{label:'Agresivo (+50%)',data:D.agresivo.revenue.slice(0,months),borderColor:'#71717a',backgroundColor:'#71717a14',fill:true,tension:.3,borderWidth:2,pointRadius:2,borderDash:[2,2]}]},options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:function(c){return c.dataset.label+': \u20ac'+c.raw.toLocaleString()+'/mes'}}}},scales:{y:{ticks:{callback:function(v){return '\u20ac'+v.toLocaleString()}}}}}})}
 
 function updDfsGaps(){var el=document.getElementById('dfsGapList');if(!el)return;var h='';COMPS.forEach(function(c,ci){var g=COMP_GAPS[c.domain]||[];if(!g.length)return;h+='<div style="margin-bottom:16px"><div class="card-title" style="margin-bottom:6px"><span class="dot"><\/span>'+c.domain+' \u2014 '+g.length+' gaps ('+g.reduce(function(s,x){return s+x.vol},0).toLocaleString()+'/mes)<\/div><div class="kw-table-wrap"><table class="kw-table"><thead><tr><th>Keyword<\/th><th style="text-align:right">Pos.<\/th><th style="text-align:right">Vol.<\/th><\/tr><\/thead><tbody>';g.sort(function(a,b){return b.vol-a.vol}).slice(0,10).forEach(function(x){h+='<tr><td>'+x.kw+'<\/td><td style="text-align:right;font-family:var(--mono);color:var(--text3)">'+x.posComp+'<\/td><td style="text-align:right;font-family:var(--mono);font-weight:600">'+x.vol.toLocaleString()+'<\/td><\/tr>'});h+='<\/tbody><\/table><\/div><\/div>'});el.innerHTML=h||'<div style="text-align:center;color:var(--text3);padding:12px">Sin datos de gaps<\/div>'}
 
