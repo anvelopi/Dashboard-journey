@@ -9,32 +9,28 @@
 <title>Tareas en familia</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-:root {
-  --bg: #f5f5f7;
-  --surface: #ffffff;
-  --surface2: #f2f2f7;
-  --border: rgba(0,0,0,0.10);
-  --border2: rgba(0,0,0,0.18);
-  --text: #1c1c1e;
-  --text2: #6e6e73;
-  --text3: #aeaeb2;
-  --accent: #1c1c1e;
-  --accent-fg: #ffffff;
-  --red: #E24B4A;
-  --green: #1D9E75;
-  --orange-bg: #FAEEDA;
-  --orange-text: #633806;
-  --danger-bg: #FCEBEB;
-  --danger-text: #A32D2D;
-  --info-bg: #E6F1FB;
-  --info-text: #185FA5;
-  --radius: 12px;
-  --radius-sm: 8px;
+:root{
+  --bg:#f5f5f7;--surface:#fff;--surface2:#f2f2f7;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --text:#1c1c1e;--text2:#6e6e73;--text3:#aeaeb2;
+  --accent:#1c1c1e;--accent-fg:#fff;
+  --red:#E24B4A;--green:#1D9E75;
+  --orange-bg:#FAEEDA;--orange-text:#633806;
+  --danger-bg:#FCEBEB;--danger-text:#A32D2D;
+  --info-bg:#E6F1FB;--info-text:#185FA5;
+  --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
 .app{min-height:100vh;min-height:-webkit-fill-available;background:var(--bg)}
 .screen{display:none}.screen.active{display:block}
+
+/* LOADING */
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
+.loading-screen.hidden{display:none}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:var(--text2)}
 
 /* LOGIN */
 .login-wrap{padding:2.5rem 1.25rem 2rem;max-width:440px;margin:0 auto}
@@ -69,9 +65,9 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .task-card.done{opacity:.5}.task-card.done .task-title{text-decoration:line-through}
 .task-card.overdue{border-left:3px solid var(--red)}
 .task-row{display:flex;align-items:flex-start;gap:12px}
-.check-btn{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:0}
+.check-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:0;transition:background .15s}
 .check-btn.checked{background:var(--green);border-color:var(--green)}
-.check-btn.checked::after{content:'✓';font-size:13px;color:#fff;font-weight:700}
+.check-btn.checked::after{content:'✓';font-size:14px;color:#fff;font-weight:700}
 .task-info{flex:1;min-width:0}
 .task-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
 .task-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:8px}
@@ -88,7 +84,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 /* ADMIN */
 .admin-body{display:flex;flex-direction:column;min-height:calc(100vh - 57px)}
 .admin-profiles{padding:1rem 1.25rem;flex:1}
-.profile-row{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer;transition:border-color .12s}
+.profile-row{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer}
 .profile-row:active{border-color:var(--border2);background:var(--surface2)}
 .profile-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .profile-name{font-size:15px;font-weight:600;color:var(--text);flex:1}
@@ -99,7 +95,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .stat-none{background:var(--surface2);color:var(--text2)}
 
 /* FAB */
-.fab-wrap{padding:1rem 1.25rem;padding-bottom:max(1rem, env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--surface);display:flex;gap:10px;position:sticky;bottom:0}
+.fab-wrap{padding:1rem 1.25rem;padding-bottom:max(1rem,env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--surface);display:flex;gap:10px;position:sticky;bottom:0}
 .fab{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
 .fab:active{opacity:.8}
 .fab-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:none;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
@@ -113,9 +109,9 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .modal-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:1.25rem;letter-spacing:-.2px}
 
 .assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;transition:border-color .1s;font-family:inherit}
+.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
 .assign-btn:active{background:var(--surface2)}
-.assign-btn.sel{border-color:var(--accent);border-width:2px;background:var(--surface2)}
+.assign-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
 .assign-av{width:34px;height:34px;border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:17px}
 .assign-name{font-size:12px;color:var(--text);font-weight:600}
 
@@ -143,13 +139,13 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .cal-day:active{background:var(--surface2)}
 .cal-day.other{color:var(--text3);opacity:.5}
 .cal-day.today{font-weight:800;color:var(--info-text)}
-.cal-day.selected{background:var(--accent);color:#fff;border-radius:8px}
+.cal-day.selected{background:var(--accent);color:#fff}
 .cal-day.past{opacity:.25;cursor:default;pointer-events:none}
 .cal-chosen{font-size:13px;color:var(--text2);padding:8px 12px;border-top:1px solid var(--border);background:var(--surface2);text-align:center;font-weight:500}
 
-/* PASSWORD MODAL */
+/* CONTRASEÑAS */
 .pass-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
-.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;transition:border-color .1s;font-family:inherit}
+.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
 .pass-user-btn:active{background:var(--surface2)}
 .pass-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
 .pass-user-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px}
@@ -168,9 +164,22 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .pin-input:focus{outline:none;border-color:var(--accent);background:var(--surface)}
 .pin-error{font-size:13px;color:var(--danger-text);min-height:20px;margin-bottom:10px;font-weight:500}
 .pin-btns{display:flex;gap:8px}
+
+/* SYNC INDICATOR */
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.sync-dot.syncing{background:var(--orange-text);animation:pulse .8s infinite}
+.sync-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-text">Cargando...</div>
+</div>
+
 <div class="app">
 
 <!-- LOGIN -->
@@ -187,6 +196,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
   <div class="topbar">
     <div class="topbar-av" id="u-av"></div>
     <div class="topbar-name" id="u-name"></div>
+    <div class="sync-dot" id="u-sync" title="Sincronizado"></div>
     <button class="back-btn" onclick="logout()">Salir</button>
   </div>
   <div class="content" id="u-tasks"></div>
@@ -197,13 +207,14 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
   <div class="topbar">
     <div class="topbar-av av-admin">👑</div>
     <div class="topbar-name">Admin</div>
+    <div class="sync-dot" id="a-sync" title="Sincronizado"></div>
     <button class="back-btn" onclick="logout()">Salir</button>
   </div>
   <div class="admin-body">
     <div class="admin-profiles" id="admin-profiles"></div>
     <div class="fab-wrap">
-      <button class="fab" id="fab-btn"><i class="ti ti-plus"></i> Añadir tarea</button>
-      <button class="fab-sec" onclick="openPassModal()"><i class="ti ti-lock"></i> Contraseñas</button>
+      <button class="fab" id="fab-btn">＋ Añadir tarea</button>
+      <button class="fab-sec" onclick="openPassModal()">🔒 Contraseñas</button>
     </div>
   </div>
 </div>
@@ -211,7 +222,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <!-- ADMIN VER USUARIO -->
 <div class="screen" id="s-admin-user">
   <div class="topbar">
-    <button class="back-btn" onclick="backToAdmin()"><i class="ti ti-arrow-left"></i> Volver</button>
+    <button class="back-btn" onclick="backToAdmin()">‹ Volver</button>
     <div class="topbar-av" id="au-av" style="margin-left:8px"></div>
     <div class="topbar-name" id="au-name" style="margin-left:8px"></div>
   </div>
@@ -226,7 +237,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     <div class="pin-emoji">🔐</div>
     <div class="pin-title">Acceso admin</div>
     <div class="pin-sub">Introduce la contraseña</div>
-    <input class="pin-input" type="password" id="pin-input" maxlength="20" placeholder="••••••" inputmode="text">
+    <input class="pin-input" type="password" id="pin-input" maxlength="20" placeholder="••••••">
     <div class="pin-error" id="pin-error"></div>
     <div class="pin-btns">
       <button class="btn-cancel" onclick="closePin()">Cancelar</button>
@@ -241,7 +252,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     <div class="pin-emoji" id="upin-emoji"></div>
     <div class="pin-title" id="upin-title"></div>
     <div class="pin-sub">Introduce tu contraseña</div>
-    <input class="pin-input" type="password" id="upin-input" maxlength="20" placeholder="••••••" inputmode="text">
+    <input class="pin-input" type="password" id="upin-input" maxlength="20" placeholder="••••••">
     <div class="pin-error" id="upin-error"></div>
     <div class="pin-btns">
       <button class="btn-cancel" onclick="closeUserPin()">Cancelar</button>
@@ -300,11 +311,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     </div>
     <div class="pass-fields" id="pass-fields" style="display:none">
       <div class="field">
-        <label for="new-pass" id="new-pass-label">Nueva contraseña</label>
+        <label id="new-pass-label">Nueva contraseña</label>
         <input type="password" id="new-pass" placeholder="Escribe la nueva contraseña" autocomplete="new-password">
       </div>
       <div class="field">
-        <label for="new-pass2">Confirmar contraseña</label>
+        <label>Confirmar contraseña</label>
         <input type="password" id="new-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
       </div>
       <div class="pin-error" id="pass-error" style="margin-bottom:8px"></div>
@@ -317,6 +328,30 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 </div>
 
 <script>
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL = 'https://tfbrbvgqlmenbvfdxxgs.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYnJidmdxbG1lbmJ2ZmR4eGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODQ0NTcsImV4cCI6MjA5Nzg2MDQ1N30.XrBFyr3CRpsgq-jrvxKnTxGQFAVUPec4Vu8ZmTXf8PA';
+
+async function sb(path, opts={}){
+  const res = await fetch(SUPABASE_URL+'/rest/v1/'+path, {
+    headers:{
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer '+SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || 'return=representation',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if(!res.ok){
+    const err = await res.text();
+    throw new Error(err);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : [];
+}
+
+// ── CONSTANTES ──
 const USERS=[
   {id:'mama',  name:'Mamá',    emoji:'👩', av:'av-mama'},
   {id:'papa',  name:'Papá',    emoji:'👨', av:'av-papa'},
@@ -327,35 +362,44 @@ const ADMIN_PIN='190715';
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DAYS=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
 
-let tasks=[], nextId=1;
+let tasks=[], userPasses={};
 let curUser=null, selUser=null, adminViewUid=null;
 let calYear, calMonth, selDate=null;
-let userPasses={mama:null,papa:null,sara:null,antonio:null};
 let pendingLoginId=null, selPassUser=null;
-
-// Cargar datos guardados
-function loadData(){
-  try{
-    const t=localStorage.getItem('fam_tasks');
-    if(t){tasks=JSON.parse(t);nextId=tasks.reduce((m,x)=>Math.max(m,x.id),0)+1;}
-    const p=localStorage.getItem('fam_passes');
-    if(p)userPasses=JSON.parse(p);
-  }catch(e){}
-}
-function saveData(){
-  try{
-    localStorage.setItem('fam_tasks',JSON.stringify(tasks));
-    localStorage.setItem('fam_passes',JSON.stringify(userPasses));
-  }catch(e){}
-}
 
 function getUser(id){return USERS.find(u=>u.id===id)||{id:'?',name:'?',emoji:'?',av:''}}
 
-/* ── LOGIN ── */
+// ── CARGA INICIAL ──
+async function loadAll(){
+  showLoading(true);
+  try{
+    const [t, p] = await Promise.all([
+      sb('tasks?order=id.asc'),
+      sb('user_passwords?select=user_id,password')
+    ]);
+    tasks = t;
+    userPasses = {};
+    p.forEach(r=>{ userPasses[r.user_id]=r.password });
+  }catch(e){ toast('Error cargando datos') }
+  showLoading(false);
+  buildLogin();
+}
+
+function showLoading(v){
+  document.getElementById('loading-screen').classList.toggle('hidden',!v);
+}
+
+function setSyncDot(id, state){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.className='sync-dot'+(state==='syncing'?' syncing':state==='error'?' error':'');
+}
+
+// ── LOGIN ──
 function buildLogin(){
   let h='';
   USERS.forEach(u=>{
-    const p=tasks.filter(t=>t.userId===u.id&&!t.done).length;
+    const p=tasks.filter(t=>t.user_id===u.id&&!t.done).length;
     const hasPass=!!userPasses[u.id];
     h+=`<div class="user-card" onclick="tryLoginUser('${u.id}')">
       ${p?`<div class="notif-badge">${p}</div>`:''}
@@ -402,11 +446,35 @@ function loginAs(id){
     document.getElementById('u-name').textContent=u.name;
     show('s-user');
     renderTasks(id,'u-tasks',false);
+    // Refresco cada 30 segundos mientras está abierta
+    startAutoRefresh();
   }
 }
-function logout(){curUser=null;buildLogin();show('s-login')}
+function logout(){
+  curUser=null;
+  stopAutoRefresh();
+  buildLogin();
+  show('s-login');
+}
 
-/* ── PIN ADMIN ── */
+// ── AUTO REFRESH ──
+let refreshInterval=null;
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshInterval=setInterval(async()=>{
+    if(!curUser||curUser==='admin')return;
+    setSyncDot('u-sync','syncing');
+    try{
+      tasks=await sb('tasks?order=id.asc');
+      renderTasks(curUser,'u-tasks',false);
+      buildLogin();
+      setSyncDot('u-sync','ok');
+    }catch(e){ setSyncDot('u-sync','error') }
+  },30000);
+}
+function stopAutoRefresh(){if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null}}
+
+// ── PIN ADMIN ──
 function openPin(){
   document.getElementById('pin-input').value='';
   document.getElementById('pin-error').textContent='';
@@ -420,7 +488,7 @@ function checkPin(){
 }
 document.getElementById('pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
 
-/* ── MODAL TAREA ── */
+// ── MODAL TAREA ──
 document.getElementById('fab-btn').addEventListener('click',openModal);
 function openModal(){
   selUser=null;buildAssignGrid();
@@ -444,19 +512,31 @@ function buildAssignGrid(){
 }
 function pickUser(id){selUser=id;buildAssignGrid()}
 
-function saveTask(){
+async function saveTask(){
   const title=document.getElementById('f-title').value.trim();
   const desc=document.getElementById('f-desc').value.trim();
   const date=getSelDateStr();
   if(!selUser){toast('Selecciona a quién asignar la tarea');return}
   if(!title){toast('Escribe el título de la tarea');return}
   if(!date){toast('Elige una fecha límite en el calendario');return}
-  tasks.push({id:nextId++,userId:selUser,title,desc,deadline:date,done:false});
-  saveData();closeModal();buildLogin();renderAdminProfiles();
-  toast('✓ Tarea añadida a '+getUser(selUser).name);
+
+  setSyncDot('a-sync','syncing');
+  try{
+    const newTask = await sb('tasks', {
+      method:'POST',
+      body: JSON.stringify({user_id:selUser, title, description:desc, deadline:date, done:false})
+    });
+    tasks.push(newTask[0]);
+    closeModal();buildLogin();renderAdminProfiles();
+    setSyncDot('a-sync','ok');
+    toast('✓ Tarea añadida a '+getUser(selUser).name);
+  }catch(e){
+    setSyncDot('a-sync','error');
+    toast('Error al guardar la tarea');
+  }
 }
 
-/* ── MODAL CONTRASEÑAS ── */
+// ── MODAL CONTRASEÑAS ──
 function openPassModal(){
   selPassUser=null;buildPassUserGrid();
   document.getElementById('pass-fields').style.display='none';
@@ -489,17 +569,127 @@ function pickPassUser(id){
   document.getElementById('new-pass-label').textContent='Nueva contraseña para '+getUser(id).name;
   setTimeout(()=>document.getElementById('new-pass').focus(),100);
 }
-function savePass(){
+
+async function savePass(){
   const p1=document.getElementById('new-pass').value;
   const p2=document.getElementById('new-pass2').value;
   if(!p1){document.getElementById('pass-error').textContent='Escribe una contraseña';return}
   if(p1!==p2){document.getElementById('pass-error').textContent='Las contraseñas no coinciden';return}
-  userPasses[selPassUser]=p1;
-  saveData();closePassModal();buildLogin();
-  toast('✓ Contraseña guardada para '+getUser(selPassUser).name);
+
+  setSyncDot('a-sync','syncing');
+  try{
+    // Upsert: si existe lo actualiza, si no lo crea
+    await sb('user_passwords', {
+      method:'POST',
+      headers:{'Prefer':'resolution=merge-duplicates'},
+      body: JSON.stringify({user_id:selPassUser, password:p1})
+    });
+    userPasses[selPassUser]=p1;
+    closePassModal();buildLogin();
+    setSyncDot('a-sync','ok');
+    toast('✓ Contraseña guardada para '+getUser(selPassUser).name);
+  }catch(e){
+    setSyncDot('a-sync','error');
+    toast('Error al guardar la contraseña');
+  }
 }
 
-/* ── CALENDARIO ── */
+// ── ADMIN ──
+function renderAdminProfiles(){
+  let h='';
+  USERS.forEach(u=>{
+    const ut=tasks.filter(t=>t.user_id===u.id);
+    const pend=ut.filter(t=>!t.done).length,done=ut.filter(t=>t.done).length;
+    let st=ut.length===0?`<span class="stat-pill stat-none">Sin tareas</span>`:'';
+    if(pend)st+=`<span class="stat-pill stat-pend">${pend} pendiente${pend>1?'s':''}</span>`;
+    if(done)st+=`<span class="stat-pill stat-done">${done} hecha${done>1?'s':''}</span>`;
+    h+=`<div class="profile-row" onclick="openUserView('${u.id}')">
+      <div class="profile-av ${u.av}">${u.emoji}</div>
+      <div class="profile-name">${u.name}</div>
+      <div class="profile-stats">${st}</div>
+      <span style="color:#aeaeb2;font-size:20px">›</span>
+    </div>`;
+  });
+  document.getElementById('admin-profiles').innerHTML=h;
+}
+
+async function openUserView(uid){
+  adminViewUid=uid;const u=getUser(uid);
+  setAv('au-av',u);
+  document.getElementById('au-name').textContent='Tareas de '+u.name;
+  show('s-admin-user');
+  // Recargar tareas frescas
+  try{
+    tasks=await sb('tasks?order=id.asc');
+  }catch(e){}
+  renderTasks(uid,'au-tasks',true);
+}
+function backToAdmin(){adminViewUid=null;renderAdminProfiles();show('s-admin')}
+
+// ── TAREAS ──
+function renderTasks(uid,cid,isAdmin){
+  const ut=tasks.filter(t=>t.user_id===uid);
+  const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
+  let h='';
+  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(!ut.length)h=`<div class="empty-state"><div class="empty-icon">✓</div>Sin tareas asignadas de momento.</div>`;
+  document.getElementById(cid).innerHTML=h;
+}
+
+function taskHTML(t,isAdmin){
+  const ov=isOverdue(t),di=dlInfo(t);
+  return`<div class="task-card${t.done?' done':''}${ov?' overdue':''}" id="tc-${t.id}">
+    <div class="task-row">
+      ${!isAdmin?`<button class="check-btn${t.done?' checked':''}" onclick="toggle(${t.id})" aria-label="Marcar"></button>`:''}
+      <div class="task-info">
+        <div class="task-title">${t.title}</div>
+        ${t.description?`<div class="task-desc">${t.description}</div>`:''}
+        <div class="task-meta">${di.txt?`<span class="tag ${di.cls}">📅 ${di.txt}</span>`:''}</div>
+      </div>
+      ${isAdmin?`<button class="del-btn" onclick="delTask(${t.id})" aria-label="Eliminar">🗑️</button>`:''}
+    </div>
+  </div>`;
+}
+
+async function toggle(id){
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
+  const newDone=!t.done;
+  t.done=newDone;
+  renderTasks(curUser,'u-tasks',false);
+  buildLogin();
+  setSyncDot('u-sync','syncing');
+  try{
+    await sb(`tasks?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({done:newDone})});
+    setSyncDot('u-sync','ok');
+  }catch(e){
+    t.done=!newDone; // revertir
+    renderTasks(curUser,'u-tasks',false);
+    buildLogin();
+    setSyncDot('u-sync','error');
+    toast('Error al actualizar');
+  }
+}
+
+async function delTask(id){
+  tasks=tasks.filter(x=>x.id!==id);
+  buildLogin();
+  if(adminViewUid){renderTasks(adminViewUid,'au-tasks',true);renderAdminProfiles();}
+  setSyncDot('a-sync','syncing');
+  try{
+    await sb(`tasks?id=eq.${id}`,{method:'DELETE',prefer:'',headers:{'Prefer':''}});
+    setSyncDot('a-sync','ok');
+  }catch(e){
+    setSyncDot('a-sync','error');
+    toast('Error al eliminar');
+    // Recargar
+    tasks=await sb('tasks?order=id.asc');
+    if(adminViewUid)renderTasks(adminViewUid,'au-tasks',true);
+  }
+}
+
+// ── CALENDARIO ──
 function initCal(){
   const now=new Date();
   calYear=now.getFullYear();calMonth=now.getMonth();selDate=null;
@@ -552,66 +742,7 @@ function getSelDateStr(){
   return selDate.getFullYear()+'-'+String(selDate.getMonth()+1).padStart(2,'0')+'-'+String(selDate.getDate()).padStart(2,'0');
 }
 
-/* ── ADMIN ── */
-function renderAdminProfiles(){
-  let h='';
-  USERS.forEach(u=>{
-    const ut=tasks.filter(t=>t.userId===u.id);
-    const pend=ut.filter(t=>!t.done).length,done=ut.filter(t=>t.done).length;
-    let st=ut.length===0?`<span class="stat-pill stat-none">Sin tareas</span>`:'';
-    if(pend)st+=`<span class="stat-pill stat-pend">${pend} pendiente${pend>1?'s':''}</span>`;
-    if(done)st+=`<span class="stat-pill stat-done">${done} hecha${done>1?'s':''}</span>`;
-    h+=`<div class="profile-row" onclick="openUserView('${u.id}')">
-      <div class="profile-av ${u.av}">${u.emoji}</div>
-      <div class="profile-name">${u.name}</div>
-      <div class="profile-stats">${st}</div>
-      <span style="color:#aeaeb2;font-size:16px">›</span>
-    </div>`;
-  });
-  document.getElementById('admin-profiles').innerHTML=h;
-}
-function openUserView(uid){
-  adminViewUid=uid;const u=getUser(uid);
-  setAv('au-av',u);document.getElementById('au-name').textContent='Tareas de '+u.name;
-  renderTasks(uid,'au-tasks',true);show('s-admin-user');
-}
-function backToAdmin(){adminViewUid=null;renderAdminProfiles();show('s-admin')}
-
-/* ── TAREAS ── */
-function renderTasks(uid,cid,isAdmin){
-  const ut=tasks.filter(t=>t.userId===uid);
-  const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
-  let h='';
-  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,isAdmin)})}
-  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,isAdmin)})}
-  if(!ut.length)h=`<div class="empty-state"><div class="empty-icon">✓</div>Sin tareas asignadas de momento.<br>El admin asignará nuevas tareas pronto.</div>`;
-  document.getElementById(cid).innerHTML=h;
-}
-function taskHTML(t,isAdmin){
-  const ov=isOverdue(t),di=dlInfo(t);
-  return`<div class="task-card${t.done?' done':''}${ov?' overdue':''}" id="tc-${t.id}">
-    <div class="task-row">
-      ${!isAdmin?`<button class="check-btn${t.done?' checked':''}" onclick="toggle(${t.id})" aria-label="Marcar"></button>`:''}
-      <div class="task-info">
-        <div class="task-title">${t.title}</div>
-        ${t.desc?`<div class="task-desc">${t.desc}</div>`:''}
-        <div class="task-meta">${di.txt?`<span class="tag ${di.cls}">📅 ${di.txt}</span>`:''}</div>
-      </div>
-      ${isAdmin?`<button class="del-btn" onclick="delTask(${t.id})" aria-label="Eliminar">🗑️</button>`:''}
-    </div>
-  </div>`;
-}
-function toggle(id){
-  const t=tasks.find(x=>x.id===id);if(t)t.done=!t.done;
-  saveData();buildLogin();renderTasks(curUser,'u-tasks',false);
-}
-function delTask(id){
-  tasks=tasks.filter(x=>x.id!==id);
-  saveData();buildLogin();
-  if(adminViewUid){renderTasks(adminViewUid,'au-tasks',true);renderAdminProfiles();}
-}
-
-/* ── HELPERS ── */
+// ── HELPERS ──
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function setAv(elId,u){const el=document.getElementById(elId);el.className='topbar-av '+u.av;el.textContent=u.emoji}
 function isOverdue(t){if(t.done||!t.deadline)return false;const td=new Date();td.setHours(0,0,0,0);return new Date(t.deadline)<td}
@@ -628,12 +759,11 @@ function dlInfo(t){
 }
 function toast(msg){
   const el=document.createElement('div');
-  el.style.cssText='position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;z-index:999;white-space:nowrap;font-family:-apple-system,sans-serif';
+  el.style.cssText='position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;z-index:9999;white-space:nowrap;font-family:-apple-system,sans-serif';
   el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
 }
 
-loadData();
-buildLogin();
+loadAll();
 </script>
 </body>
 </html>
