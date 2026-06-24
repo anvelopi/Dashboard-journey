@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tareas Familia">
+<title>Tareas en familia</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface2: #f2f2f7;
+  --border: rgba(0,0,0,0.10);
+  --border2: rgba(0,0,0,0.18);
+  --text: #1c1c1e;
+  --text2: #6e6e73;
+  --text3: #aeaeb2;
+  --accent: #1c1c1e;
+  --accent-fg: #ffffff;
+  --red: #E24B4A;
+  --green: #1D9E75;
+  --orange-bg: #FAEEDA;
+  --orange-text: #633806;
+  --danger-bg: #FCEBEB;
+  --danger-text: #A32D2D;
+  --info-bg: #E6F1FB;
+  --info-text: #185FA5;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.app{min-height:100vh;min-height:-webkit-fill-available;background:var(--bg)}
+.screen{display:none}.screen.active{display:block}
+
+/* LOGIN */
+.login-wrap{padding:2.5rem 1.25rem 2rem;max-width:440px;margin:0 auto}
+.login-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:.2rem;letter-spacing:-.3px}
+.login-sub{font-size:15px;color:var(--text2);margin-bottom:2rem}
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;cursor:pointer;text-align:center;transition:transform .12s,border-color .12s;position:relative;-webkit-user-select:none;user-select:none}
+.user-card:active{transform:scale(.97);border-color:var(--border2)}
+.avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px}
+.av-mama{background:#EEEDFE}.av-papa{background:#E6F1FB}.av-sara{background:#FBEAF0}.av-antonio{background:#EAF3DE}.av-admin{background:#FAEEDA}
+.user-name{font-size:15px;font-weight:600;color:var(--text)}
+.user-role{font-size:12px;color:var(--text2);margin-top:2px}
+.notif-badge{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.lock-icon{position:absolute;bottom:10px;right:10px;color:var(--text3);font-size:13px}
+.admin-card{grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:1rem 1.25rem;background:var(--surface2)}
+.admin-card .avatar{margin:0;flex-shrink:0;width:48px;height:48px;font-size:22px}
+.admin-info{flex:1}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:10px;padding:.9rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.topbar-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.topbar-name{font-size:16px;font-weight:600;color:var(--text);flex:1}
+.back-btn{background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 13px;font-size:14px;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.back-btn:active{background:var(--surface2)}
+
+/* CONTENT */
+.content{padding:1rem 1.25rem;padding-bottom:2rem}
+.section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 .6rem}
+
+/* TASK CARDS */
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.95rem 1rem;margin-bottom:10px}
+.task-card.done{opacity:.5}.task-card.done .task-title{text-decoration:line-through}
+.task-card.overdue{border-left:3px solid var(--red)}
+.task-row{display:flex;align-items:flex-start;gap:12px}
+.check-btn{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:0}
+.check-btn.checked{background:var(--green);border-color:var(--green)}
+.check-btn.checked::after{content:'✓';font-size:13px;color:#fff;font-weight:700}
+.task-info{flex:1;min-width:0}
+.task-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.task-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:8px}
+.task-meta{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.tag-ok{background:var(--surface2);color:var(--text2)}
+.tag-soon{background:var(--orange-bg);color:var(--orange-text)}
+.tag-overdue{background:var(--danger-bg);color:var(--danger-text)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:6px;border-radius:8px;flex-shrink:0;font-size:18px;line-height:1}
+.del-btn:active{color:var(--red)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:14px;line-height:1.6}
+.empty-icon{font-size:36px;margin-bottom:.75rem;opacity:.3}
+
+/* ADMIN */
+.admin-body{display:flex;flex-direction:column;min-height:calc(100vh - 57px)}
+.admin-profiles{padding:1rem 1.25rem;flex:1}
+.profile-row{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer;transition:border-color .12s}
+.profile-row:active{border-color:var(--border2);background:var(--surface2)}
+.profile-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.profile-name{font-size:15px;font-weight:600;color:var(--text);flex:1}
+.profile-stats{display:flex;gap:6px;flex-wrap:wrap}
+.stat-pill{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.stat-pend{background:var(--orange-bg);color:var(--orange-text)}
+.stat-done{background:#EAF3DE;color:#27500A}
+.stat-none{background:var(--surface2);color:var(--text2)}
+
+/* FAB */
+.fab-wrap{padding:1rem 1.25rem;padding-bottom:max(1rem, env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--surface);display:flex;gap:10px;position:sticky;bottom:0}
+.fab{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
+.fab:active{opacity:.8}
+.fab-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:none;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
+.fab-sec:active{background:var(--surface2)}
+
+/* MODALES */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;padding-bottom:max(2rem,env(safe-area-inset-bottom));width:100%;max-width:600px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.25rem}
+.modal-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:1.25rem;letter-spacing:-.2px}
+
+.assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;transition:border-color .1s;font-family:inherit}
+.assign-btn:active{background:var(--surface2)}
+.assign-btn.sel{border-color:var(--accent);border-width:2px;background:var(--surface2)}
+.assign-av{width:34px;height:34px;border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.assign-name{font-size:12px;color:var(--text);font-weight:600}
+
+.field{margin-bottom:16px}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea{width:100%;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;font-size:16px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;-webkit-appearance:none;appearance:none}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.field textarea{resize:vertical;min-height:88px}
+.modal-actions{display:flex;gap:8px;margin-top:8px}
+.btn-cancel{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;font-size:15px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:600}
+.btn-cancel:active{background:var(--border)}
+.btn-save{flex:2;background:var(--accent);color:var(--accent-fg);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-save:active{opacity:.8}
+
+/* CALENDARIO */
+.cal-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;background:var(--surface)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text);padding:6px 10px;border-radius:8px;font-size:20px;line-height:1;font-family:inherit}
+.cal-nav:active{background:var(--border)}
+.cal-label{display:flex;gap:6px;align-items:center}
+.cal-select{font-size:14px;font-family:inherit;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);cursor:pointer;font-weight:600;-webkit-appearance:none;appearance:none}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:8px 6px}
+.cal-day-name{text-align:center;font-size:11px;font-weight:700;color:var(--text2);padding:4px 0;text-transform:uppercase}
+.cal-day{text-align:center;font-size:14px;padding:7px 2px;border-radius:8px;cursor:pointer;color:var(--text);line-height:1.4;font-weight:500;-webkit-user-select:none;user-select:none}
+.cal-day:active{background:var(--surface2)}
+.cal-day.other{color:var(--text3);opacity:.5}
+.cal-day.today{font-weight:800;color:var(--info-text)}
+.cal-day.selected{background:var(--accent);color:#fff;border-radius:8px}
+.cal-day.past{opacity:.25;cursor:default;pointer-events:none}
+.cal-chosen{font-size:13px;color:var(--text2);padding:8px 12px;border-top:1px solid var(--border);background:var(--surface2);text-align:center;font-weight:500}
+
+/* PASSWORD MODAL */
+.pass-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
+.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;transition:border-color .1s;font-family:inherit}
+.pass-user-btn:active{background:var(--surface2)}
+.pass-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+.pass-user-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.pass-user-name{font-size:14px;font-weight:600;color:var(--text)}
+.pass-user-status{font-size:11px;color:var(--text2);margin-top:3px}
+.pass-fields{border-top:1px solid var(--border);padding-top:1rem;margin-top:.75rem}
+
+/* PIN */
+.pin-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.pin-bg.open{display:flex}
+.pin-box{background:var(--surface);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:320px;text-align:center}
+.pin-emoji{font-size:34px;margin-bottom:.6rem}
+.pin-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.pin-sub{font-size:14px;color:var(--text2);margin-bottom:1.25rem}
+.pin-input{width:100%;font-size:22px;letter-spacing:.3em;text-align:center;font-family:monospace;margin-bottom:10px;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);-webkit-appearance:none;appearance:none}
+.pin-input:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.pin-error{font-size:13px;color:var(--danger-text);min-height:20px;margin-bottom:10px;font-weight:500}
+.pin-btns{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- LOGIN -->
+<div class="screen active" id="s-login">
+  <div class="login-wrap">
+    <p class="login-title">Tareas en familia 🏠</p>
+    <p class="login-sub">¿Quién eres?</p>
+    <div class="user-grid" id="login-grid"></div>
+  </div>
+</div>
+
+<!-- USUARIO -->
+<div class="screen" id="s-user">
+  <div class="topbar">
+    <div class="topbar-av" id="u-av"></div>
+    <div class="topbar-name" id="u-name"></div>
+    <button class="back-btn" onclick="logout()">Salir</button>
+  </div>
+  <div class="content" id="u-tasks"></div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <div class="topbar">
+    <div class="topbar-av av-admin">👑</div>
+    <div class="topbar-name">Admin</div>
+    <button class="back-btn" onclick="logout()">Salir</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-profiles" id="admin-profiles"></div>
+    <div class="fab-wrap">
+      <button class="fab" id="fab-btn"><i class="ti ti-plus"></i> Añadir tarea</button>
+      <button class="fab-sec" onclick="openPassModal()"><i class="ti ti-lock"></i> Contraseñas</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN VER USUARIO -->
+<div class="screen" id="s-admin-user">
+  <div class="topbar">
+    <button class="back-btn" onclick="backToAdmin()"><i class="ti ti-arrow-left"></i> Volver</button>
+    <div class="topbar-av" id="au-av" style="margin-left:8px"></div>
+    <div class="topbar-name" id="au-name" style="margin-left:8px"></div>
+  </div>
+  <div class="content" id="au-tasks"></div>
+</div>
+
+</div>
+
+<!-- PIN ADMIN -->
+<div class="pin-bg" id="pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji">🔐</div>
+    <div class="pin-title">Acceso admin</div>
+    <div class="pin-sub">Introduce la contraseña</div>
+    <input class="pin-input" type="password" id="pin-input" maxlength="20" placeholder="••••••" inputmode="text">
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closePin()">Cancelar</button>
+      <button class="btn-save" onclick="checkPin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN USUARIO -->
+<div class="pin-bg" id="user-pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji" id="upin-emoji"></div>
+    <div class="pin-title" id="upin-title"></div>
+    <div class="pin-sub">Introduce tu contraseña</div>
+    <input class="pin-input" type="password" id="upin-input" maxlength="20" placeholder="••••••" inputmode="text">
+    <div class="pin-error" id="upin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closeUserPin()">Cancelar</button>
+      <button class="btn-save" onclick="checkUserPin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AÑADIR TAREA -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nueva tarea</div>
+    <div class="field">
+      <label>Asignar a</label>
+      <div class="assign-grid" id="assign-grid"></div>
+    </div>
+    <div class="field">
+      <label for="f-title">Título de la tarea</label>
+      <input type="text" id="f-title" placeholder="Ej: Limpia la terraza" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="f-desc">Descripción</label>
+      <textarea id="f-desc" placeholder="Ej: Barre el suelo, limpia los muebles y riega las plantas"></textarea>
+    </div>
+    <div class="field">
+      <label>Fecha límite</label>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calMove(-1)">‹</button>
+          <div class="cal-label">
+            <select class="cal-select" id="cal-month-sel" onchange="calMonthChange()"></select>
+            <select class="cal-select" id="cal-year-sel" onchange="calYearChange()"></select>
+          </div>
+          <button class="cal-nav" onclick="calMove(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-chosen" id="cal-chosen">Ninguna fecha seleccionada</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveTask()">✓ Guardar tarea</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONTRASEÑAS -->
+<div class="modal-bg" id="pass-modal-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Contraseñas de usuario</div>
+    <div class="field">
+      <label>Selecciona el perfil</label>
+      <div class="pass-user-grid" id="pass-user-grid"></div>
+    </div>
+    <div class="pass-fields" id="pass-fields" style="display:none">
+      <div class="field">
+        <label for="new-pass" id="new-pass-label">Nueva contraseña</label>
+        <input type="password" id="new-pass" placeholder="Escribe la nueva contraseña" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label for="new-pass2">Confirmar contraseña</label>
+        <input type="password" id="new-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
+      </div>
+      <div class="pin-error" id="pass-error" style="margin-bottom:8px"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closePassModal()">Cancelar</button>
+        <button class="btn-save" onclick="savePass()">🔒 Guardar contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const USERS=[
+  {id:'mama',  name:'Mamá',    emoji:'👩', av:'av-mama'},
+  {id:'papa',  name:'Papá',    emoji:'👨', av:'av-papa'},
+  {id:'sara',  name:'Sara',    emoji:'👧', av:'av-sara'},
+  {id:'antonio',name:'Antonio',emoji:'🧒', av:'av-antonio'},
+];
+const ADMIN_PIN='190715';
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+
+let tasks=[], nextId=1;
+let curUser=null, selUser=null, adminViewUid=null;
+let calYear, calMonth, selDate=null;
+let userPasses={mama:null,papa:null,sara:null,antonio:null};
+let pendingLoginId=null, selPassUser=null;
+
+// Cargar datos guardados
+function loadData(){
+  try{
+    const t=localStorage.getItem('fam_tasks');
+    if(t){tasks=JSON.parse(t);nextId=tasks.reduce((m,x)=>Math.max(m,x.id),0)+1;}
+    const p=localStorage.getItem('fam_passes');
+    if(p)userPasses=JSON.parse(p);
+  }catch(e){}
+}
+function saveData(){
+  try{
+    localStorage.setItem('fam_tasks',JSON.stringify(tasks));
+    localStorage.setItem('fam_passes',JSON.stringify(userPasses));
+  }catch(e){}
+}
+
+function getUser(id){return USERS.find(u=>u.id===id)||{id:'?',name:'?',emoji:'?',av:''}}
+
+/* ── LOGIN ── */
+function buildLogin(){
+  let h='';
+  USERS.forEach(u=>{
+    const p=tasks.filter(t=>t.userId===u.id&&!t.done).length;
+    const hasPass=!!userPasses[u.id];
+    h+=`<div class="user-card" onclick="tryLoginUser('${u.id}')">
+      ${p?`<div class="notif-badge">${p}</div>`:''}
+      ${hasPass?`<span class="lock-icon">🔒</span>`:''}
+      <div class="avatar ${u.av}">${u.emoji}</div>
+      <div class="user-name">${u.name}</div>
+      <div class="user-role">${hasPass?'Con contraseña':'Miembro'}</div>
+    </div>`;
+  });
+  h+=`<div class="user-card admin-card" onclick="openPin()">
+    <div class="avatar av-admin" style="width:48px;height:48px;font-size:22px;margin:0;flex-shrink:0">👑</div>
+    <div class="admin-info"><div class="user-name">Admin</div><div class="user-role">Gestión de tareas</div></div>
+    <span style="color:#aeaeb2;font-size:18px">🔒</span>
+  </div>`;
+  document.getElementById('login-grid').innerHTML=h;
+}
+
+function tryLoginUser(id){
+  if(userPasses[id]){
+    pendingLoginId=id;
+    const u=getUser(id);
+    document.getElementById('upin-emoji').textContent=u.emoji;
+    document.getElementById('upin-title').textContent=u.name;
+    document.getElementById('upin-input').value='';
+    document.getElementById('upin-error').textContent='';
+    document.getElementById('user-pin-bg').classList.add('open');
+    setTimeout(()=>document.getElementById('upin-input').focus(),300);
+  } else { loginAs(id); }
+}
+function closeUserPin(){document.getElementById('user-pin-bg').classList.remove('open');pendingLoginId=null}
+function checkUserPin(){
+  const v=document.getElementById('upin-input').value;
+  if(v===userPasses[pendingLoginId]){closeUserPin();loginAs(pendingLoginId);}
+  else{document.getElementById('upin-error').textContent='Contraseña incorrecta';document.getElementById('upin-input').value='';}
+}
+document.getElementById('upin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkUserPin()});
+
+function loginAs(id){
+  curUser=id;
+  if(id==='admin'){show('s-admin');renderAdminProfiles();}
+  else{
+    const u=getUser(id);
+    setAv('u-av',u);
+    document.getElementById('u-name').textContent=u.name;
+    show('s-user');
+    renderTasks(id,'u-tasks',false);
+  }
+}
+function logout(){curUser=null;buildLogin();show('s-login')}
+
+/* ── PIN ADMIN ── */
+function openPin(){
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-error').textContent='';
+  document.getElementById('pin-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('pin-input').focus(),300);
+}
+function closePin(){document.getElementById('pin-bg').classList.remove('open')}
+function checkPin(){
+  if(document.getElementById('pin-input').value===ADMIN_PIN){closePin();loginAs('admin');}
+  else{document.getElementById('pin-error').textContent='Contraseña incorrecta';document.getElementById('pin-input').value='';}
+}
+document.getElementById('pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
+
+/* ── MODAL TAREA ── */
+document.getElementById('fab-btn').addEventListener('click',openModal);
+function openModal(){
+  selUser=null;buildAssignGrid();
+  document.getElementById('f-title').value='';
+  document.getElementById('f-desc').value='';
+  initCal();
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open')}
+document.getElementById('modal-bg').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function buildAssignGrid(){
+  let h='';
+  USERS.forEach(u=>{
+    h+=`<button class="assign-btn${selUser===u.id?' sel':''}" onclick="pickUser('${u.id}')">
+      <div class="assign-av ${u.av}">${u.emoji}</div>
+      <div class="assign-name">${u.name}</div>
+    </button>`;
+  });
+  document.getElementById('assign-grid').innerHTML=h;
+}
+function pickUser(id){selUser=id;buildAssignGrid()}
+
+function saveTask(){
+  const title=document.getElementById('f-title').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  const date=getSelDateStr();
+  if(!selUser){toast('Selecciona a quién asignar la tarea');return}
+  if(!title){toast('Escribe el título de la tarea');return}
+  if(!date){toast('Elige una fecha límite en el calendario');return}
+  tasks.push({id:nextId++,userId:selUser,title,desc,deadline:date,done:false});
+  saveData();closeModal();buildLogin();renderAdminProfiles();
+  toast('✓ Tarea añadida a '+getUser(selUser).name);
+}
+
+/* ── MODAL CONTRASEÑAS ── */
+function openPassModal(){
+  selPassUser=null;buildPassUserGrid();
+  document.getElementById('pass-fields').style.display='none';
+  document.getElementById('new-pass').value='';
+  document.getElementById('new-pass2').value='';
+  document.getElementById('pass-error').textContent='';
+  document.getElementById('pass-modal-bg').classList.add('open');
+}
+function closePassModal(){document.getElementById('pass-modal-bg').classList.remove('open')}
+document.getElementById('pass-modal-bg').addEventListener('click',function(e){if(e.target===this)closePassModal()});
+
+function buildPassUserGrid(){
+  let h='';
+  USERS.forEach(u=>{
+    const hasP=!!userPasses[u.id];
+    h+=`<button class="pass-user-btn${selPassUser===u.id?' sel':''}" onclick="pickPassUser('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
+      <div class="pass-user-status">${hasP?'🔒 Con contraseña':'Sin contraseña'}</div>
+    </button>`;
+  });
+  document.getElementById('pass-user-grid').innerHTML=h;
+}
+function pickPassUser(id){
+  selPassUser=id;buildPassUserGrid();
+  document.getElementById('pass-fields').style.display='block';
+  document.getElementById('new-pass').value='';
+  document.getElementById('new-pass2').value='';
+  document.getElementById('pass-error').textContent='';
+  document.getElementById('new-pass-label').textContent='Nueva contraseña para '+getUser(id).name;
+  setTimeout(()=>document.getElementById('new-pass').focus(),100);
+}
+function savePass(){
+  const p1=document.getElementById('new-pass').value;
+  const p2=document.getElementById('new-pass2').value;
+  if(!p1){document.getElementById('pass-error').textContent='Escribe una contraseña';return}
+  if(p1!==p2){document.getElementById('pass-error').textContent='Las contraseñas no coinciden';return}
+  userPasses[selPassUser]=p1;
+  saveData();closePassModal();buildLogin();
+  toast('✓ Contraseña guardada para '+getUser(selPassUser).name);
+}
+
+/* ── CALENDARIO ── */
+function initCal(){
+  const now=new Date();
+  calYear=now.getFullYear();calMonth=now.getMonth();selDate=null;
+  buildCalSelects();renderCal();
+  document.getElementById('cal-chosen').textContent='Ninguna fecha seleccionada';
+}
+function buildCalSelects(){
+  const ms=document.getElementById('cal-month-sel');
+  ms.innerHTML=MONTHS.map((m,i)=>`<option value="${i}"${i===calMonth?' selected':''}>${m}</option>`).join('');
+  const ys=document.getElementById('cal-year-sel');
+  const now=new Date().getFullYear();
+  let yo='';for(let y=now;y<=2040;y++)yo+=`<option value="${y}"${y===calYear?' selected':''}>${y}</option>`;
+  ys.innerHTML=yo;
+}
+function calMonthChange(){calMonth=parseInt(document.getElementById('cal-month-sel').value);renderCal()}
+function calYearChange(){calYear=parseInt(document.getElementById('cal-year-sel').value);renderCal()}
+function calMove(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}
+  if(calYear>2040){calYear=2040;calMonth=11;}
+  const now=new Date();
+  if(calYear<now.getFullYear()||(calYear===now.getFullYear()&&calMonth<now.getMonth())){calYear=now.getFullYear();calMonth=now.getMonth();}
+  buildCalSelects();renderCal();
+}
+function renderCal(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let startDow=new Date(calYear,calMonth,1).getDay();
+  startDow=startDow===0?6:startDow-1;
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const dip=new Date(calYear,calMonth,0).getDate();
+  let h=DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++)h+=`<div class="cal-day other">${dip-startDow+1+i}</div>`;
+  for(let d=1;d<=dim;d++){
+    const dt=new Date(calYear,calMonth,d);
+    const isPast=dt<today,isTod=dt.getTime()===today.getTime(),isSel=selDate&&dt.getTime()===selDate.getTime();
+    let cls='cal-day';
+    if(isPast)cls+=' past';else if(isSel)cls+=' selected';else if(isTod)cls+=' today';
+    h+=`<div class="${cls}"${isPast?'':` onclick="pickDay(${d})"`}>${d}</div>`;
+  }
+  const rem=(7-(startDow+dim)%7)%7;
+  for(let i=1;i<=rem;i++)h+=`<div class="cal-day other">${i}</div>`;
+  document.getElementById('cal-grid').innerHTML=h;
+}
+function pickDay(d){
+  selDate=new Date(calYear,calMonth,d);renderCal();
+  document.getElementById('cal-chosen').textContent='📅 '+String(d).padStart(2,'0')+'/'+String(calMonth+1).padStart(2,'0')+'/'+calYear;
+}
+function getSelDateStr(){
+  if(!selDate)return null;
+  return selDate.getFullYear()+'-'+String(selDate.getMonth()+1).padStart(2,'0')+'-'+String(selDate.getDate()).padStart(2,'0');
+}
+
+/* ── ADMIN ── */
+function renderAdminProfiles(){
+  let h='';
+  USERS.forEach(u=>{
+    const ut=tasks.filter(t=>t.userId===u.id);
+    const pend=ut.filter(t=>!t.done).length,done=ut.filter(t=>t.done).length;
+    let st=ut.length===0?`<span class="stat-pill stat-none">Sin tareas</span>`:'';
+    if(pend)st+=`<span class="stat-pill stat-pend">${pend} pendiente${pend>1?'s':''}</span>`;
+    if(done)st+=`<span class="stat-pill stat-done">${done} hecha${done>1?'s':''}</span>`;
+    h+=`<div class="profile-row" onclick="openUserView('${u.id}')">
+      <div class="profile-av ${u.av}">${u.emoji}</div>
+      <div class="profile-name">${u.name}</div>
+      <div class="profile-stats">${st}</div>
+      <span style="color:#aeaeb2;font-size:16px">›</span>
+    </div>`;
+  });
+  document.getElementById('admin-profiles').innerHTML=h;
+}
+function openUserView(uid){
+  adminViewUid=uid;const u=getUser(uid);
+  setAv('au-av',u);document.getElementById('au-name').textContent='Tareas de '+u.name;
+  renderTasks(uid,'au-tasks',true);show('s-admin-user');
+}
+function backToAdmin(){adminViewUid=null;renderAdminProfiles();show('s-admin')}
+
+/* ── TAREAS ── */
+function renderTasks(uid,cid,isAdmin){
+  const ut=tasks.filter(t=>t.userId===uid);
+  const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
+  let h='';
+  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(!ut.length)h=`<div class="empty-state"><div class="empty-icon">✓</div>Sin tareas asignadas de momento.<br>El admin asignará nuevas tareas pronto.</div>`;
+  document.getElementById(cid).innerHTML=h;
+}
+function taskHTML(t,isAdmin){
+  const ov=isOverdue(t),di=dlInfo(t);
+  return`<div class="task-card${t.done?' done':''}${ov?' overdue':''}" id="tc-${t.id}">
+    <div class="task-row">
+      ${!isAdmin?`<button class="check-btn${t.done?' checked':''}" onclick="toggle(${t.id})" aria-label="Marcar"></button>`:''}
+      <div class="task-info">
+        <div class="task-title">${t.title}</div>
+        ${t.desc?`<div class="task-desc">${t.desc}</div>`:''}
+        <div class="task-meta">${di.txt?`<span class="tag ${di.cls}">📅 ${di.txt}</span>`:''}</div>
+      </div>
+      ${isAdmin?`<button class="del-btn" onclick="delTask(${t.id})" aria-label="Eliminar">🗑️</button>`:''}
+    </div>
+  </div>`;
+}
+function toggle(id){
+  const t=tasks.find(x=>x.id===id);if(t)t.done=!t.done;
+  saveData();buildLogin();renderTasks(curUser,'u-tasks',false);
+}
+function delTask(id){
+  tasks=tasks.filter(x=>x.id!==id);
+  saveData();buildLogin();
+  if(adminViewUid){renderTasks(adminViewUid,'au-tasks',true);renderAdminProfiles();}
+}
+
+/* ── HELPERS ── */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function setAv(elId,u){const el=document.getElementById(elId);el.className='topbar-av '+u.av;el.textContent=u.emoji}
+function isOverdue(t){if(t.done||!t.deadline)return false;const td=new Date();td.setHours(0,0,0,0);return new Date(t.deadline)<td}
+function fmtDate(dl){const[y,m,d]=dl.split('-');return d+'/'+m+'/'+y}
+function dlInfo(t){
+  if(!t.deadline)return{cls:'tag-ok',txt:''};
+  const td=new Date();td.setHours(0,0,0,0);
+  const diff=Math.round((new Date(t.deadline)-td)/86400000);
+  if(t.done)return{cls:'tag-ok',txt:'Entregada el '+fmtDate(t.deadline)};
+  if(diff<0)return{cls:'tag-overdue',txt:'Vencida el '+fmtDate(t.deadline)};
+  if(diff===0)return{cls:'tag-soon',txt:'Vence hoy'};
+  if(diff===1)return{cls:'tag-soon',txt:'Vence mañana'};
+  return{cls:'tag-ok',txt:'Hasta el '+fmtDate(t.deadline)};
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;z-index:999;white-space:nowrap;font-family:-apple-system,sans-serif';
+  el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
+}
+
+loadData();
+buildLogin();
+</script>
+</body>
+</html>
