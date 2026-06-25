@@ -233,6 +233,29 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .shop-history{margin-top:1.5rem}
 .shop-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.7rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:8px}
 
+/* RULETA */
+.wheel-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.wheel-btn:active{opacity:.85}
+.wheel-screen-wrap{max-width:400px;margin:0 auto;padding:1.25rem}
+.wheel-header{background:linear-gradient(135deg,#FFD93D,#FF6B9D);border-radius:var(--radius);padding:1.25rem;text-align:center;margin-bottom:1.25rem;color:#fff}
+.wheel-spins-badge{display:inline-block;background:rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;margin-top:.5rem}
+.wheel-wrap{position:relative;width:300px;height:300px;margin:0 auto 1.25rem}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;z-index:10;line-height:1}
+#wheel-svg{width:300px;height:300px}
+.wheel-spin-btn{display:block;width:100%;padding:14px;background:var(--text);color:var(--surface);border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:1rem}
+.wheel-spin-btn:disabled{opacity:.35;cursor:default}
+.wheel-result{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;margin-bottom:1rem}
+.wheel-result-emoji{font-size:44px;line-height:1}
+.wheel-result-name{font-size:16px;font-weight:700;color:var(--text)}
+.wheel-result-sub{font-size:12px;color:var(--text2)}
+.wheel-legend{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.wheel-legend-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:8px;border:0.5px solid var(--border)}
+.wheel-legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.wheel-legend-emoji{font-size:16px;flex-shrink:0}
+.wheel-legend-name{font-size:12px;font-weight:500;color:var(--text);line-height:1.3}
+.wheel-legend-prob{font-size:10px;color:var(--text2)}
+.wheel-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.65rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:8px}
+
 /* TEMPORIZADOR */
 .timer-wrap{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
 .timer-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
@@ -258,7 +281,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
         <div class="login-title">Tareas en familia 🏠</div>
         <div class="login-sub">¿Quién eres?</div>
       </div>
-      <button class="shop-btn" onclick="openShopLogin()">🏪 Tienda</button>
+      <div style="display:flex;gap:8px">
+        <button class="wheel-btn" onclick="openWheelLogin()">🎰 Ruleta</button>
+        <button class="shop-btn" onclick="openShopLogin()">🏪 Tienda</button>
+      </div>
     </div>
     <div id="leaderboard"></div>
     <div class="user-grid" id="login-grid"></div>
@@ -325,6 +351,63 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
   </div>
 </div>
 
+</div>
+
+<!-- RULETA -->
+<div class="screen" id="s-wheel">
+  <div class="topbar">
+    <button class="back-btn" onclick="exitWheel()">‹ Volver</button>
+    <div class="topbar-av" id="wheel-av" style="margin-left:8px"></div>
+    <div class="topbar-name" id="wheel-name" style="margin-left:8px"></div>
+  </div>
+  <div class="wheel-screen-wrap">
+    <div class="wheel-header">
+      <div style="font-size:22px;font-weight:700">🎰 Ruleta semanal</div>
+      <div class="wheel-spins-badge" id="wheel-spins-badge">Cargando...</div>
+    </div>
+    <div class="wheel-wrap">
+      <div class="wheel-pointer">▼</div>
+      <svg id="wheel-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <g id="wheel-g" style="transform-origin:150px 150px"></g>
+        <circle cx="150" cy="150" r="28" fill="white" stroke="rgba(0,0,0,0.1)" stroke-width="2"/>
+        <text x="150" y="158" text-anchor="middle" font-size="22">🎰</text>
+      </svg>
+    </div>
+    <button class="wheel-spin-btn" id="wheel-spin-btn" onclick="spinWheel()">🎰 Girar ruleta</button>
+    <div class="wheel-result" id="wheel-result">
+      <div class="wheel-result-sub">Pulsa el botón para girar</div>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Premios posibles</div>
+    <div class="wheel-legend" id="wheel-legend"></div>
+    <div id="wheel-history"></div>
+  </div>
+</div>
+
+<!-- MODAL LOGIN RULETA -->
+<div class="modal-bg" id="wheel-login-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎰 ¿Quién gira la ruleta?</div>
+    <div class="pass-user-grid" id="wheel-login-grid"></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="closeWheelLogin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PIN RULETA -->
+<div class="pin-bg" id="wheel-pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji" id="wheel-pin-emoji"></div>
+    <div class="pin-title" id="wheel-pin-title"></div>
+    <div class="pin-sub">Introduce tu contraseña</div>
+    <input class="pin-input" type="password" id="wheel-pin-input" maxlength="20" placeholder="••••••">
+    <div class="pin-error" id="wheel-pin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closeWheelPin()">Cancelar</button>
+      <button class="btn-save" onclick="checkWheelPin()">Entrar</button>
+    </div>
+  </div>
 </div>
 
 <!-- PIN ADMIN -->
@@ -560,6 +643,19 @@ const SHOP_ITEMS=[
   {id:'pass-task',icon:'📤',name:'Pasar tarea',desc:'Pasa una tarea pendiente a otro miembro',cost:40},
 ];
 
+const WHEEL_PRIZES=[
+  {id:'pts5',   emoji:'⭐',  name:'+5 puntos',     color:'#FFD93D', weight:30, pts:5},
+  {id:'pts10',  emoji:'⭐⭐', name:'+10 puntos',    color:'#FF6B9D', weight:20, pts:10},
+  {id:'dayoff', emoji:'🛌',  name:'Sin tareas',     color:'#6C63FF', weight:15, pts:0},
+  {id:'passtask',emoji:'📤', name:'Pasar tarea',    color:'#4ECDC4', weight:15, pts:0},
+  {id:'assign', emoji:'😈',  name:'Asignar tarea',  color:'#E24B4A', weight:12, pts:0},
+  {id:'surprise',emoji:'🎁', name:'Premio sorpresa',color:'#1D9E75', weight:8,  pts:0},
+];
+const WHEEL_TOTAL=WHEEL_PRIZES.reduce((s,p)=>s+p.weight,0);
+
+let wheelSpins=[], wheelUser=null, pendingWheelLoginId=null;
+let wheelCurrentAngle=0, wheelSpinning=false, wheelSpinsLeft=0;
+
 let tasks=[],userPasses={},challenges=[];
 let userPoints={mama:0,papa:0,sara:0,antonio:0};
 let curUser=null,selUser=null,adminViewUid=null;
@@ -577,12 +673,13 @@ function getUserPts(id){return userPoints[id]||0}
 async function loadAll(){
   document.getElementById('loading-screen').classList.remove('hidden');
   try{
-    const [t,p,c]=await Promise.all([
+    const [t,p,c,w]=await Promise.all([
       sb('tasks?order=id.asc'),
       sb('user_passwords?select=user_id,password'),
-      sb('challenges?order=id.desc')
+      sb('challenges?order=id.desc'),
+      sb('wheel_spins?order=id.desc')
     ]);
-    tasks=t; challenges=c;
+    tasks=t; challenges=c; wheelSpins=w;
     userPasses={};p.forEach(r=>{userPasses[r.user_id]=r.password});
     recalcPoints();
   }catch(e){toast('❌ Error conectando')}
@@ -596,7 +693,6 @@ function recalcPoints(){
     if(t.done&&t.difficulty&&userPoints[t.user_id]!==undefined)
       userPoints[t.user_id]+=(DIFF_PTS[t.difficulty]||1);
   });
-  // Challenge winnings/losses
   challenges.forEach(c=>{
     if(c.status==='won'&&c.winner){
       const loser=c.winner===c.from_user?c.to_user:c.from_user;
@@ -608,10 +704,259 @@ function recalcPoints(){
       if(userPoints[c.to_user]!==undefined) userPoints[c.to_user]-=c.points;
     }
   });
+  // Wheel prizes with points
+  wheelSpins.forEach(s=>{
+    const prize=WHEEL_PRIZES.find(p=>p.id===s.prize_id);
+    if(prize&&prize.pts>0&&userPoints[s.user_id]!==undefined)
+      userPoints[s.user_id]+=prize.pts;
+  });
   USERS.forEach(u=>{
     const spent=parseInt(localStorage.getItem('spent_'+u.id)||'0');
     userPoints[u.id]=Math.max(0,(userPoints[u.id]||0)-spent);
   });
+}
+
+/* ── RULETA ── */
+function getWeekKey(){
+  const now=new Date();
+  const day=now.getDay()||7;
+  const monday=new Date(now);
+  monday.setDate(now.getDate()-day+1);
+  return monday.toISOString().split('T')[0];
+}
+
+function getWheelSpinsLeft(uid){
+  const week=getWeekKey();
+  const spentThisWeek=wheelSpins.filter(s=>s.user_id===uid&&s.week===week).length;
+  // Last place gets 2, everyone else gets 1
+  const lb=getWeeklyLeaderboard();
+  const isLast=lb[lb.length-1].id===uid;
+  const maxSpins=isLast?2:1;
+  return Math.max(0,maxSpins-spentThisWeek);
+}
+
+function getWeeklyLeaderboard(){
+  const now=new Date();
+  const weekAgo=new Date(now.getTime()-7*24*60*60*1000);
+  const pts={};
+  USERS.forEach(u=>pts[u.id]=0);
+  tasks.forEach(t=>{
+    if(t.done&&t.difficulty&&t.completed_at&&new Date(t.completed_at)>=weekAgo&&pts[t.user_id]!==undefined)
+      pts[t.user_id]+=(DIFF_PTS[t.difficulty]||1);
+  });
+  challenges.forEach(c=>{
+    if(c.status==='won'&&c.winner&&c.created_at&&new Date(c.created_at)>=weekAgo){
+      const loser=c.winner===c.from_user?c.to_user:c.from_user;
+      if(pts[c.winner]!==undefined) pts[c.winner]+=c.points;
+      if(pts[loser]!==undefined) pts[loser]=Math.max(0,pts[loser]-c.points);
+    }
+  });
+  return [...USERS].sort((a,b)=>pts[b.id]-pts[a.id]);
+}
+
+function openWheelLogin(){
+  let h='';
+  USERS.forEach(u=>{
+    const left=getWheelSpinsLeft(u.id);
+    h+=`<button class="pass-user-btn" onclick="pickWheelUser('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
+      <div class="pass-user-status">${left>0?left+' giro'+( left>1?'s':'')+' disponible':'Sin giros esta semana'}</div>
+    </button>`;
+  });
+  document.getElementById('wheel-login-grid').innerHTML=h;
+  document.getElementById('wheel-login-bg').classList.add('open');
+}
+function closeWheelLogin(){document.getElementById('wheel-login-bg').classList.remove('open')}
+
+function pickWheelUser(id){
+  closeWheelLogin();
+  if(userPasses[id]){
+    pendingWheelLoginId=id;
+    const u=getUser(id);
+    document.getElementById('wheel-pin-emoji').textContent=u.emoji;
+    document.getElementById('wheel-pin-title').textContent=u.name;
+    document.getElementById('wheel-pin-input').value='';
+    document.getElementById('wheel-pin-error').textContent='';
+    document.getElementById('wheel-pin-bg').classList.add('open');
+    setTimeout(()=>document.getElementById('wheel-pin-input').focus(),300);
+  } else { enterWheel(id); }
+}
+function closeWheelPin(){document.getElementById('wheel-pin-bg').classList.remove('open')}
+function checkWheelPin(){
+  const v=document.getElementById('wheel-pin-input').value;
+  if(v===userPasses[pendingWheelLoginId]){
+    const id=pendingWheelLoginId;pendingWheelLoginId=null;closeWheelPin();enterWheel(id);
+  } else {document.getElementById('wheel-pin-error').textContent='Contraseña incorrecta';document.getElementById('wheel-pin-input').value='';}
+}
+document.getElementById('wheel-pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkWheelPin()});
+
+function enterWheel(uid){
+  wheelUser=uid;
+  const u=getUser(uid);
+  setAv('wheel-av',u);
+  document.getElementById('wheel-name').textContent=u.name;
+  wheelSpinsLeft=getWheelSpinsLeft(uid);
+  wheelCurrentAngle=0;
+  buildWheelSVG();
+  buildWheelLegend();
+  renderWheelHistory();
+  updateWheelBtn();
+  document.getElementById('wheel-result').innerHTML='<div class="wheel-result-sub">Pulsa el botón para girar</div>';
+  show('s-wheel');
+}
+function exitWheel(){wheelUser=null;show('s-login')}
+
+function buildWheelSVG(){
+  const g=document.getElementById('wheel-g');
+  g.innerHTML='';
+  const N=WHEEL_PRIZES.length;
+  const SLICE=360/N;
+  const CX=150,CY=150,R=148;
+  WHEEL_PRIZES.forEach((p,i)=>{
+    const startDeg=i*SLICE;
+    const endDeg=startDeg+SLICE;
+    const p1=wPolar(startDeg,R,CX,CY);
+    const p2=wPolar(endDeg,R,CX,CY);
+    const large=SLICE>180?1:0;
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${CX},${CY} L${p1.x},${p1.y} A${R},${R} 0 ${large},1 ${p2.x},${p2.y} Z`);
+    path.setAttribute('fill',p.color);
+    path.setAttribute('stroke','white');
+    path.setAttribute('stroke-width','3');
+    g.appendChild(path);
+    const mid=startDeg+SLICE/2;
+    const ep=wPolar(mid,R*0.60,CX,CY);
+    const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',ep.x);txt.setAttribute('y',ep.y);
+    txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size','44');txt.textContent=p.emoji;
+    g.appendChild(txt);
+  });
+  const border=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  border.setAttribute('cx',150);border.setAttribute('cy',150);border.setAttribute('r',R);
+  border.setAttribute('fill','none');border.setAttribute('stroke','rgba(0,0,0,0.12)');border.setAttribute('stroke-width','3');
+  g.appendChild(border);
+  document.getElementById('wheel-g').style.transform=`rotate(${wheelCurrentAngle}deg)`;
+}
+
+function wPolar(deg,r,cx,cy){
+  const rad=(deg-90)*Math.PI/180;
+  return{x:cx+Math.cos(rad)*r,y:cy+Math.sin(rad)*r};
+}
+
+function buildWheelLegend(){
+  document.getElementById('wheel-legend').innerHTML=WHEEL_PRIZES.map(p=>`
+    <div class="wheel-legend-item">
+      <div class="wheel-legend-dot" style="background:${p.color}"></div>
+      <div class="wheel-legend-emoji">${p.emoji}</div>
+      <div>
+        <div class="wheel-legend-name">${p.name}</div>
+        <div class="wheel-legend-prob">${p.weight>=25?'Frecuente':p.weight>=15?'Normal':p.weight>=10?'Raro':'Muy raro'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderWheelHistory(){
+  const mySpins=wheelSpins.filter(s=>s.user_id===wheelUser);
+  if(!mySpins.length){document.getElementById('wheel-history').innerHTML='';return;}
+  let h='<p class="section-label" style="margin-top:1rem">Mis premios</p>';
+  mySpins.slice(0,10).forEach(s=>{
+    const d=new Date(s.created_at).toLocaleDateString('es-ES');
+    h+=`<div class="wheel-history-item"><span>${s.prize_emoji} ${s.prize_name}</span><span style="flex-shrink:0">${d}</span></div>`;
+  });
+  document.getElementById('wheel-history').innerHTML=h;
+}
+
+function updateWheelBtn(){
+  const btn=document.getElementById('wheel-spin-btn');
+  const badge=document.getElementById('wheel-spins-badge');
+  const lb=getWeeklyLeaderboard();
+  const isLast=lb[lb.length-1].id===wheelUser;
+  if(wheelSpinsLeft>0){
+    btn.disabled=false;
+    btn.textContent=`🎰 Girar ruleta${wheelSpinsLeft>1?' ('+wheelSpinsLeft+' giros)':''}`;
+    badge.textContent=isLast?`💩 Último: ${wheelSpinsLeft} giro${wheelSpinsLeft>1?'s':''}`:`${wheelSpinsLeft} giro disponible`;
+  } else {
+    btn.disabled=true;
+    btn.textContent='✓ Sin giros esta semana';
+    badge.textContent='Sin giros esta semana';
+  }
+}
+
+function wheelWeightedRandom(){
+  let r=Math.random()*WHEEL_TOTAL,acc=0;
+  for(let i=0;i<WHEEL_PRIZES.length;i++){acc+=WHEEL_PRIZES[i].weight;if(r<=acc)return i;}
+  return WHEEL_PRIZES.length-1;
+}
+
+async function spinWheel(){
+  if(wheelSpinning||wheelSpinsLeft<=0)return;
+  wheelSpinning=true;
+  document.getElementById('wheel-spin-btn').disabled=true;
+  document.getElementById('wheel-result').innerHTML='<div class="wheel-result-sub" style="font-size:16px">🌀 Girando...</div>';
+
+  const N=WHEEL_PRIZES.length;
+  const SLICE=360/N;
+  const targetIdx=wheelWeightedRandom();
+  const sectorCenter=targetIdx*SLICE+SLICE/2;
+  const offset=(360-sectorCenter+360)%360;
+  const extraSpins=(6+Math.floor(Math.random()*3))*360;
+  const targetDeg=Math.floor(wheelCurrentAngle/360)*360+extraSpins+offset+(360-wheelCurrentAngle%360+360)%360;
+
+  const duration=4500;
+  const startTime=performance.now();
+  const startDeg=wheelCurrentAngle;
+
+  function animate(now){
+    const elapsed=now-startTime;
+    const t=Math.min(elapsed/duration,1);
+    const ease=1-Math.pow(1-t,3.8);
+    const deg=startDeg+(targetDeg-startDeg)*ease;
+    document.getElementById('wheel-g').style.transform=`rotate(${deg}deg)`;
+    if(t<1){requestAnimationFrame(animate);}
+    else{
+      wheelCurrentAngle=targetDeg;
+      wheelSpinning=false;
+      wheelSpinsLeft--;
+      showWheelResult(targetIdx);
+      saveWheelSpin(targetIdx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+async function saveWheelSpin(idx){
+  const p=WHEEL_PRIZES[idx];
+  const week=getWeekKey();
+  try{
+    const result=await sb('wheel_spins',{method:'POST',body:JSON.stringify({
+      user_id:wheelUser,prize_id:p.id,prize_name:p.name,prize_emoji:p.emoji,week
+    })});
+    if(result&&result[0])wheelSpins.unshift(result[0]);
+    // Add points if prize gives points
+    if(p.pts>0){
+      recalcPoints();
+      buildLogin();
+    }
+    renderWheelHistory();
+    updateWheelBtn();
+    // Also update shop if open
+  }catch(e){toast('❌ Error guardando premio')}
+}
+
+function showWheelResult(idx){
+  const p=WHEEL_PRIZES[idx];
+  let extra='';
+  if(p.id==='surprise') extra='<div class="wheel-result-sub">El admin decidirá tu premio 🎁</div>';
+  else if(p.pts>0) extra=`<div class="wheel-result-sub">+${p.pts} puntos añadidos a tu cuenta</div>`;
+  else extra='<div class="wheel-result-sub">¡Premio conseguido!</div>';
+  document.getElementById('wheel-result').innerHTML=`
+    <div class="wheel-result-emoji">${p.emoji}</div>
+    <div class="wheel-result-name">${p.name}</div>
+    ${extra}
+  `;
 }
 
 function spendPoints(uid,amt){
@@ -738,8 +1083,8 @@ function startAutoRefresh(){
   refreshInterval=setInterval(async()=>{
     if(!curUser||curUser==='admin')return;
     try{
-      const [t,c]=await Promise.all([sb('tasks?order=id.asc'),sb('challenges?order=id.desc')]);
-      tasks=t;challenges=c;recalcPoints();
+      const [t,c,w]=await Promise.all([sb('tasks?order=id.asc'),sb('challenges?order=id.desc'),sb('wheel_spins?order=id.desc')]);
+      tasks=t;challenges=c;wheelSpins=w;recalcPoints();
       document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
       updateTabBadges();renderUserTab();buildLogin();
     }catch(e){}
@@ -1040,14 +1385,21 @@ function renderShop(){
     </div>`;
   });
   document.getElementById('shop-items').innerHTML=h;
-  const history=JSON.parse(localStorage.getItem('shop_history_'+shopUser)||'[]');
-  if(history.length){
-    let hh='<p class="section-label">Historial</p>';
-    history.slice().reverse().forEach(h=>{
+
+  const shopHistory=JSON.parse(localStorage.getItem('shop_history_'+shopUser)||'[]');
+  const myWheelSpins=wheelSpins.filter(s=>s.user_id===shopUser);
+  let hh='';
+  if(shopHistory.length||myWheelSpins.length){
+    hh='<p class="section-label">Historial</p>';
+    shopHistory.slice().reverse().forEach(h=>{
       hh+=`<div class="shop-history-item"><span>${h.icon} ${h.name}</span><span style="flex-shrink:0">-${h.cost}⭐ · ${h.date}</span></div>`;
     });
-    document.getElementById('shop-history').innerHTML=hh;
+    myWheelSpins.slice(0,10).forEach(s=>{
+      const d=new Date(s.created_at).toLocaleDateString('es-ES');
+      hh+=`<div class="shop-history-item"><span>${s.prize_emoji} ${s.prize_name} <span style="font-size:10px;background:#F0EEFF;color:#6C63FF;border-radius:10px;padding:1px 6px">Ruleta</span></span><span style="flex-shrink:0">${d}</span></div>`;
+    });
   }
+  document.getElementById('shop-history').innerHTML=hh;
 }
 
 function buyItem(itemId){
