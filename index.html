@@ -18,15 +18,14 @@
   --orange-bg:#FAEEDA;--orange-text:#633806;
   --danger-bg:#FCEBEB;--danger-text:#A32D2D;
   --info-bg:#E6F1FB;--info-text:#185FA5;
-  --purple:#6C63FF;--yellow:#FFD93D;--pink:#FF6B9D;
+  --purple:#6C63FF;--pink:#FF6B9D;--yellow:#FFD93D;
   --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
 .app{min-height:100vh;background:var(--bg)}
 .screen{display:none}.screen.active{display:block}
-
-.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999}
 .loading-screen.hidden{display:none}
 .spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -34,13 +33,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 /* LOGIN */
 .login-wrap{padding:2rem 1.25rem;max-width:440px;margin:0 auto}
 .login-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem}
-.login-title-wrap{}
 .login-title{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.3px}
 .login-sub{font-size:15px;color:var(--text2);margin-top:.2rem}
-.shop-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;box-shadow:0 4px 12px rgba(108,99,255,.3)}
+.shop-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
 .shop-btn:active{opacity:.85}
-.shop-btn-icon{font-size:18px}
-
 .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;cursor:pointer;text-align:center;position:relative;-webkit-user-select:none;user-select:none}
 .user-card:active{transform:scale(.97)}
@@ -49,22 +45,29 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .user-name{font-size:15px;font-weight:600;color:var(--text)}
 .user-role{font-size:12px;color:var(--text2);margin-top:2px}
 .notif-badge{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.challenge-badge{position:absolute;top:10px;left:10px;background:var(--purple);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
 .lock-icon{position:absolute;bottom:10px;right:10px;color:var(--text3);font-size:13px}
 .admin-card{grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:1rem 1.25rem;background:var(--surface2)}
 .admin-card .avatar{margin:0;flex-shrink:0;width:48px;height:48px;font-size:22px}
 .admin-info{flex:1}
 
 /* TOPBAR */
-.topbar{display:flex;align-items:center;gap:10px;padding:.9rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.topbar{display:flex;align-items:center;gap:8px;padding:.9rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
 .topbar-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.topbar-name{font-size:16px;font-weight:600;color:var(--text);flex:1}
-.back-btn{background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 13px;font-size:14px;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.topbar-name{font-size:15px;font-weight:600;color:var(--text);flex:1}
+.back-btn{background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 13px;font-size:13px;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
 .back-btn:active{background:var(--surface2)}
-.points-chip{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700}
+.points-chip{display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;white-space:nowrap}
 
 /* CONTENT */
 .content{padding:1rem 1.25rem;padding-bottom:2rem}
 .section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 .6rem}
+
+/* TABS */
+.user-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:57px;z-index:9}
+.utab{flex:1;padding:11px 8px;font-size:13px;font-weight:600;color:var(--text2);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit;position:relative}
+.utab.active{color:var(--text);border-bottom-color:var(--accent)}
+.utab-badge{position:absolute;top:6px;right:8px;background:var(--purple);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px}
 
 /* TASK CARDS */
 .task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.95rem 1rem;margin-bottom:10px}
@@ -85,12 +88,36 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .tag-easy{background:#EAF3DE;color:#27500A}
 .tag-medium{background:#E6F1FB;color:#185FA5}
 .tag-hard{background:#FBEAF0;color:#72243E}
-.task-actions{display:flex;gap:6px;margin-top:2px}
-.pass-btn{background:none;border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit}
+.task-actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.pass-btn{background:none;border:1px solid var(--border2);border-radius:20px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit}
 .pass-btn:active{background:var(--surface2)}
 .del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:6px;border-radius:8px;flex-shrink:0;font-size:18px;line-height:1}
 .del-btn:active{color:var(--red)}
 .empty-state{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:14px;line-height:1.6}
+
+/* RETO CARDS */
+.challenge-card{border-radius:var(--radius);padding:1rem;margin-bottom:10px;border:1px solid}
+.challenge-card.pending{background:#F0EEFF;border-color:#C4BEFF}
+.challenge-card.active{background:linear-gradient(135deg,#F0EEFF,#FEE9F4);border-color:#C4BEFF}
+.challenge-card.won{background:#EAF3DE;border-color:#B7DDB0}
+.challenge-card.lost{background:var(--danger-bg);border-color:#F5C6C6}
+.challenge-card.expired{background:var(--surface2);border-color:var(--border2)}
+.ch-header{display:flex;align-items:center;gap:10px;margin-bottom:.6rem}
+.ch-icon{font-size:22px}
+.ch-title{font-size:15px;font-weight:700;color:var(--text);flex:1}
+.ch-bet{background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+.ch-desc{font-size:13px;color:var(--text2);margin-bottom:.6rem;line-height:1.5}
+.ch-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:.75rem}
+.ch-tag{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;background:var(--surface);color:var(--text2);border:1px solid var(--border)}
+.ch-timer{font-size:13px;font-weight:700;color:var(--purple)}
+.ch-actions{display:flex;gap:8px}
+.ch-btn{flex:1;padding:9px;border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit}
+.ch-btn-accept{background:var(--green);color:#fff}
+.ch-btn-reject{background:var(--surface2);color:var(--text);border:1px solid var(--border2)}
+.ch-btn-done{background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff}
+.ch-progress{display:flex;gap:8px;margin-bottom:.75rem}
+.ch-user-status{flex:1;padding:8px;border-radius:var(--radius-sm);text-align:center;font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--border)}
+.ch-user-status.done{background:#EAF3DE;color:#27500A;border-color:#B7DDB0}
 
 /* ADMIN */
 .admin-body{display:flex;flex-direction:column;min-height:calc(100vh - 57px)}
@@ -119,19 +146,17 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .modal{background:var(--surface);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;padding-bottom:max(2rem,env(safe-area-inset-bottom));width:100%;max-width:600px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.25rem}
 .modal-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:1.25rem}
-
-.assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
+.assign-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 4px;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
 .assign-btn:active{background:var(--surface2)}
 .assign-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
-.assign-av{width:34px;height:34px;border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.assign-av{width:36px;height:36px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:18px}
 .assign-name{font-size:12px;color:var(--text);font-weight:600}
-
 .field{margin-bottom:16px}
 .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .field input,.field textarea,.field select{width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;-webkit-appearance:none;appearance:none}
-.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface)}
-.field textarea{resize:vertical;min-height:88px}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.field textarea{resize:vertical;min-height:80px}
 .modal-actions{display:flex;gap:8px;margin-top:8px}
 .btn-cancel{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;font-size:15px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:600}
 .btn-cancel:active{background:var(--border)}
@@ -160,15 +185,6 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .cal-day.past{opacity:.25;cursor:default;pointer-events:none}
 .cal-chosen{font-size:13px;color:var(--text2);padding:8px 12px;border-top:1px solid var(--border);background:var(--surface2);text-align:center;font-weight:500}
 
-/* CONTRASEÑAS */
-.pass-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
-.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
-.pass-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
-.pass-user-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px}
-.pass-user-name{font-size:14px;font-weight:600;color:var(--text)}
-.pass-user-status{font-size:11px;color:var(--text2);margin-top:3px}
-.pass-fields{border-top:1px solid var(--border);padding-top:1rem;margin-top:.75rem}
-
 /* PIN */
 .pin-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem}
 .pin-bg.open{display:flex}
@@ -181,36 +197,45 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .pin-error{font-size:13px;color:var(--danger-text);min-height:20px;margin-bottom:10px;font-weight:500}
 .pin-btns{display:flex;gap:8px}
 
+/* CONTRASEÑAS */
+.pass-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
+.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
+.pass-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+.pass-user-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.pass-user-name{font-size:14px;font-weight:600;color:var(--text)}
+.pass-user-status{font-size:11px;color:var(--text2);margin-top:3px}
+.pass-fields{border-top:1px solid var(--border);padding-top:1rem;margin-top:.75rem}
+
 /* TIENDA */
 .shop-screen-wrap{max-width:440px;margin:0 auto;padding:1.25rem}
 .shop-header{background:linear-gradient(135deg,#6C63FF,#FF6B9D);border-radius:var(--radius);padding:1.5rem;text-align:center;margin-bottom:1.25rem;color:#fff}
 .shop-header-title{font-size:22px;font-weight:700;margin-bottom:.25rem}
-.shop-header-pts{font-size:15px;opacity:.9}
 .shop-pts-big{font-size:36px;font-weight:800;margin:.25rem 0}
 .shop-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:10px;display:flex;align-items:center;gap:14px}
 .shop-item-icon{font-size:32px;flex-shrink:0}
 .shop-item-info{flex:1}
 .shop-item-name{font-size:15px;font-weight:600;color:var(--text)}
 .shop-item-desc{font-size:13px;color:var(--text2);margin-top:2px}
-.shop-item-cost{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:var(--orange-text);background:var(--orange-bg);border-radius:20px;padding:4px 10px;white-space:nowrap}
 .shop-buy-btn{background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
 .shop-buy-btn:disabled{opacity:.4;cursor:default}
 .shop-buy-btn:not(:disabled):active{opacity:.8}
 .shop-history{margin-top:1.5rem}
-.shop-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.7rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between}
+.shop-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.7rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:8px}
 
-/* PASAR TAREA MODAL */
-.pass-task-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.pass-task-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
-.pass-task-user-btn:active{background:var(--surface2)}
-.pass-task-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+/* TEMPORIZADOR */
+.timer-wrap{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
+.timer-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.timer-controls{display:flex;gap:8px;align-items:center}
+.timer-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--surface);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.timer-display{flex:1;text-align:center;font-size:22px;font-weight:800;color:var(--text);font-family:monospace}
+.timer-presets{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.timer-preset{border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--text2);font-family:inherit}
+.timer-preset.sel{border-color:var(--purple);background:#F0EEFF;color:var(--purple)}
 </style>
 </head>
 <body>
 
-<div class="loading-screen" id="loading-screen">
-  <div class="spinner"></div>
-</div>
+<div class="loading-screen" id="loading-screen"><div class="spinner"></div></div>
 
 <div class="app">
 
@@ -218,13 +243,11 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <div class="screen active" id="s-login">
   <div class="login-wrap">
     <div class="login-header">
-      <div class="login-title-wrap">
+      <div>
         <div class="login-title">Tareas en familia 🏠</div>
         <div class="login-sub">¿Quién eres?</div>
       </div>
-      <button class="shop-btn" onclick="openShopLogin()">
-        <span class="shop-btn-icon">🏪</span> Tienda
-      </button>
+      <button class="shop-btn" onclick="openShopLogin()">🏪 Tienda</button>
     </div>
     <div class="user-grid" id="login-grid"></div>
   </div>
@@ -238,7 +261,12 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     <div class="points-chip" id="u-points">⭐ 0</div>
     <button class="back-btn" onclick="logout()">Salir</button>
   </div>
-  <div class="content" id="u-tasks"></div>
+  <div class="user-tabs">
+    <button class="utab active" id="tab-tasks" onclick="switchUserTab('tasks')">Mis tareas</button>
+    <button class="utab" id="tab-sent" onclick="switchUserTab('sent')">Enviadas <span class="utab-badge" id="badge-sent" style="display:none"></span></button>
+    <button class="utab" id="tab-received" onclick="switchUserTab('received')">Llegadas <span class="utab-badge" id="badge-received" style="display:none"></span></button>
+  </div>
+  <div class="content" id="u-tab-content"></div>
 </div>
 
 <!-- ADMIN -->
@@ -276,12 +304,12 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
   </div>
   <div class="shop-screen-wrap">
     <div class="shop-header">
-      <div class="shop-header-title">🏪 Tienda de recompensas</div>
-      <div class="shop-header-pts">Tus puntos</div>
+      <div class="shop-header-title">🏪 Tienda</div>
+      <div style="font-size:14px;opacity:.9">Tus puntos</div>
       <div class="shop-pts-big" id="shop-pts-display">0 ⭐</div>
     </div>
     <div id="shop-items"></div>
-    <div class="shop-history" id="shop-history"></div>
+    <div id="shop-history"></div>
   </div>
 </div>
 
@@ -336,7 +364,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <div class="modal-bg" id="shop-login-bg">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🏪 ¿Quién entra a la tienda?</div>
+    <div class="modal-title">🏪 ¿Quién entra?</div>
     <div class="pass-user-grid" id="shop-login-grid"></div>
     <div class="modal-actions" style="margin-top:1rem">
       <button class="btn-cancel" onclick="closeShopLogin()">Cancelar</button>
@@ -344,14 +372,14 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
   </div>
 </div>
 
-<!-- MODAL AÑADIR TAREA -->
+<!-- MODAL AÑADIR TAREA (ADMIN) -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-title">Nueva tarea</div>
     <div class="field">
       <label>Asignar a</label>
-      <div class="assign-grid" id="assign-grid"></div>
+      <div class="assign-grid" id="assign-grid" style="grid-template-columns:repeat(4,1fr)"></div>
     </div>
     <div class="field">
       <label for="f-title">Título</label>
@@ -363,25 +391,21 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     </div>
     <div class="field">
       <label>Dificultad</label>
-      <div class="diff-grid" id="diff-grid">
-        <button class="diff-btn" onclick="pickDiff('easy')">⭐ Fácil<br><small>1 punto</small></button>
-        <button class="diff-btn" onclick="pickDiff('medium')">⭐⭐ Media<br><small>2 puntos</small></button>
-        <button class="diff-btn" onclick="pickDiff('hard')">⭐⭐⭐ Difícil<br><small>3 puntos</small></button>
-      </div>
+      <div class="diff-grid" id="diff-grid"></div>
     </div>
     <div class="field">
       <label>Fecha límite</label>
-      <div class="cal-wrap">
+      <div class="cal-wrap" id="task-cal-wrap">
         <div class="cal-header">
-          <button class="cal-nav" onclick="calMove(-1)">‹</button>
+          <button class="cal-nav" onclick="calMove('task',-1)">‹</button>
           <div class="cal-label">
-            <select class="cal-select" id="cal-month-sel" onchange="calMonthChange()"></select>
-            <select class="cal-select" id="cal-year-sel" onchange="calYearChange()"></select>
+            <select class="cal-select" id="task-cal-month-sel" onchange="calMonthChange('task')"></select>
+            <select class="cal-select" id="task-cal-year-sel" onchange="calYearChange('task')"></select>
           </div>
-          <button class="cal-nav" onclick="calMove(1)">›</button>
+          <button class="cal-nav" onclick="calMove('task',1)">›</button>
         </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="cal-chosen" id="cal-chosen">Ninguna fecha seleccionada</div>
+        <div class="cal-grid" id="task-cal-grid"></div>
+        <div class="cal-chosen" id="task-cal-chosen">Ninguna fecha seleccionada</div>
       </div>
     </div>
     <div class="modal-actions">
@@ -412,7 +436,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
       <div class="pin-error" id="pass-error" style="margin-bottom:8px"></div>
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closePassModal()">Cancelar</button>
-        <button class="btn-save" onclick="savePass()">🔒 Guardar contraseña</button>
+        <button class="btn-save" onclick="savePass()">🔒 Guardar</button>
       </div>
     </div>
   </div>
@@ -420,45 +444,98 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 
 <!-- MODAL PASAR TAREA -->
 <div class="modal-bg" id="pass-task-bg">
+  <div class="modal" id="pass-task-modal-content">
+    <div class="modal-handle"></div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO RETO -->
+<div class="modal-bg" id="challenge-modal-bg">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">📤 Pasar tarea</div>
-    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">
-      ⚠️ Cuesta 40 puntos pasar una tarea. Tienes <span id="pass-task-pts"></span> ⭐
-    </div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong id="pass-task-title"></strong></div>
+    <div class="modal-title">⚔️ Nuevo reto</div>
     <div class="field">
-      <label>¿A quién se la pasas?</label>
-      <div class="pass-task-user-grid" id="pass-task-user-grid"></div>
+      <label>Retar a</label>
+      <div class="assign-grid" id="ch-assign-grid"></div>
     </div>
-    <div class="modal-actions" style="margin-top:1rem">
-      <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
-      <button class="btn-save" id="confirm-pass-task-btn" onclick="confirmPassTask()">✓ Pasar tarea</button>
+    <div class="field">
+      <label for="ch-title">Título del reto</label>
+      <input type="text" id="ch-title" placeholder="Ej: ¿Quién limpia antes?" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="ch-desc">Descripción</label>
+      <textarea id="ch-desc" placeholder="Describe qué tiene que hacer cada uno" style="min-height:70px"></textarea>
+    </div>
+    <div class="field">
+      <label>Puntos a apostar</label>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button onclick="changeBet(-5)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);font-size:20px;cursor:pointer;font-family:inherit">−</button>
+        <div style="flex:1;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--purple)" id="bet-display">10</div>
+          <div style="font-size:12px;color:var(--text2)">puntos cada uno · tienes <span id="bet-available">0</span> ⭐</div>
+        </div>
+        <button onclick="changeBet(5)" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--border2);background:var(--surface2);font-size:20px;cursor:pointer;font-family:inherit">＋</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Temporizador (opcional)</label>
+      <div class="timer-wrap">
+        <div class="timer-controls">
+          <button class="timer-btn" onclick="changeTimer(-60)">−</button>
+          <div class="timer-display" id="ch-timer-display">Sin límite</div>
+          <button class="timer-btn" onclick="changeTimer(60)">＋</button>
+        </div>
+        <div class="timer-presets">
+          <button class="timer-preset" onclick="setTimer(0)">Sin límite</button>
+          <button class="timer-preset" onclick="setTimer(3600)">1h</button>
+          <button class="timer-preset" onclick="setTimer(7200)">2h</button>
+          <button class="timer-preset" onclick="setTimer(86400)">1 día</button>
+          <button class="timer-preset" onclick="setTimer(604800)">1 semana</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Fecha tope (opcional)</label>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calMove('ch',-1)">‹</button>
+          <div class="cal-label">
+            <select class="cal-select" id="ch-cal-month-sel" onchange="calMonthChange('ch')"></select>
+            <select class="cal-select" id="ch-cal-year-sel" onchange="calYearChange('ch')"></select>
+          </div>
+          <button class="cal-nav" onclick="calMove('ch',1)">›</button>
+        </div>
+        <div class="cal-grid" id="ch-cal-grid"></div>
+        <div class="cal-chosen" id="ch-cal-chosen">Sin fecha tope</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeChallengeModal()">Cancelar</button>
+      <button class="btn-save" id="send-challenge-btn" onclick="sendChallenge()">⚔️ Enviar reto</button>
     </div>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://tfbrbvgqlmenbvfdxxgs.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYnJidmdxbG1lbmJ2ZmR4eGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODQ0NTcsImV4cCI6MjA5Nzg2MDQ1N30.XrBFyr3CRpsgq-jrvxKnTxGQFAVUPec4Vu8ZmTXf8PA';
+const SUPABASE_URL='https://tfbrbvgqlmenbvfdxxgs.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYnJidmdxbG1lbmJ2ZmR4eGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODQ0NTcsImV4cCI6MjA5Nzg2MDQ1N30.XrBFyr3CRpsgq-jrvxKnTxGQFAVUPec4Vu8ZmTXf8PA';
 
-async function sb(path, opts={}){
-  const method = opts.method||'GET';
-  const headers = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
-  if(opts.extraHeaders) Object.assign(headers,opts.extraHeaders);
-  const fetchOpts={method,headers};
-  if(opts.body) fetchOpts.body=opts.body;
-  const res = await fetch(SUPABASE_URL+'/rest/v1/'+path,fetchOpts);
-  const text = await res.text();
-  if(!res.ok) throw new Error(text);
+async function sb(path,opts={}){
+  const method=opts.method||'GET';
+  const headers={'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  if(opts.extraHeaders)Object.assign(headers,opts.extraHeaders);
+  const fo={method,headers};if(opts.body)fo.body=opts.body;
+  const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,fo);
+  const text=await res.text();
+  if(!res.ok)throw new Error(text);
   return text?JSON.parse(text):[];
 }
 
 const USERS=[
-  {id:'mama',  name:'Mamá',    emoji:'👩', av:'av-mama'},
-  {id:'papa',  name:'Papá',    emoji:'👨', av:'av-papa'},
-  {id:'sara',  name:'Sara',    emoji:'👧', av:'av-sara'},
-  {id:'antonio',name:'Antonio',emoji:'🧒', av:'av-antonio'},
+  {id:'mama',  name:'Mamá',    emoji:'👩',av:'av-mama'},
+  {id:'papa',  name:'Papá',    emoji:'👨',av:'av-papa'},
+  {id:'sara',  name:'Sara',    emoji:'👧',av:'av-sara'},
+  {id:'antonio',name:'Antonio',emoji:'🧒',av:'av-antonio'},
 ];
 const ADMIN_PIN='190715';
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -466,18 +543,20 @@ const DAYS=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
 const DIFF_PTS={easy:1,medium:2,hard:3};
 const DIFF_LABEL={easy:'⭐ Fácil',medium:'⭐⭐ Media',hard:'⭐⭐⭐ Difícil'};
 const DIFF_TAG={easy:'tag-easy',medium:'tag-medium',hard:'tag-hard'};
-
 const SHOP_ITEMS=[
-  {id:'day-off', icon:'🛌', name:'Día sin tareas', desc:'Un día completo sin ninguna tarea asignada', cost:50},
-  {id:'pass-task', icon:'📤', name:'Pasar tarea', desc:'Pasa una de tus tareas pendientes a otro miembro', cost:40},
+  {id:'day-off',icon:'🛌',name:'Día sin tareas',desc:'Un día sin ninguna tarea asignada',cost:50},
+  {id:'pass-task',icon:'📤',name:'Pasar tarea',desc:'Pasa una tarea pendiente a otro miembro',cost:40},
 ];
 
-let tasks=[], userPasses={}, userPoints={mama:0,papa:0,sara:0,antonio:0};
-let curUser=null, selUser=null, adminViewUid=null;
-let calYear, calMonth, selDate=null, selDiff=null;
-let pendingLoginId=null, selPassUser=null;
-let shopUser=null, pendingShopLoginId=null;
-let passTaskId=null, passTaskToUser=null;
+let tasks=[],userPasses={},challenges=[];
+let userPoints={mama:0,papa:0,sara:0,antonio:0};
+let curUser=null,selUser=null,adminViewUid=null;
+let calStates={task:{year:0,month:0,date:null},ch:{year:0,month:0,date:null}};
+let selDiff=null,pendingLoginId=null,selPassUser=null;
+let shopUser=null,pendingShopLoginId=null;
+let passTaskId=null,passTaskToUser=null;
+let chBet=10,chTimerSecs=0,selChUser=null;
+let curUserTab='tasks';
 let refreshInterval=null;
 
 function getUser(id){return USERS.find(u=>u.id===id)||{id:'?',name:'?',emoji:'?',av:''}}
@@ -486,15 +565,15 @@ function getUserPts(id){return userPoints[id]||0}
 async function loadAll(){
   document.getElementById('loading-screen').classList.remove('hidden');
   try{
-    const [t,p] = await Promise.all([
+    const [t,p,c]=await Promise.all([
       sb('tasks?order=id.asc'),
-      sb('user_passwords?select=user_id,password')
+      sb('user_passwords?select=user_id,password'),
+      sb('challenges?order=id.desc')
     ]);
-    tasks=t;
+    tasks=t; challenges=c;
     userPasses={};p.forEach(r=>{userPasses[r.user_id]=r.password});
-    // Recalculate points from completed tasks
     recalcPoints();
-  }catch(e){ toast('❌ Error conectando') }
+  }catch(e){toast('❌ Error conectando')}
   document.getElementById('loading-screen').classList.add('hidden');
   buildLogin();
 }
@@ -502,20 +581,30 @@ async function loadAll(){
 function recalcPoints(){
   userPoints={mama:0,papa:0,sara:0,antonio:0};
   tasks.forEach(t=>{
-    if(t.done && t.difficulty && userPoints[t.user_id]!==undefined){
+    if(t.done&&t.difficulty&&userPoints[t.user_id]!==undefined)
       userPoints[t.user_id]+=(DIFF_PTS[t.difficulty]||1);
+  });
+  // Challenge winnings/losses
+  challenges.forEach(c=>{
+    if(c.status==='won'&&c.winner){
+      const loser=c.winner===c.from_user?c.to_user:c.from_user;
+      if(userPoints[c.winner]!==undefined) userPoints[c.winner]+=c.points;
+      if(userPoints[loser]!==undefined) userPoints[loser]-=c.points;
+    }
+    if(c.status==='expired'){
+      if(userPoints[c.from_user]!==undefined) userPoints[c.from_user]-=c.points;
+      if(userPoints[c.to_user]!==undefined) userPoints[c.to_user]-=c.points;
     }
   });
-  // Subtract spent points (stored in localStorage)
   USERS.forEach(u=>{
-    const spent = parseInt(localStorage.getItem('spent_'+u.id)||'0');
+    const spent=parseInt(localStorage.getItem('spent_'+u.id)||'0');
     userPoints[u.id]=Math.max(0,(userPoints[u.id]||0)-spent);
   });
 }
 
-function spendPoints(uid, amt){
-  const cur = parseInt(localStorage.getItem('spent_'+uid)||'0');
-  localStorage.setItem('spent_'+uid, cur+amt);
+function spendPoints(uid,amt){
+  const cur=parseInt(localStorage.getItem('spent_'+uid)||'0');
+  localStorage.setItem('spent_'+uid,cur+amt);
   recalcPoints();
 }
 
@@ -523,11 +612,13 @@ function spendPoints(uid, amt){
 function buildLogin(){
   let h='';
   USERS.forEach(u=>{
-    const p=tasks.filter(t=>t.user_id===u.id&&!t.done).length;
+    const pend=tasks.filter(t=>t.user_id===u.id&&!t.done).length;
     const hasPass=!!userPasses[u.id];
+    const incomingCh=challenges.filter(c=>c.to_user===u.id&&c.status==='pending').length;
     const pts=getUserPts(u.id);
     h+=`<div class="user-card" onclick="tryLoginUser('${u.id}')">
-      ${p?`<div class="notif-badge">${p}</div>`:''}
+      ${pend?`<div class="notif-badge">${pend}</div>`:''}
+      ${incomingCh?`<div class="challenge-badge">⚔️${incomingCh}</div>`:''}
       ${hasPass?`<span class="lock-icon">🔒</span>`:''}
       <div class="avatar ${u.av}">${u.emoji}</div>
       <div class="user-name">${u.name}</div>
@@ -552,20 +643,14 @@ function tryLoginUser(id){
     document.getElementById('upin-error').textContent='';
     document.getElementById('user-pin-bg').classList.add('open');
     setTimeout(()=>document.getElementById('upin-input').focus(),300);
-  } else { loginAs(id); }
+  } else {loginAs(id);}
 }
 function closeUserPin(){document.getElementById('user-pin-bg').classList.remove('open');}
 function checkUserPin(){
   const v=document.getElementById('upin-input').value;
   if(v===userPasses[pendingLoginId]){
-    const id=pendingLoginId;
-    pendingLoginId=null;
-    closeUserPin();
-    loginAs(id);
-  } else {
-    document.getElementById('upin-error').textContent='Contraseña incorrecta';
-    document.getElementById('upin-input').value='';
-  }
+    const id=pendingLoginId;pendingLoginId=null;closeUserPin();loginAs(id);
+  } else {document.getElementById('upin-error').textContent='Contraseña incorrecta';document.getElementById('upin-input').value='';}
 }
 document.getElementById('upin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkUserPin()});
 
@@ -577,39 +662,277 @@ function loginAs(id){
     setAv('u-av',u);
     document.getElementById('u-name').textContent=u.name;
     document.getElementById('u-points').textContent='⭐ '+getUserPts(id);
+    curUserTab='tasks';
     show('s-user');
-    renderTasks(id,'u-tasks',false);
+    updateTabBadges();
+    renderUserTab();
     startAutoRefresh();
   }
 }
 function logout(){curUser=null;stopAutoRefresh();buildLogin();show('s-login')}
 
-/* ── AUTO REFRESH ── */
 function startAutoRefresh(){
   stopAutoRefresh();
   refreshInterval=setInterval(async()=>{
     if(!curUser||curUser==='admin')return;
-    try{tasks=await sb('tasks?order=id.asc');recalcPoints();renderTasks(curUser,'u-tasks',false);buildLogin();document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);}catch(e){}
+    try{
+      const [t,c]=await Promise.all([sb('tasks?order=id.asc'),sb('challenges?order=id.desc')]);
+      tasks=t;challenges=c;recalcPoints();
+      document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
+      updateTabBadges();renderUserTab();buildLogin();
+    }catch(e){}
   },30000);
 }
 function stopAutoRefresh(){if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null}}
+
+/* ── USER TABS ── */
+function switchUserTab(tab){
+  curUserTab=tab;
+  document.querySelectorAll('.utab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  renderUserTab();
+}
+
+function updateTabBadges(){
+  if(!curUser)return;
+  const sent=challenges.filter(c=>c.from_user===curUser&&c.status==='pending').length;
+  const received=challenges.filter(c=>c.to_user===curUser&&c.status==='pending').length;
+  const bs=document.getElementById('badge-sent');
+  const br=document.getElementById('badge-received');
+  if(bs){bs.style.display=sent?'inline-flex':'none';bs.textContent=sent;}
+  if(br){br.style.display=received?'inline-flex':'none';br.textContent=received;}
+}
+
+function renderUserTab(){
+  if(!curUser)return;
+  const cont=document.getElementById('u-tab-content');
+  if(curUserTab==='tasks'){
+    const ut=tasks.filter(t=>t.user_id===curUser);
+    const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
+    let h='';
+    h+=`<div style="margin-bottom:12px"><button style="width:100%;padding:12px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit" onclick="openChallengeModal()">⚔️ Enviar reto a alguien</button></div>`;
+    if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,false)})}
+    if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,false)})}
+    if(!ut.length)h+=`<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">✓</div>Sin tareas asignadas de momento.</div>`;
+    cont.innerHTML=h;
+  } else if(curUserTab==='sent'){
+    const sent=challenges.filter(c=>c.from_user===curUser);
+    let h='';
+    if(!sent.length){h='<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">⚔️</div>No has enviado ningún reto todavía.</div>';}
+    else{h+=`<p class="section-label">Retos enviados (${sent.length})</p>`;sent.forEach(c=>{h+=challengeHTML(c,false)})}
+    cont.innerHTML=h;
+  } else if(curUserTab==='received'){
+    const received=challenges.filter(c=>c.to_user===curUser);
+    let h='';
+    if(!received.length){h='<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">📬</div>No tienes retos recibidos.</div>';}
+    else{h+=`<p class="section-label">Retos recibidos (${received.length})</p>`;received.forEach(c=>{h+=challengeHTML(c,true)})}
+    cont.innerHTML=h;
+  }
+}
+
+/* ── CHALLENGE HTML ── */
+function challengeHTML(c,isReceiver){
+  const from=getUser(c.from_user),to=getUser(c.to_user);
+  const opponent=isReceiver?from:to;
+  let statusCls='pending',statusTxt='',actions='';
+
+  if(c.status==='pending'){
+    statusCls='pending';
+    statusTxt=isReceiver?'⏳ Pendiente de tu respuesta':'⏳ Esperando respuesta';
+    if(isReceiver){
+      actions=`<div class="ch-actions">
+        <button class="ch-btn ch-btn-reject" onclick="respondChallenge(${c.id},'rejected')">✗ Rechazar</button>
+        <button class="ch-btn ch-btn-accept" onclick="respondChallenge(${c.id},'active')">✓ Aceptar</button>
+      </div>`;
+    }
+  } else if(c.status==='active'){
+    statusCls='active';
+    const myDone=isReceiver?c.to_done:c.from_done;
+    const opDone=isReceiver?c.from_done:c.to_done;
+    statusTxt='⚔️ ¡En curso!';
+    actions=`<div class="ch-progress">
+      <div class="ch-user-status${myDone?' done':''}">Tú: ${myDone?'✓ Hecho':'⏳ Pendiente'}</div>
+      <div class="ch-user-status${opDone?' done':''}">ó{opponent.emoji}: ${opDone?'✓ Hecho':'⏳ Pendiente'}</div>
+    </div>`;
+    if(!myDone){
+      actions+=`<button class="ch-btn ch-btn-done" style="width:100%" onclick="markChallengeDone(${c.id})">✓ ¡Lo hice!</button>`;
+    }
+  } else if(c.status==='won'){
+    const iWon=c.winner===curUser;
+    statusCls=iWon?'won':'lost';
+    statusTxt=iWon?`🏆 ¡Ganaste! +${c.points} ⭐`:`💀 Perdiste -${c.points} ⭐`;
+  } else if(c.status==='rejected'){
+    statusCls='expired';statusTxt='✗ Rechazado';
+  } else if(c.status==='expired'){
+    statusCls='expired';statusTxt=`⏰ Tiempo agotado · -${c.points} ⭐ cada uno`;
+  }
+
+  let timerStr='';
+  if(c.timer_seconds&&c.status==='active'&&c.accepted_at){
+    const elapsed=Math.floor((Date.now()-new Date(c.accepted_at).getTime())/1000);
+    const remaining=c.timer_seconds-elapsed;
+    if(remaining>0){
+      timerStr=`<span class="ch-timer">⏱ ${fmtTimer(remaining)} restante</span>`;
+    } else {
+      timerStr=`<span class="ch-timer" style="color:var(--red)">⏱ Tiempo agotado</span>`;
+    }
+  }
+
+  return`<div class="challenge-card ${statusCls}">
+    <div class="ch-header">
+      <div class="ch-icon">⚔️</div>
+      <div class="ch-title">${c.title}</div>
+      <div class="ch-bet">⭐ ${c.points}</div>
+    </div>
+    ${c.description?`<div class="ch-desc">${c.description}</div>`:''}
+    <div class="ch-meta">
+      <span class="ch-tag">${opponent.emoji} vs ${opponent.name}</span>
+      ${c.deadline?`<span class="ch-tag">📅 Tope: ${fmtDate(c.deadline)}</span>`:''}
+      ${timerStr}
+      <span class="ch-tag" style="background:${statusCls==='won'?'#EAF3DE':statusCls==='lost'?'var(--danger-bg)':statusCls==='active'?'#F0EEFF':'var(--surface2)'}">${statusTxt}</span>
+    </div>
+    ${actions}
+  </div>`.replace('ó{opponent.emoji}',opponent.emoji);
+}
+
+async function respondChallenge(id,status){
+  try{
+    const extra=status==='active'?{accepted_at:new Date().toISOString()}:{};
+    await sb(`challenges?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({status,...extra})});
+    challenges=await sb('challenges?order=id.desc');
+    updateTabBadges();renderUserTab();buildLogin();
+    toast(status==='active'?'⚔️ ¡Reto aceptado!':'✗ Reto rechazado');
+  }catch(e){toast('❌ Error')}
+}
+
+async function markChallengeDone(id){
+  const c=challenges.find(x=>x.id===id);
+  if(!c)return;
+  const isFrom=c.from_user===curUser;
+  const field=isFrom?'from_done':'to_done';
+  const otherDone=isFrom?c.to_done:c.from_done;
+  const update={[field]:true};
+
+  // If other is done, we lost (they were first). If not, we're first (winner)
+  if(otherDone){
+    // Other did it first, we lose
+    update.status='won';
+    update.winner=isFrom?c.to_user:c.from_user;
+  } else {
+    // We did it first, we win IF other hasn't — mark our side, wait for other
+    // Actually check if timer expired
+    if(c.timer_seconds&&c.accepted_at){
+      const elapsed=Math.floor((Date.now()-new Date(c.accepted_at).getTime())/1000);
+      if(elapsed>c.timer_seconds){update.status='expired';}
+    }
+  }
+
+  try{
+    await sb(`challenges?id=eq.${id}`,{method:'PATCH',body:JSON.stringify(update)});
+    challenges=await sb('challenges?order=id.desc');
+    recalcPoints();
+    document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
+    updateTabBadges();renderUserTab();buildLogin();
+    if(update.status==='won'){
+      const winner=update.winner;
+      toast(winner===curUser?'💀 El otro llegó primero, perdiste':'🏆 ¡Ganaste el reto!');
+    } else {
+      toast('✓ Marcado como hecho · esperando al otro');
+    }
+  }catch(e){toast('❌ Error')}
+}
+
+/* ── MODAL RETO ── */
+function openChallengeModal(){
+  selChUser=null;chBet=10;chTimerSecs=0;
+  calStates.ch={year:new Date().getFullYear(),month:new Date().getMonth(),date:null};
+  buildChAssignGrid();
+  document.getElementById('ch-title').value='';
+  document.getElementById('ch-desc').value='';
+  document.getElementById('bet-display').textContent=chBet;
+  document.getElementById('bet-available').textContent=getUserPts(curUser);
+  document.getElementById('ch-timer-display').textContent='Sin límite';
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('.timer-preset').classList.add('sel');
+  buildCal('ch');
+  document.getElementById('ch-cal-chosen').textContent='Sin fecha tope';
+  document.getElementById('challenge-modal-bg').classList.add('open');
+}
+function closeChallengeModal(){document.getElementById('challenge-modal-bg').classList.remove('open')}
+document.getElementById('challenge-modal-bg').addEventListener('click',function(e){if(e.target===this)closeChallengeModal()});
+
+function buildChAssignGrid(){
+  const others=USERS.filter(u=>u.id!==curUser);
+  let h='';
+  others.forEach(u=>{
+    h+=`<button class="assign-btn${selChUser===u.id?' sel':''}" onclick="pickChUser('${u.id}')">
+      <div class="assign-av ${u.av}">${u.emoji}</div>
+      <div class="assign-name">${u.name}</div>
+    </button>`;
+  });
+  document.getElementById('ch-assign-grid').innerHTML=h;
+}
+function pickChUser(id){selChUser=id;buildChAssignGrid()}
+
+function changeBet(delta){
+  const maxPts=getUserPts(curUser);
+  chBet=Math.max(1,Math.min(maxPts,chBet+delta));
+  document.getElementById('bet-display').textContent=chBet;
+}
+
+function changeTimer(delta){
+  chTimerSecs=Math.max(0,chTimerSecs+delta);
+  document.getElementById('ch-timer-display').textContent=chTimerSecs>0?fmtTimer(chTimerSecs):'Sin límite';
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('sel'));
+}
+function setTimer(secs){
+  chTimerSecs=secs;
+  document.getElementById('ch-timer-display').textContent=secs>0?fmtTimer(secs):'Sin límite';
+  document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('sel'));
+  event.target.classList.add('sel');
+}
+function fmtTimer(s){
+  if(s>=86400)return Math.floor(s/86400)+'d '+(Math.floor((s%86400)/3600))+'h';
+  if(s>=3600)return Math.floor(s/3600)+'h '+(Math.floor((s%3600)/60))+'m';
+  return Math.floor(s/60)+'m';
+}
+
+async function sendChallenge(){
+  const title=document.getElementById('ch-title').value.trim();
+  const desc=document.getElementById('ch-desc').value.trim();
+  const deadline=calStates.ch.date?getDateStr('ch'):null;
+  if(!selChUser){toast('Elige a quién retar');return}
+  if(!title){toast('Escribe el título del reto');return}
+  if(chBet>getUserPts(curUser)){toast('No tienes suficientes puntos');return}
+  const btn=document.getElementById('send-challenge-btn');
+  btn.textContent='Enviando...';btn.disabled=true;
+  try{
+    const result=await sb('challenges',{method:'POST',body:JSON.stringify({
+      from_user:curUser,to_user:selChUser,title,description:desc,
+      points:chBet,deadline,timer_seconds:chTimerSecs||null,status:'pending'
+    })});
+    if(result&&result[0])challenges.unshift(result[0]);
+    closeChallengeModal();
+    updateTabBadges();renderUserTab();buildLogin();
+    toast('⚔️ ¡Reto enviado a '+getUser(selChUser).name+'!');
+  }catch(e){toast('❌ Error al enviar el reto')}
+  finally{btn.textContent='⚔️ Enviar reto';btn.disabled=false;}
+}
 
 /* ── TIENDA ── */
 function openShopLogin(){
   let h='';
   USERS.forEach(u=>{
-    const pts=getUserPts(u.id);
     h+=`<button class="pass-user-btn" onclick="pickShopUser('${u.id}')">
       <div class="pass-user-av ${u.av}">${u.emoji}</div>
       <div class="pass-user-name">${u.name}</div>
-      <div class="pass-user-status">${pts} ⭐</div>
+      <div class="pass-user-status">${getUserPts(u.id)} ⭐</div>
     </button>`;
   });
   document.getElementById('shop-login-grid').innerHTML=h;
   document.getElementById('shop-login-bg').classList.add('open');
 }
 function closeShopLogin(){document.getElementById('shop-login-bg').classList.remove('open')}
-
 function pickShopUser(id){
   closeShopLogin();
   if(userPasses[id]){
@@ -621,7 +944,7 @@ function pickShopUser(id){
     document.getElementById('shop-pin-error').textContent='';
     document.getElementById('shop-pin-bg').classList.add('open');
     setTimeout(()=>document.getElementById('shop-pin-input').focus(),300);
-  } else { enterShop(id); }
+  } else {enterShop(id);}
 }
 function closeShopPin(){document.getElementById('shop-pin-bg').classList.remove('open')}
 function checkShopPin(){
@@ -632,19 +955,15 @@ function checkShopPin(){
 document.getElementById('shop-pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkShopPin()});
 
 function enterShop(uid){
-  shopUser=uid;
-  const u=getUser(uid);
-  setAv('shop-av',u);
-  document.getElementById('shop-name').textContent=u.name;
-  renderShop();
-  show('s-shop');
+  shopUser=uid;const u=getUser(uid);
+  setAv('shop-av',u);document.getElementById('shop-name').textContent=u.name;
+  renderShop();show('s-shop');
 }
 function exitShop(){shopUser=null;show('s-login')}
 
 function renderShop(){
   const pts=getUserPts(shopUser);
   document.getElementById('shop-pts-display').textContent=pts+' ⭐';
-
   let h='';
   SHOP_ITEMS.forEach(item=>{
     const canBuy=pts>=item.cost;
@@ -653,25 +972,19 @@ function renderShop(){
       <div class="shop-item-info">
         <div class="shop-item-name">${item.name}</div>
         <div class="shop-item-desc">${item.desc}</div>
+        <div style="margin-top:6px;font-size:12px;font-weight:700;color:var(--orange-text)">⭐ ${item.cost} puntos</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
-        <div class="shop-item-cost">⭐ ${item.cost}</div>
-        <button class="shop-buy-btn" ${canBuy?'':'disabled'} onclick="buyItem('${item.id}')">${canBuy?'Comprar':'Sin puntos'}</button>
-      </div>
+      <button class="shop-buy-btn" ${canBuy?'':'disabled'} onclick="buyItem('${item.id}')">${canBuy?'Usar':'Sin pts'}</button>
     </div>`;
   });
   document.getElementById('shop-items').innerHTML=h;
-
-  // History
-  const history = JSON.parse(localStorage.getItem('shop_history_'+shopUser)||'[]');
+  const history=JSON.parse(localStorage.getItem('shop_history_'+shopUser)||'[]');
   if(history.length){
-    let hh='<p class="section-label">Historial de compras</p>';
+    let hh='<p class="section-label">Historial</p>';
     history.slice().reverse().forEach(h=>{
-      hh+=`<div class="shop-history-item"><span>${h.icon} ${h.name}</span><span>-${h.cost} ⭐ · ${h.date}</span></div>`;
+      hh+=`<div class="shop-history-item"><span>${h.icon} ${h.name}</span><span style="flex-shrink:0">-${h.cost}⭐ · ${h.date}</span></div>`;
     });
     document.getElementById('shop-history').innerHTML=hh;
-  } else {
-    document.getElementById('shop-history').innerHTML='';
   }
 }
 
@@ -679,101 +992,71 @@ function buyItem(itemId){
   const item=SHOP_ITEMS.find(i=>i.id===itemId);
   const pts=getUserPts(shopUser);
   if(pts<item.cost){toast('No tienes suficientes puntos');return}
-
-  if(itemId==='pass-task'){
-    // Open pass task flow from shop
-    openPassTaskFromShop();
-    return;
-  }
-
+  if(itemId==='pass-task'){openPassTaskFromShop();return}
   if(itemId==='day-off'){
-    if(!confirm('¿Confirmas canjear "'+item.name+'" por '+item.cost+' puntos?'))return;
-    spendPoints(shopUser, item.cost);
-    addShopHistory(shopUser, item);
+    if(!confirm('¿Canjear "'+item.name+'" por '+item.cost+' puntos?'))return;
+    spendPoints(shopUser,item.cost);
+    addShopHistory(shopUser,item);
     renderShop();
     toast('🛌 ¡Día sin tareas conseguido!');
   }
 }
 
-function addShopHistory(uid, item){
-  const history=JSON.parse(localStorage.getItem('shop_history_'+uid)||'[]');
-  history.push({icon:item.icon,name:item.name,cost:item.cost,date:new Date().toLocaleDateString('es-ES')});
-  localStorage.setItem('shop_history_'+uid,JSON.stringify(history));
+function addShopHistory(uid,item){
+  const h=JSON.parse(localStorage.getItem('shop_history_'+uid)||'[]');
+  h.push({icon:item.icon,name:item.name,cost:item.cost,date:new Date().toLocaleDateString('es-ES')});
+  localStorage.setItem('shop_history_'+uid,JSON.stringify(h));
 }
 
-/* ── PASAR TAREA ── */
 function openPassTaskFromShop(){
   const myTasks=tasks.filter(t=>t.user_id===shopUser&&!t.done);
   if(!myTasks.length){toast('No tienes tareas pendientes para pasar');return}
-
-  // Show list of tasks to pick
-  let h='<p class="section-label" style="margin-top:0">Elige qué tarea pasar</p>';
+  let h=`<div class="modal-handle"></div><div class="modal-title">📤 ¿Qué tarea pasas?</div>
+  <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${getUserPts(shopUser)} ⭐</div>`;
   myTasks.forEach(t=>{
-    h+=`<div class="task-card" style="cursor:pointer" onclick="selectTaskToPass(${t.id})">
-      <div class="task-title">${t.title}</div>
-      ${t.description?`<div class="task-desc" style="margin-top:4px">${t.description}</div>`:''}
-    </div>`;
+    h+=`<div class="task-card" style="cursor:pointer;margin-bottom:8px" onclick="selectPassTask(${t.id})"><div class="task-title">${t.title}</div>${t.description?`<div class="task-desc" style="margin-top:4px">${t.description}</div>`:''}</div>`;
   });
-  // Use pass-task modal repurposed
-  document.getElementById('pass-task-pts').textContent=getUserPts(shopUser);
-  document.getElementById('pass-task-title').textContent='Elige una tarea abajo';
-  document.getElementById('pass-task-user-grid').innerHTML='';
-  // override modal content
-  const modal = document.querySelector('#pass-task-bg .modal');
-  modal.innerHTML=`
-    <div class="modal-handle"></div>
-    <div class="modal-title">📤 ¿Qué tarea quieres pasar?</div>
-    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${getUserPts(shopUser)} ⭐</div>
-    ${h}
-    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closePassTask()">Cancelar</button>
-  `;
+  h+=`<button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closePassTask()">Cancelar</button>`;
+  document.getElementById('pass-task-modal-content').innerHTML=h;
   document.getElementById('pass-task-bg').classList.add('open');
 }
 
-function selectTaskToPass(taskId){
+function selectPassTask(taskId){
   passTaskId=taskId;
   const t=tasks.find(x=>x.id===taskId);
   const others=USERS.filter(u=>u.id!==shopUser);
-  let h='';
+  let h=`<div class="modal-handle"></div><div class="modal-title">📤 ¿A quién le pasas?</div>
+  <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong>${t.title}</strong></div>
+  <div class="pass-user-grid">`;
   others.forEach(u=>{
-    h+=`<button class="pass-task-user-btn" onclick="pickPassTarget('${u.id}')">
-      <div class="pass-user-av ${u.av}" style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px">${u.emoji}</div>
-      <div class="pass-user-name" style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
+    h+=`<button class="pass-user-btn" onclick="confirmPassTaskShop('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
     </button>`;
   });
-  const modal = document.querySelector('#pass-task-bg .modal');
-  modal.innerHTML=`
-    <div class="modal-handle"></div>
-    <div class="modal-title">📤 ¿A quién le pasas "${t.title}"?</div>
-    <div class="pass-task-user-grid">${h}</div>
-    <button class="btn-cancel" style="width:100%;margin-top:12px" onclick="closePassTask()">Cancelar</button>
-  `;
+  h+=`</div><button class="btn-cancel" style="width:100%;margin-top:12px" onclick="closePassTask()">Cancelar</button>`;
+  document.getElementById('pass-task-modal-content').innerHTML=h;
 }
 
-async function pickPassTarget(targetId){
-  if(!confirm('¿Pasarle "'+tasks.find(x=>x.id===passTaskId).title+'" a '+getUser(targetId).name+' por 40 puntos?'))return;
+async function confirmPassTaskShop(targetId){
+  const t=tasks.find(x=>x.id===passTaskId);
+  if(!confirm('¿Pasarle "'+t.title+'" a '+getUser(targetId).name+' por 40 puntos?'))return;
   try{
     await sb(`tasks?id=eq.${passTaskId}`,{method:'PATCH',body:JSON.stringify({user_id:targetId})});
     spendPoints(shopUser,40);
     addShopHistory(shopUser,{icon:'📤',name:'Tarea pasada a '+getUser(targetId).name,cost:40});
     tasks=await sb('tasks?order=id.asc');
-    recalcPoints();
-    closePassTask();
-    renderShop();
+    recalcPoints();closePassTask();renderShop();
     toast('✓ Tarea pasada a '+getUser(targetId).name);
-  }catch(e){ toast('❌ Error al pasar la tarea') }
+  }catch(e){toast('❌ Error al pasar la tarea')}
 }
 
-function closePassTask(){
-  document.getElementById('pass-task-bg').classList.remove('open');
-  passTaskId=null;
-}
+function closePassTask(){document.getElementById('pass-task-bg').classList.remove('open');passTaskId=null;}
 document.getElementById('pass-task-bg').addEventListener('click',function(e){if(e.target===this)closePassTask()});
 
 /* ── PIN ADMIN ── */
 function openPin(){
-  document.getElementById('pin-input').value='';
-  document.getElementById('pin-error').textContent='';
+  document.getElementById('pin-input').value='';document.getElementById('pin-error').textContent='';
   document.getElementById('pin-bg').classList.add('open');
   setTimeout(()=>document.getElementById('pin-input').focus(),300);
 }
@@ -784,20 +1067,21 @@ function checkPin(){
 }
 document.getElementById('pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
 
-/* ── MODAL TAREA ── */
+/* ── MODAL TAREA ADMIN ── */
 document.getElementById('fab-btn').addEventListener('click',openModal);
 function openModal(){
   selUser=null;selDiff=null;
-  buildAssignGrid();buildDiffGrid();
-  document.getElementById('f-title').value='';
-  document.getElementById('f-desc').value='';
-  initCal();
+  buildAssignGrid4();buildDiffGrid();
+  document.getElementById('f-title').value='';document.getElementById('f-desc').value='';
+  calStates.task={year:new Date().getFullYear(),month:new Date().getMonth(),date:null};
+  buildCal('task');
+  document.getElementById('task-cal-chosen').textContent='Ninguna fecha seleccionada';
   document.getElementById('modal-bg').classList.add('open');
 }
 function closeModal(){document.getElementById('modal-bg').classList.remove('open')}
 document.getElementById('modal-bg').addEventListener('click',function(e){if(e.target===this)closeModal()});
 
-function buildAssignGrid(){
+function buildAssignGrid4(){
   let h='';
   USERS.forEach(u=>{
     h+=`<button class="assign-btn${selUser===u.id?' sel':''}" onclick="pickUser('${u.id}')">
@@ -807,15 +1091,14 @@ function buildAssignGrid(){
   });
   document.getElementById('assign-grid').innerHTML=h;
 }
-function pickUser(id){selUser=id;buildAssignGrid()}
+function pickUser(id){selUser=id;buildAssignGrid4()}
 
 function buildDiffGrid(){
   const diffs=['easy','medium','hard'];
-  const labels=['⭐ Fácil<br><small>1 punto</small>','⭐⭐ Media<br><small>2 puntos</small>','⭐⭐⭐ Difícil<br><small>3 puntos</small>'];
+  const labels=['⭐ Fácil<br><small>1 pt</small>','⭐⭐ Media<br><small>2 pts</small>','⭐⭐⭐ Difícil<br><small>3 pts</small>'];
   let h='';
   diffs.forEach((d,i)=>{
-    const selCls=selDiff===d?` sel-${d}`:'';
-    h+=`<button class="diff-btn${selCls}" onclick="pickDiff('${d}')">${labels[i]}</button>`;
+    h+=`<button class="diff-btn${selDiff===d?' sel-'+d:''}" onclick="pickDiff('${d}')">${labels[i]}</button>`;
   });
   document.getElementById('diff-grid').innerHTML=h;
 }
@@ -824,9 +1107,9 @@ function pickDiff(d){selDiff=d;buildDiffGrid()}
 async function saveTask(){
   const title=document.getElementById('f-title').value.trim();
   const desc=document.getElementById('f-desc').value.trim();
-  const date=getSelDateStr();
+  const date=getDateStr('task');
   if(!selUser){toast('Selecciona a quién asignar la tarea');return}
-  if(!title){toast('Escribe el título de la tarea');return}
+  if(!title){toast('Escribe el título');return}
   if(!selDiff){toast('Selecciona la dificultad');return}
   if(!date){toast('Elige una fecha límite');return}
   const btn=document.getElementById('save-task-btn');
@@ -836,7 +1119,7 @@ async function saveTask(){
     if(result&&result[0])tasks.push(result[0]);
     closeModal();buildLogin();renderAdminProfiles();
     toast('✓ Tarea añadida a '+getUser(selUser).name);
-  }catch(e){ toast('❌ Error al guardar') }
+  }catch(e){toast('❌ Error al guardar')}
   finally{btn.textContent='✓ Guardar tarea';btn.disabled=false;}
 }
 
@@ -844,14 +1127,12 @@ async function saveTask(){
 function openPassModal(){
   selPassUser=null;buildPassUserGrid();
   document.getElementById('pass-fields').style.display='none';
-  document.getElementById('new-pass').value='';
-  document.getElementById('new-pass2').value='';
+  document.getElementById('new-pass').value='';document.getElementById('new-pass2').value='';
   document.getElementById('pass-error').textContent='';
   document.getElementById('pass-modal-bg').classList.add('open');
 }
 function closePassModal(){document.getElementById('pass-modal-bg').classList.remove('open')}
 document.getElementById('pass-modal-bg').addEventListener('click',function(e){if(e.target===this)closePassModal()});
-
 function buildPassUserGrid(){
   let h='';
   USERS.forEach(u=>{
@@ -867,10 +1148,9 @@ function buildPassUserGrid(){
 function pickPassUser(id){
   selPassUser=id;buildPassUserGrid();
   document.getElementById('pass-fields').style.display='block';
-  document.getElementById('new-pass').value='';
-  document.getElementById('new-pass2').value='';
+  document.getElementById('new-pass').value='';document.getElementById('new-pass2').value='';
   document.getElementById('pass-error').textContent='';
-  document.getElementById('new-pass-label').textContent='Nueva contraseña para '+getUser(id).name;
+  document.getElementById('new-pass-label').textContent='Contraseña para '+getUser(id).name;
   setTimeout(()=>document.getElementById('new-pass').focus(),100);
 }
 async function savePass(){
@@ -881,14 +1161,13 @@ async function savePass(){
   try{
     await sb('user_passwords',{method:'POST',extraHeaders:{'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:selPassUser,password:p1})});
     userPasses[selPassUser]=p1;closePassModal();buildLogin();
-    toast('✓ Contraseña guardada para '+getUser(selPassUser).name);
-  }catch(e){ toast('❌ Error guardando contraseña') }
+    toast('✓ Contraseña guardada');
+  }catch(e){toast('❌ Error guardando contraseña')}
 }
 
-/* ── ADMIN ── */
+/* ── ADMIN PERFILES ── */
 function renderAdminProfiles(){
-  recalcPoints();
-  let h='';
+  recalcPoints();let h='';
   USERS.forEach(u=>{
     const ut=tasks.filter(t=>t.user_id===u.id);
     const pend=ut.filter(t=>!t.done).length,done=ut.filter(t=>t.done).length;
@@ -906,27 +1185,25 @@ function renderAdminProfiles(){
   });
   document.getElementById('admin-profiles').innerHTML=h;
 }
-
 async function openUserView(uid){
   adminViewUid=uid;const u=getUser(uid);
   setAv('au-av',u);document.getElementById('au-name').textContent='Tareas de '+u.name;
   show('s-admin-user');
   try{tasks=await sb('tasks?order=id.asc');recalcPoints();}catch(e){}
-  renderTasks(uid,'au-tasks',true);
+  renderAdminTasks(uid);
 }
 function backToAdmin(){adminViewUid=null;renderAdminProfiles();show('s-admin')}
-
-/* ── TAREAS ── */
-function renderTasks(uid,cid,isAdmin){
+function renderAdminTasks(uid){
   const ut=tasks.filter(t=>t.user_id===uid);
   const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
   let h='';
-  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,isAdmin)})}
-  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,isAdmin)})}
-  if(!ut.length)h=`<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">✓</div>Sin tareas asignadas de momento.</div>`;
-  document.getElementById(cid).innerHTML=h;
+  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,true)})}
+  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,true)})}
+  if(!ut.length)h=`<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">✓</div>Sin tareas.</div>`;
+  document.getElementById('au-tasks').innerHTML=h;
 }
 
+/* ── TASK HTML ── */
 function taskHTML(t,isAdmin){
   const ov=isOverdue(t),di=dlInfo(t);
   const diffTag=t.difficulty?`<span class="tag ${DIFF_TAG[t.difficulty]||'tag-ok'}">${DIFF_LABEL[t.difficulty]||''}</span>`:'';
@@ -940,133 +1217,123 @@ function taskHTML(t,isAdmin){
           ${di.txt?`<span class="tag ${di.cls}">📅 ${di.txt}</span>`:''}
           ${diffTag}
         </div>
-        ${!isAdmin&&!t.done?`<div class="task-actions"><button class="pass-btn" onclick="openPassTaskModal(${t.id})">📤 Pasar tarea (40⭐)</button></div>`:''}
+        ${!isAdmin&&!t.done?`<div class="task-actions"><button class="pass-btn" onclick="openPassTaskDirect(${t.id})">📤 Pasar (40⭐)</button></div>`:''}
       </div>
       ${isAdmin?`<button class="del-btn" onclick="delTask(${t.id})">🗑️</button>`:''}
     </div>
   </div>`;
 }
 
-function openPassTaskModal(taskId){
+function openPassTaskDirect(taskId){
   const pts=getUserPts(curUser);
   if(pts<40){toast('Necesitas 40 ⭐ para pasar una tarea. Tienes '+pts);return}
   passTaskId=taskId;
   const t=tasks.find(x=>x.id===taskId);
   const others=USERS.filter(u=>u.id!==curUser);
-  document.getElementById('pass-task-pts').textContent=pts;
-  document.getElementById('pass-task-title').textContent=t.title;
-  let h='';
+  let h=`<div class="modal-handle"></div>
+  <div class="modal-title">📤 ¿A quién le pasas?</div>
+  <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${pts} ⭐</div>
+  <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong>${t.title}</strong></div>
+  <div class="pass-user-grid">`;
   others.forEach(u=>{
-    h+=`<button class="pass-task-user-btn${passTaskToUser===u.id?' sel':''}" onclick="pickPassTarget('${u.id}')">
-      <div style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px" class="${u.av}">${u.emoji}</div>
-      <div style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
+    h+=`<button class="pass-user-btn" onclick="confirmPassDirect('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
     </button>`;
   });
-  // Rebuild modal to original structure
-  const modal=document.querySelector('#pass-task-bg .modal');
-  modal.innerHTML=`
-    <div class="modal-handle"></div>
-    <div class="modal-title">📤 Pasar tarea</div>
-    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${pts} ⭐</div>
-    <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong>${t.title}</strong></div>
-    <div class="field"><label>¿A quién se la pasas?</label><div class="pass-task-user-grid">${h}</div></div>
-    <div class="modal-actions" style="margin-top:1rem">
-      <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
-      <button class="btn-save" onclick="confirmPassTask()">✓ Pasar tarea</button>
-    </div>
-  `;
+  h+=`</div><button class="btn-cancel" style="width:100%;margin-top:12px" onclick="closePassTask()">Cancelar</button>`;
+  document.getElementById('pass-task-modal-content').innerHTML=h;
   document.getElementById('pass-task-bg').classList.add('open');
 }
 
-async function confirmPassTask(){
-  if(!passTaskToUser){toast('Selecciona a quién pasarla');return}
+async function confirmPassDirect(targetId){
   const t=tasks.find(x=>x.id===passTaskId);
-  if(!confirm('¿Pasarle "'+t.title+'" a '+getUser(passTaskToUser).name+' por 40 puntos?'))return;
+  if(!confirm('¿Pasarle "'+t.title+'" a '+getUser(targetId).name+' por 40 puntos?'))return;
   try{
-    await sb(`tasks?id=eq.${passTaskId}`,{method:'PATCH',body:JSON.stringify({user_id:passTaskToUser})});
+    await sb(`tasks?id=eq.${passTaskId}`,{method:'PATCH',body:JSON.stringify({user_id:targetId})});
     spendPoints(curUser,40);
     tasks=await sb('tasks?order=id.asc');
-    recalcPoints();
-    closePassTask();
+    recalcPoints();closePassTask();
     document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
-    renderTasks(curUser,'u-tasks',false);
-    buildLogin();
-    toast('✓ Tarea pasada a '+getUser(passTaskToUser).name);
-  }catch(e){ toast('❌ Error al pasar la tarea') }
+    renderUserTab();buildLogin();
+    toast('✓ Tarea pasada a '+getUser(targetId).name);
+  }catch(e){toast('❌ Error al pasar la tarea')}
 }
 
 async function toggle(id){
   const t=tasks.find(x=>x.id===id);if(!t)return;
   const newDone=!t.done;t.done=newDone;
-  renderTasks(curUser,'u-tasks',false);buildLogin();
-  const pts=getUserPts(curUser);
-  document.getElementById('u-points').textContent='⭐ '+(newDone?pts+(DIFF_PTS[t.difficulty]||1):pts-(DIFF_PTS[t.difficulty]||1));
+  renderUserTab();buildLogin();
   try{
     await sb(`tasks?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({done:newDone})});
     recalcPoints();
     document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
-  }catch(e){t.done=!newDone;renderTasks(curUser,'u-tasks',false);toast('❌ Error al actualizar');}
+    buildLogin();
+  }catch(e){t.done=!newDone;renderUserTab();toast('❌ Error al actualizar');}
 }
 
 async function delTask(id){
   if(!confirm('¿Eliminar esta tarea?'))return;
-  tasks=tasks.filter(x=>x.id!==id);recalcPoints();
-  buildLogin();
-  if(adminViewUid){renderTasks(adminViewUid,'au-tasks',true);renderAdminProfiles();}
-  try{
-    await fetch(SUPABASE_URL+'/rest/v1/tasks?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
-  }catch(e){ toast('❌ Error al eliminar') }
+  tasks=tasks.filter(x=>x.id!==id);recalcPoints();buildLogin();
+  if(adminViewUid){renderAdminTasks(adminViewUid);renderAdminProfiles();}
+  try{await fetch(SUPABASE_URL+'/rest/v1/tasks?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});}
+  catch(e){toast('❌ Error al eliminar')}
 }
 
-/* ── CALENDARIO ── */
-function initCal(){
-  const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();selDate=null;
-  buildCalSelects();renderCal();
-  document.getElementById('cal-chosen').textContent='Ninguna fecha seleccionada';
-}
-function buildCalSelects(){
-  const ms=document.getElementById('cal-month-sel');
-  ms.innerHTML=MONTHS.map((m,i)=>`<option value="${i}"${i===calMonth?' selected':''}>${m}</option>`).join('');
-  const ys=document.getElementById('cal-year-sel');
-  const now=new Date().getFullYear();let yo='';
-  for(let y=now;y<=2040;y++)yo+=`<option value="${y}"${y===calYear?' selected':''}>${y}</option>`;
+/* ── CALENDARIO GENÉRICO ── */
+function buildCal(key){
+  const s=calStates[key];
+  const ms=document.getElementById(key+'-cal-month-sel');
+  ms.innerHTML=MONTHS.map((m,i)=>`<option value="${i}"${i===s.month?' selected':''}>${m}</option>`).join('');
+  const ys=document.getElementById(key+'-cal-year-sel');
+  const ny=new Date().getFullYear();let yo='';
+  for(let y=ny;y<=2040;y++)yo+=`<option value="${y}"${y===s.year?' selected':''}>${y}</option>`;
   ys.innerHTML=yo;
+  renderCal(key);
 }
-function calMonthChange(){calMonth=parseInt(document.getElementById('cal-month-sel').value);renderCal()}
-function calYearChange(){calYear=parseInt(document.getElementById('cal-year-sel').value);renderCal()}
-function calMove(dir){
-  calMonth+=dir;
-  if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}
-  if(calYear>2040){calYear=2040;calMonth=11;}
+function calMonthChange(key){calStates[key].month=parseInt(document.getElementById(key+'-cal-month-sel').value);renderCal(key)}
+function calYearChange(key){calStates[key].year=parseInt(document.getElementById(key+'-cal-year-sel').value);renderCal(key)}
+function calMove(key,dir){
+  const s=calStates[key];
+  s.month+=dir;
+  if(s.month<0){s.month=11;s.year--;}if(s.month>11){s.month=0;s.year++;}
+  if(s.year>2040){s.year=2040;s.month=11;}
   const now=new Date();
-  if(calYear<now.getFullYear()||(calYear===now.getFullYear()&&calMonth<now.getMonth())){calYear=now.getFullYear();calMonth=now.getMonth();}
-  buildCalSelects();renderCal();
+  if(s.year<now.getFullYear()||(s.year===now.getFullYear()&&s.month<now.getMonth())){s.year=now.getFullYear();s.month=now.getMonth();}
+  buildCal(key);
 }
-function renderCal(){
+function renderCal(key){
+  const s=calStates[key];
   const today=new Date();today.setHours(0,0,0,0);
-  let startDow=new Date(calYear,calMonth,1).getDay();startDow=startDow===0?6:startDow-1;
-  const dim=new Date(calYear,calMonth+1,0).getDate();
-  const dip=new Date(calYear,calMonth,0).getDate();
+  let startDow=new Date(s.year,s.month,1).getDay();startDow=startDow===0?6:startDow-1;
+  const dim=new Date(s.year,s.month+1,0).getDate();
+  const dip=new Date(s.year,s.month,0).getDate();
   let h=DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
   for(let i=0;i<startDow;i++)h+=`<div class="cal-day other">${dip-startDow+1+i}</div>`;
   for(let d=1;d<=dim;d++){
-    const dt=new Date(calYear,calMonth,d);
-    const isPast=dt<today,isTod=dt.getTime()===today.getTime(),isSel=selDate&&dt.getTime()===selDate.getTime();
+    const dt=new Date(s.year,s.month,d);
+    const isPast=dt<today,isTod=dt.getTime()===today.getTime();
+    const isSel=s.date&&dt.getTime()===s.date.getTime();
     let cls='cal-day';
     if(isPast)cls+=' past';else if(isSel)cls+=' selected';else if(isTod)cls+=' today';
-    h+=`<div class="${cls}"${isPast?'':` onclick="pickDay(${d})"`}>${d}</div>`;
+    h+=`<div class="${cls}"${isPast?'':` onclick="pickCalDay('${key}',${d})"`}>${d}</div>`;
   }
   const rem=(7-(startDow+dim)%7)%7;
   for(let i=1;i<=rem;i++)h+=`<div class="cal-day other">${i}</div>`;
-  document.getElementById('cal-grid').innerHTML=h;
+  document.getElementById(key+'-cal-grid').innerHTML=h;
 }
-function pickDay(d){
-  selDate=new Date(calYear,calMonth,d);renderCal();
-  document.getElementById('cal-chosen').textContent='📅 '+String(d).padStart(2,'0')+'/'+String(calMonth+1).padStart(2,'0')+'/'+calYear;
+function pickCalDay(key,d){
+  const s=calStates[key];
+  s.date=new Date(s.year,s.month,d);
+  renderCal(key);
+  const str=String(d).padStart(2,'0')+'/'+String(s.month+1).padStart(2,'0')+'/'+s.year;
+  const el=document.getElementById(key+'-cal-chosen');
+  if(el)el.textContent='📅 '+str;
 }
-function getSelDateStr(){
-  if(!selDate)return null;
-  return selDate.getFullYear()+'-'+String(selDate.getMonth()+1).padStart(2,'0')+'-'+String(selDate.getDate()).padStart(2,'0');
+function getDateStr(key){
+  const s=calStates[key];
+  if(!s.date)return null;
+  return s.date.getFullYear()+'-'+String(s.date.getMonth()+1).padStart(2,'0')+'-'+String(s.date.getDate()).padStart(2,'0');
 }
 
 /* ── HELPERS ── */
