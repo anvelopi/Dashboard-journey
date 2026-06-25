@@ -626,11 +626,30 @@ function renderLeaderboard(){
   const weekAgo=new Date(now.getTime()-7*24*60*60*1000);
   const pts={};
   USERS.forEach(u=>pts[u.id]=0);
+  // Tareas completadas esta semana
   tasks.forEach(t=>{
     if(t.done&&t.difficulty&&t.completed_at){
       const completedDate=new Date(t.completed_at);
       if(completedDate>=weekAgo&&pts[t.user_id]!==undefined){
         pts[t.user_id]+=(DIFF_PTS[t.difficulty]||1);
+      }
+    }
+  });
+  // Retos ganados/perdidos esta semana
+  challenges.forEach(c=>{
+    if(c.status==='won'&&c.winner&&c.created_at){
+      const d=new Date(c.created_at);
+      if(d>=weekAgo){
+        const loser=c.winner===c.from_user?c.to_user:c.from_user;
+        if(pts[c.winner]!==undefined) pts[c.winner]+=c.points;
+        if(pts[loser]!==undefined) pts[loser]=Math.max(0,pts[loser]-c.points);
+      }
+    }
+    if(c.status==='expired'&&c.created_at){
+      const d=new Date(c.created_at);
+      if(d>=weekAgo){
+        if(pts[c.from_user]!==undefined) pts[c.from_user]=Math.max(0,pts[c.from_user]-c.points);
+        if(pts[c.to_user]!==undefined) pts[c.to_user]=Math.max(0,pts[c.to_user]-c.points);
       }
     }
   });
