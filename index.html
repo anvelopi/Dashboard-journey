@@ -1,2484 +1,1096 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Tareas Familia">
-    <title>Tareas en familia</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    <style>
-    :root {
-        --bg: #f5f5f7;
-        --surface: #fff;
-        --surface2: #f2f2f7;
-        --border: rgba(0, 0, 0, .10);
-        --border2: rgba(0, 0, 0, .18);
-        --text: #1c1c1e;
-        --text2: #6e6e73;
-        --text3: #aeaeb2;
-        --accent: #1c1c1e;
-        --accent-fg: #fff;
-        --red: #E24B4A;
-        --green: #1D9E75;
-        --orange-bg: #FAEEDA;
-        --orange-text: #633806;
-        --danger-bg: #FCEBEB;
-        --danger-text: #A32D2D;
-        --info-bg: #E6F1FB;
-        --info-text: #185FA5;
-        --purple: #6C63FF;
-        --yellow: #FFD93D;
-        --pink: #FF6B9D;
-        --radius: 12px;
-        --radius-sm: 8px;
-    }
-
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        -webkit-tap-highlight-color: transparent
-    }
-
-    html, body {
-        height: 100%;
-        background: var(--bg);
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
-        color: var(--text);
-        -webkit-font-smoothing: antialiased
-    }
-
-    .app {
-        min-height: 100vh;
-        background: var(--bg)
-    }
-
-    .screen {
-        display:none
-    }
-
-    .screen.active {
-        display: block
-    }
-
-    .loading-screen {
-        position: fixed;
-        inset: 0;
-        background: var(--bg);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 12px;
-        z-index: 999
-    }
-
-    .loading-screen.hidden {
-        display: none
-    }
-
-    .spinner {
-        width: 32px;
-        height: 32px;
-        border: 3px solid var(--border2);
-        border-top-color: var(--accent);
-        border-radius: 50%;
-        animation: spin .7s linear infinite
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg)
-        }
-    }/* LOGIN */
-    .login-wrap {
-        padding: 2rem 1.25rem;
-        max-width: 440px;
-        margin: 0 auto
-    }
-
-    .login-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.75rem
-    }
-
-    .login-title-wrap {
-    }
-
-    .login-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: var(--text);
-        letter-spacing: -.3px
-    }
-
-    .login-sub {
-        font-size: 15px;
-        color: var(--text2);
-        margin-top: .2rem
-    }
-
-    .shop-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: linear-gradient(135deg, #6C63FF, #FF6B9D);
-        color: #fff;
-        border: none;
-        border-radius: var(--radius);
-        padding: 10px 14px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit;
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(108, 99, 255, .3)
-    }
-
-    .shop-btn:active {
-        opacity: .85
-    }
-
-    .shop-btn-icon {
-        font-size: 18px
-    }
-
-    .user-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px
-    }
-
-    .user-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 1.25rem 1rem;
-        cursor: pointer;
-        text-align: center;
-        position: relative;
-        -webkit-user-select: none;
-        user-select: none
-    }
-
-    .user-card:active {
-        transform: scale(.97)
-    }
-
-    .avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        margin: 0 auto 10px
-    }
-
-    .av-mama {
-        background:#EEEDFE
-    }
-
-    .av-papa {
-        background:#E6F1FB
-    }
-
-    .av-sara {
-        background:#FBEAF0
-    }
-
-    .av-antonio {
-        background:#EAF3DE
-    }
-
-    .av-admin {
-        background: #FAEEDA
-    }
-
-    .user-name {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text)
-    }
-
-    .user-role {
-        font-size: 12px;
-        color: var(--text2);
-        margin-top: 2px
-    }
-
-    .notif-badge {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: var(--red);
-        color: #fff;
-        font-size: 11px;
-        font-weight: 700;
-        min-width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0 5px
-    }
-
-    .lock-icon {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        color: var(--text3);
-        font-size: 13px
-    }
-
-    .admin-card {
-        grid-column: 1/-1;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        text-align: left;
-        padding: 1rem 1.25rem;
-        background: var(--surface2)
-    }
-
-    .admin-card .avatar {
-        margin: 0;
-        flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        font-size: 22px
-    }
-
-    .admin-info {
-        flex: 1
-    }/* TOPBAR */
-    .topbar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: .9rem 1.25rem;
-        background: var(--surface);
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 0;
-        z-index: 10
-    }
-
-    .topbar-av {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px;
-        flex-shrink: 0
-    }
-
-    .topbar-name {
-        font-size: 16px;
-        font-weight: 600;
-        color: var(--text);
-        flex: 1
-    }
-
-    .back-btn {
-        background: none;
-        border: 1px solid var(--border2);
-        border-radius: var(--radius-sm);
-        padding: 7px 13px;
-        font-size: 14px;
-        color: var(--text2);
-        cursor: pointer;
-        font-family: inherit;
-        white-space: nowrap
-    }
-
-    .back-btn:active {
-        background: var(--surface2)
-    }
-
-    .points-chip {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        background: linear-gradient(135deg, #FFD93D, #FF6B9D);
-        color: #fff;
-        border-radius: 20px;
-        padding: 5px 12px;
-        font-size: 13px;
-        font-weight: 700
-    }/* CONTENT */
-    .content {
-        padding: 1rem 1.25rem;
-        padding-bottom: 2rem
-    }
-
-    .section-label {
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--text2);
-        text-transform: uppercase;
-        letter-spacing: .06em;
-        margin: 1.25rem 0 .6rem
-    }/* TASK CARDS */
-    .task-card {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: .95rem 1rem;
-        margin-bottom: 10px
-    }
-
-    .task-card.done {
-        opacity:.5
-    }
-
-    .task-card.done .task-title {
-        text-decoration: line-through
-    }
-
-    .task-card.overdue {
-        border-left: 3px solid var(--red)
-    }
-
-    .task-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px
-    }
-
-    .check-btn {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 2px solid var(--border2);
-        background: none;
-        cursor: pointer;
-        flex-shrink: 0;
-        margin-top: 1px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0
-    }
-
-    .check-btn.checked {
-        background: var(--green);
-        border-color: var(--green)
-    }
-
-    .check-btn.checked::after {
-        content: '✓';
-        font-size: 14px;
-        color: #fff;
-        font-weight: 700
-    }
-
-    .task-info {
-        flex: 1;
-        min-width: 0
-    }
-
-    .task-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text);
-        margin-bottom: 4px;
-        line-height: 1.3
-    }
-
-    .task-desc {
-        font-size: 13px;
-        color: var(--text2);
-        line-height: 1.55;
-        margin-bottom: 8px
-    }
-
-    .task-meta {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        align-items: center
-    }
-
-    .tag {
-        font-size: 11px;
-        padding: 3px 9px;
-        border-radius: 20px;
-        font-weight: 600
-    }
-
-    .tag-ok {
-        background: var(--surface2);
-        color: var(--text2)
-    }
-
-    .tag-soon {
-        background: var(--orange-bg);
-        color: var(--orange-text)
-    }
-
-    .tag-overdue {
-        background: var(--danger-bg);
-        color: var(--danger-text)
-    }
-
-    .tag-easy {
-        background: #EAF3DE;
-        color: #27500A
-    }
-
-    .tag-medium {
-        background: #E6F1FB;
-        color: #185FA5
-    }
-
-    .tag-hard {
-        background: #FBEAF0;
-        color: #72243E
-    }
-
-    .task-actions {
-        display: flex;
-        gap: 6px;
-        margin-top: 2px
-    }
-
-    .pass-btn {
-        background: none;
-        border: 1px solid var(--border2);
-        border-radius: 20px;
-        padding: 4px 10px;
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--text2);
-        cursor: pointer;
-        font-family: inherit
-    }
-
-    .pass-btn:active {
-        background: var(--surface2)
-    }
-
-    .del-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text3);
-        padding: 6px;
-        border-radius: 8px;
-        flex-shrink: 0;
-        font-size: 18px;
-        line-height: 1
-    }
-
-    .del-btn:active {
-        color: var(--red)
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: var(--text2);
-        font-size: 14px;
-        line-height: 1.6
-    }/* ADMIN */
-    .admin-body {
-        display: flex;
-        flex-direction: column;
-        min-height: calc(100vh - 57px)
-    }
-
-    .admin-profiles {
-        padding: 1rem 1.25rem;
-        flex: 1
-    }
-
-    .profile-row {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: .9rem 1rem;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        margin-bottom: 10px;
-        cursor: pointer
-    }
-
-    .profile-row:active {
-        background: var(--surface2)
-    }
-
-    .profile-av {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        flex-shrink: 0
-    }
-
-    .profile-name {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text);
-        flex: 1
-    }
-
-    .profile-stats {
-        display: flex;
-        gap: 6px;
-        flex-wrap: wrap;
-        align-items: center
-    }
-
-    .stat-pill {
-        font-size: 11px;
-        padding: 3px 8px;
-        border-radius: 20px;
-        font-weight: 600
-    }
-
-    .stat-pend {
-        background: var(--orange-bg);
-        color: var(--orange-text)
-    }
-
-    .stat-done {
-        background: #EAF3DE;
-        color: #27500A
-    }
-
-    .stat-none {
-        background: var(--surface2);
-        color: var(--text2)
-    }
-
-    .stat-pts {
-        background: linear-gradient(135deg, #FFD93D, #FF6B9D);
-        color: #fff
-    }/* FAB */
-    .fab-wrap {
-        padding: 1rem 1.25rem;
-        padding-bottom: max(1rem, env(safe-area-inset-bottom));
-        border-top: 1px solid var(--border);
-        background: var(--surface);
-        display: flex;
-        gap: 10px;
-        position: sticky;
-        bottom: 0
-    }
-
-    .fab {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: var(--accent);
-        color: var(--accent-fg);
-        border: none;
-        border-radius: var(--radius);
-        padding: 13px 16px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        flex: 1;
-        font-family: inherit
-    }
-
-    .fab:active {
-        opacity: .8
-    }
-
-    .fab-sec {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: none;
-        color: var(--text);
-        border: 1px solid var(--border2);
-        border-radius: var(--radius);
-        padding: 13px 16px;
-        font-size: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        flex: 1;
-        font-family: inherit
-    }
-
-    .fab-sec:active {
-        background: var(--surface2)
-    }/* MODALES */
-    .modal-bg {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, .45);
-        z-index: 100;
-        display: none;
-        align-items: flex-end;
-        justify-content: center
-    }
-
-    .modal-bg.open {
-        display: flex
-    }
-
-    .modal {
-        background: var(--surface);
-        border-radius: 20px 20px 0 0;
-        padding: 1.5rem 1.25rem;
-        padding-bottom: max(2rem, env(safe-area-inset-bottom));
-        width: 100%;
-        max-width: 600px;
-        max-height: 92vh;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch
-    }
-
-    .modal-handle {
-        width: 40px;
-        height: 4px;
-        background: var(--border2);
-        border-radius: 2px;
-        margin: 0 auto 1.25rem
-    }
-
-    .modal-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text);
-        margin-bottom: 1.25rem
-    }
-
-    .assign-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px
-    }
-
-    .assign-btn {
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 10px 4px;
-        cursor: pointer;
-        background: var(--surface);
-        text-align: center;
-        font-family: inherit
-    }
-
-    .assign-btn:active {
-        background: var(--surface2)
-    }
-
-    .assign-btn.sel {
-        border: 2px solid var(--accent);
-        background: var(--surface2)
-    }
-
-    .assign-av {
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        margin: 0 auto 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 17px
-    }
-
-    .assign-name {
-        font-size: 12px;
-        color: var(--text);
-        font-weight: 600
-    }
-
-    .field {
-        margin-bottom: 16px
-    }
-
-    .field label {
-        font-size: 12px;
-        color: var(--text2);
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: .04em
-    }
-
-    .field input, .field textarea, .field select {
-        width: 100%;
-        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 16px;
-        color: var(--text);
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 11px 13px;
-        -webkit-appearance: none;
-        appearance: none
-    }
-
-    .field input:focus, .field textarea:focus, .field select:focus {
-        outline: none;
-        border-color: var(--accent);
-        background: var(--surface)
-    }
-
-    .field textarea {
-        resize: vertical;
-        min-height: 88px
-    }
-
-    .modal-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 8px
-    }
-
-    .btn-cancel {
-        flex: 1;
-        background: var(--surface2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 13px;
-        font-size: 15px;
-        cursor: pointer;
-        color: var(--text);
-        font-family: inherit;
-        font-weight: 600
-    }
-
-    .btn-cancel:active {
-        background: var(--border)
-    }
-
-    .btn-save {
-        flex: 2;
-        background: var(--accent);
-        color: var(--accent-fg);
-        border: none;
-        border-radius: var(--radius-sm);
-        padding: 13px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit
-    }
-
-    .btn-save:active {
-        opacity: .8
-    }/* DIFICULTAD */
-    .diff-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px
-    }
-
-    .diff-btn {
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        padding: 10px 4px;
-        cursor: pointer;
-        background: var(--surface);
-        text-align: center;
-        font-family: inherit;
-        font-size: 13px;
-        font-weight: 600
-    }
-
-    .diff-btn.sel-easy {
-        border: 2px solid #27500A;
-        background: #EAF3DE;
-        color: #27500A
-    }
-
-    .diff-btn.sel-medium {
-        border: 2px solid #185FA5;
-        background: #E6F1FB;
-        color: #185FA5
-    }
-
-    .diff-btn.sel-hard {
-        border: 2px solid #72243E;
-        background: #FBEAF0;
-        color: #72243E
-    }/* CALENDARIO */
-    .cal-wrap {
-        border: 1px solid var(--border);
-        border-radius: var(--radius-sm);
-        overflow: hidden
-    }
-
-    .cal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 12px;
-        background: var(--surface2);
-        border-bottom: 1px solid var(--border)
-    }
-
-    .cal-nav {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text);
-        padding: 6px 10px;
-        border-radius: 8px;
-        font-size: 20px;
-        line-height: 1;
-        font-family: inherit
-    }
-
-    .cal-label {
-        display: flex;
-        gap: 6px;
-        align-items: center
-    }
-
-    .cal-select {
-        font-size: 14px;
-        font-family: inherit;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 5px 8px;
-        color: var(--text);
-        font-weight: 600;
-        -webkit-appearance: none;
-        appearance: none
-    }
-
-    .cal-grid {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        padding: 8px 6px
-    }
-
-    .cal-day-name {
-        text-align: center;
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--text2);
-        padding: 4px 0;
-        text-transform: uppercase
-    }
-
-    .cal-day {
-        text-align: center;
-        font-size: 14px;
-        padding: 7px 2px;
-        border-radius: 8px;
-        cursor: pointer;
-        color: var(--text);
-        line-height: 1.4;
-        font-weight: 500;
-        -webkit-user-select: none;
-        user-select: none
-    }
-
-    .cal-day.other {
-        color: var(--text3);
-        opacity: .5
-    }
-
-    .cal-day.today {
-        font-weight: 800;
-        color: var(--info-text)
-    }
-
-    .cal-day.selected {
-        background: var(--accent);
-        color: #fff
-    }
-
-    .cal-day.past {
-        opacity: .25;
-        cursor: default;
-        pointer-events: none
-    }
-
-    .cal-chosen {
-        font-size: 13px;
-        color: var(--text2);
-        padding: 8px 12px;
-        border-top: 1px solid var(--border);
-        background: var(--surface2);
-        text-align: center;
-        font-weight: 500
-    }/* CONTRASEÑAS */
-    .pass-user-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        margin-bottom: 4px
-    }
-
-    .pass-user-btn {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 1rem;
-        cursor: pointer;
-        background: var(--surface);
-        text-align: center;
-        font-family: inherit
-    }
-
-    .pass-user-btn.sel {
-        border: 2px solid var(--accent);
-        background: var(--surface2)
-    }
-
-    .pass-user-av {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin: 0 auto 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px
-    }
-
-    .pass-user-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: var(--text)
-    }
-
-    .pass-user-status {
-        font-size: 11px;
-        color: var(--text2);
-        margin-top: 3px
-    }
-
-    .pass-fields {
-        border-top: 1px solid var(--border);
-        padding-top: 1rem;
-        margin-top: .75rem
-    }/* PIN */
-    .pin-bg {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, .5);
-        z-index: 200;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem
-    }
-
-    .pin-bg.open {
-        display: flex
-    }
-
-    .pin-box {
-        background: var(--surface);
-        border-radius: 20px;
-        padding: 2rem 1.5rem;
-        width: 100%;
-        max-width: 320px;
-        text-align: center
-    }
-
-    .pin-emoji {
-        font-size: 34px;
-        margin-bottom: .6rem
-    }
-
-    .pin-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: var(--text);
-        margin-bottom: .3rem
-    }
-
-    .pin-sub {
-        font-size: 14px;
-        color: var(--text2);
-        margin-bottom: 1.25rem
-    }
-
-    .pin-input {
-        width: 100%;
-        font-size: 22px;
-        letter-spacing: .3em;
-        text-align: center;
-        font-family: monospace;
-        margin-bottom: 10px;
-        padding: 12px;
-        border: 1.5px solid var(--border);
-        border-radius: var(--radius-sm);
-        background: var(--surface2);
-        color: var(--text);
-        -webkit-appearance: none
-    }
-
-    .pin-input:focus {
-        outline: none;
-        border-color: var(--accent)
-    }
-
-    .pin-error {
-        font-size: 13px;
-        color: var(--danger-text);
-        min-height: 20px;
-        margin-bottom: 10px;
-        font-weight: 500
-    }
-
-    .pin-btns {
-        display: flex;
-        gap: 8px
-    }/* TIENDA */
-    .shop-screen-wrap {
-        max-width: 440px;
-        margin: 0 auto;
-        padding: 1.25rem
-    }
-
-    .shop-header {
-        background: linear-gradient(135deg, #6C63FF, #FF6B9D);
-        border-radius: var(--radius);
-        padding: 1.5rem;
-        text-align: center;
-        margin-bottom: 1.25rem;
-        color: #fff
-    }
-
-    .shop-header-title {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: .25rem
-    }
-
-    .shop-header-pts {
-        font-size: 15px;
-        opacity: .9
-    }
-
-    .shop-pts-big {
-        font-size: 36px;
-        font-weight: 800;
-        margin: .25rem 0
-    }
-
-    .shop-item {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 1.1rem 1.25rem;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 14px
-    }
-
-    .shop-item-icon {
-        font-size: 32px;
-        flex-shrink: 0
-    }
-
-    .shop-item-info {
-        flex: 1
-    }
-
-    .shop-item-name {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--text)
-    }
-
-    .shop-item-desc {
-        font-size: 13px;
-        color: var(--text2);
-        margin-top: 2px
-    }
-
-    .shop-item-cost {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--orange-text);
-        background: var(--orange-bg);
-        border-radius: 20px;
-        padding: 4px 10px;
-        white-space: nowrap
-    }
-
-    .shop-buy-btn {
-        background: linear-gradient(135deg, #6C63FF, #FF6B9D);
-        color: #fff;
-        border: none;
-        border-radius: var(--radius-sm);
-        padding: 9px 16px;
-        font-size: 14px;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit;
-        white-space: nowrap;
-        flex-shrink: 0
-    }
-
-    .shop-buy-btn:disabled {
-        opacity: .4;
-        cursor: default
-    }
-
-    .shop-buy-btn:not(:disabled):active {
-        opacity: .8
-    }
-
-    .shop-history {
-        margin-top: 1.5rem
-    }
-
-    .shop-history-item {
-        background: var(--surface2);
-        border-radius: var(--radius-sm);
-        padding: .7rem 1rem;
-        margin-bottom: 6px;
-        font-size: 13px;
-        color: var(--text2);
-        display: flex;
-        justify-content: space-between
-    }/* PASAR TAREA MODAL */
-    .pass-task-user-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px
-    }
-
-    .pass-task-user-btn {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 1rem;
-        cursor: pointer;
-        background: var(--surface);
-        text-align: center;
-        font-family: inherit
-    }
-
-    .pass-task-user-btn:active {
-        background: var(--surface2)
-    }
-
-    .pass-task-user-btn.sel {
-        border: 2px solid var(--accent);
-        background: var(--surface2)
-    }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tareas Familia">
+<title>Tareas en familia</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#f5f5f7;--surface:#fff;--surface2:#f2f2f7;
+  --border:rgba(0,0,0,.10);--border2:rgba(0,0,0,.18);
+  --text:#1c1c1e;--text2:#6e6e73;--text3:#aeaeb2;
+  --accent:#1c1c1e;--accent-fg:#fff;
+  --red:#E24B4A;--green:#1D9E75;
+  --orange-bg:#FAEEDA;--orange-text:#633806;
+  --danger-bg:#FCEBEB;--danger-text:#A32D2D;
+  --info-bg:#E6F1FB;--info-text:#185FA5;
+  --purple:#6C63FF;--yellow:#FFD93D;--pink:#FF6B9D;
+  --radius:12px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.app{min-height:100vh;background:var(--bg)}
+.screen{display:none}.screen.active{display:block}
+
+.loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:999}
+.loading-screen.hidden{display:none}
+.spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOGIN */
+.login-wrap{padding:2rem 1.25rem;max-width:440px;margin:0 auto}
+.login-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem}
+.login-title-wrap{}
+.login-title{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.login-sub{font-size:15px;color:var(--text2);margin-top:.2rem}
+.shop-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0;box-shadow:0 4px 12px rgba(108,99,255,.3)}
+.shop-btn:active{opacity:.85}
+.shop-btn-icon{font-size:18px}
+
+.user-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;cursor:pointer;text-align:center;position:relative;-webkit-user-select:none;user-select:none}
+.user-card:active{transform:scale(.97)}
+.avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px}
+.av-mama{background:#EEEDFE}.av-papa{background:#E6F1FB}.av-sara{background:#FBEAF0}.av-antonio{background:#EAF3DE}.av-admin{background:#FAEEDA}
+.user-name{font-size:15px;font-weight:600;color:var(--text)}
+.user-role{font-size:12px;color:var(--text2);margin-top:2px}
+.notif-badge{position:absolute;top:10px;right:10px;background:var(--red);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.lock-icon{position:absolute;bottom:10px;right:10px;color:var(--text3);font-size:13px}
+.admin-card{grid-column:1/-1;display:flex;align-items:center;gap:14px;text-align:left;padding:1rem 1.25rem;background:var(--surface2)}
+.admin-card .avatar{margin:0;flex-shrink:0;width:48px;height:48px;font-size:22px}
+.admin-info{flex:1}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:10px;padding:.9rem 1.25rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.topbar-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.topbar-name{font-size:16px;font-weight:600;color:var(--text);flex:1}
+.back-btn{background:none;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:7px 13px;font-size:14px;color:var(--text2);cursor:pointer;font-family:inherit;white-space:nowrap}
+.back-btn:active{background:var(--surface2)}
+.points-chip{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700}
+
+/* CONTENT */
+.content{padding:1rem 1.25rem;padding-bottom:2rem}
+.section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:1.25rem 0 .6rem}
+
+/* TASK CARDS */
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.95rem 1rem;margin-bottom:10px}
+.task-card.done{opacity:.5}.task-card.done .task-title{text-decoration:line-through}
+.task-card.overdue{border-left:3px solid var(--red)}
+.task-row{display:flex;align-items:flex-start;gap:12px}
+.check-btn{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);background:none;cursor:pointer;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:0}
+.check-btn.checked{background:var(--green);border-color:var(--green)}
+.check-btn.checked::after{content:'✓';font-size:14px;color:#fff;font-weight:700}
+.task-info{flex:1;min-width:0}
+.task-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.task-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:8px}
+.task-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600}
+.tag-ok{background:var(--surface2);color:var(--text2)}
+.tag-soon{background:var(--orange-bg);color:var(--orange-text)}
+.tag-overdue{background:var(--danger-bg);color:var(--danger-text)}
+.tag-easy{background:#EAF3DE;color:#27500A}
+.tag-medium{background:#E6F1FB;color:#185FA5}
+.tag-hard{background:#FBEAF0;color:#72243E}
+.task-actions{display:flex;gap:6px;margin-top:2px}
+.pass-btn{background:none;border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit}
+.pass-btn:active{background:var(--surface2)}
+.del-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:6px;border-radius:8px;flex-shrink:0;font-size:18px;line-height:1}
+.del-btn:active{color:var(--red)}
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text2);font-size:14px;line-height:1.6}
+
+/* ADMIN */
+.admin-body{display:flex;flex-direction:column;min-height:calc(100vh - 57px)}
+.admin-profiles{padding:1rem 1.25rem;flex:1}
+.profile-row{display:flex;align-items:center;gap:12px;padding:.9rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;cursor:pointer}
+.profile-row:active{background:var(--surface2)}
+.profile-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.profile-name{font-size:15px;font-weight:600;color:var(--text);flex:1}
+.profile-stats{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.stat-pill{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600}
+.stat-pend{background:var(--orange-bg);color:var(--orange-text)}
+.stat-done{background:#EAF3DE;color:#27500A}
+.stat-none{background:var(--surface2);color:var(--text2)}
+.stat-pts{background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff}
+
+/* FAB */
+.fab-wrap{padding:1rem 1.25rem;padding-bottom:max(1rem,env(safe-area-inset-bottom));border-top:1px solid var(--border);background:var(--surface);display:flex;gap:10px;position:sticky;bottom:0}
+.fab{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-fg);border:none;border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
+.fab:active{opacity:.8}
+.fab-sec{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:none;color:var(--text);border:1px solid var(--border2);border-radius:var(--radius);padding:13px 16px;font-size:15px;font-weight:600;cursor:pointer;flex:1;font-family:inherit}
+.fab-sec:active{background:var(--surface2)}
+
+/* MODALES */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;padding-bottom:max(2rem,env(safe-area-inset-bottom));width:100%;max-width:600px;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 1.25rem}
+.modal-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:1.25rem}
+
+.assign-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.assign-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
+.assign-btn:active{background:var(--surface2)}
+.assign-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+.assign-av{width:34px;height:34px;border-radius:50%;margin:0 auto 5px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.assign-name{font-size:12px;color:var(--text);font-weight:600}
+
+.field{margin-bottom:16px}
+.field label{font-size:12px;color:var(--text2);display:block;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field textarea,.field select{width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;-webkit-appearance:none;appearance:none}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.field textarea{resize:vertical;min-height:88px}
+.modal-actions{display:flex;gap:8px;margin-top:8px}
+.btn-cancel{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;font-size:15px;cursor:pointer;color:var(--text);font-family:inherit;font-weight:600}
+.btn-cancel:active{background:var(--border)}
+.btn-save{flex:2;background:var(--accent);color:var(--accent-fg);border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-save:active{opacity:.8}
+
+/* DIFICULTAD */
+.diff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.diff-btn{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit;font-size:13px;font-weight:600}
+.diff-btn.sel-easy{border:2px solid #27500A;background:#EAF3DE;color:#27500A}
+.diff-btn.sel-medium{border:2px solid #185FA5;background:#E6F1FB;color:#185FA5}
+.diff-btn.sel-hard{border:2px solid #72243E;background:#FBEAF0;color:#72243E}
+
+/* CALENDARIO */
+.cal-wrap{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text);padding:6px 10px;border-radius:8px;font-size:20px;line-height:1;font-family:inherit}
+.cal-label{display:flex;gap:6px;align-items:center}
+.cal-select{font-size:14px;font-family:inherit;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-weight:600;-webkit-appearance:none;appearance:none}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:8px 6px}
+.cal-day-name{text-align:center;font-size:11px;font-weight:700;color:var(--text2);padding:4px 0;text-transform:uppercase}
+.cal-day{text-align:center;font-size:14px;padding:7px 2px;border-radius:8px;cursor:pointer;color:var(--text);line-height:1.4;font-weight:500;-webkit-user-select:none;user-select:none}
+.cal-day.other{color:var(--text3);opacity:.5}
+.cal-day.today{font-weight:800;color:var(--info-text)}
+.cal-day.selected{background:var(--accent);color:#fff}
+.cal-day.past{opacity:.25;cursor:default;pointer-events:none}
+.cal-chosen{font-size:13px;color:var(--text2);padding:8px 12px;border-top:1px solid var(--border);background:var(--surface2);text-align:center;font-weight:500}
+
+/* CONTRASEÑAS */
+.pass-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:4px}
+.pass-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
+.pass-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+.pass-user-av{width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.pass-user-name{font-size:14px;font-weight:600;color:var(--text)}
+.pass-user-status{font-size:11px;color:var(--text2);margin-top:3px}
+.pass-fields{border-top:1px solid var(--border);padding-top:1rem;margin-top:.75rem}
+
+/* PIN */
+.pin-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.pin-bg.open{display:flex}
+.pin-box{background:var(--surface);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:320px;text-align:center}
+.pin-emoji{font-size:34px;margin-bottom:.6rem}
+.pin-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.pin-sub{font-size:14px;color:var(--text2);margin-bottom:1.25rem}
+.pin-input{width:100%;font-size:22px;letter-spacing:.3em;text-align:center;font-family:monospace;margin-bottom:10px;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);-webkit-appearance:none}
+.pin-input:focus{outline:none;border-color:var(--accent)}
+.pin-error{font-size:13px;color:var(--danger-text);min-height:20px;margin-bottom:10px;font-weight:500}
+.pin-btns{display:flex;gap:8px}
+
+/* TIENDA */
+.shop-screen-wrap{max-width:440px;margin:0 auto;padding:1.25rem}
+.shop-header{background:linear-gradient(135deg,#6C63FF,#FF6B9D);border-radius:var(--radius);padding:1.5rem;text-align:center;margin-bottom:1.25rem;color:#fff}
+.shop-header-title{font-size:22px;font-weight:700;margin-bottom:.25rem}
+.shop-header-pts{font-size:15px;opacity:.9}
+.shop-pts-big{font-size:36px;font-weight:800;margin:.25rem 0}
+.shop-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.25rem;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+.shop-item-icon{font-size:32px;flex-shrink:0}
+.shop-item-info{flex:1}
+.shop-item-name{font-size:15px;font-weight:600;color:var(--text)}
+.shop-item-desc{font-size:13px;color:var(--text2);margin-top:2px}
+.shop-item-cost{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:var(--orange-text);background:var(--orange-bg);border-radius:20px;padding:4px 10px;white-space:nowrap}
+.shop-buy-btn{background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+.shop-buy-btn:disabled{opacity:.4;cursor:default}
+.shop-buy-btn:not(:disabled):active{opacity:.8}
+.shop-history{margin-top:1.5rem}
+.shop-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.7rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between}
+
+/* PASAR TAREA MODAL */
+.pass-task-user-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pass-task-user-btn{border:1px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;background:var(--surface);text-align:center;font-family:inherit}
+.pass-task-user-btn:active{background:var(--surface2)}
+.pass-task-user-btn.sel{border:2px solid var(--accent);background:var(--surface2)}
+</style>
 </head>
 <body>
 
-    <div class="loading-screen" id="loading-screen">
-        <div class="spinner"></div>
+<div class="loading-screen" id="loading-screen">
+  <div class="spinner"></div>
+</div>
+
+<div class="app">
+
+<!-- LOGIN -->
+<div class="screen active" id="s-login">
+  <div class="login-wrap">
+    <div class="login-header">
+      <div class="login-title-wrap">
+        <div class="login-title">Tareas en familia 🏠</div>
+        <div class="login-sub">¿Quién eres?</div>
+      </div>
+      <button class="shop-btn" onclick="openShopLogin()">
+        <span class="shop-btn-icon">🏪</span> Tienda
+      </button>
     </div>
+    <div class="user-grid" id="login-grid"></div>
+  </div>
+</div>
 
-    <div class="app">
+<!-- USUARIO -->
+<div class="screen" id="s-user">
+  <div class="topbar">
+    <div class="topbar-av" id="u-av"></div>
+    <div class="topbar-name" id="u-name"></div>
+    <div class="points-chip" id="u-points">⭐ 0</div>
+    <button class="back-btn" onclick="logout()">Salir</button>
+  </div>
+  <div class="content" id="u-tasks"></div>
+</div>
 
-        <!-- LOGIN -->
-        <div class="screen active" id="s-login">
-            <div class="login-wrap">
-                <div class="login-header">
-                    <div class="login-title-wrap">
-                        <div class="login-title">Tareas en familia 🏠</div>
-                        <div class="login-sub">¿Quién eres?</div>
-                    </div>
-                    <button class="shop-btn" onclick="openShopLogin()">
-                        <span class="shop-btn-icon">🏪</span>
-                         Tienda
-                              
-                    </button>
-                </div>
-                <div class="user-grid" id="login-grid"></div>
-            </div>
-        </div>
-
-        <!-- USUARIO -->
-        <div class="screen" id="s-user">
-            <div class="topbar">
-                <div class="topbar-av" id="u-av"></div>
-                <div class="topbar-name" id="u-name"></div>
-                <div class="points-chip" id="u-points">⭐ 0</div>
-                <button class="back-btn" onclick="logout()">Salir</button>
-            </div>
-            <div class="content" id="u-tasks"></div>
-        </div>
-
-        <!-- ADMIN -->
-        <div class="screen" id="s-admin">
-            <div class="topbar">
-                <div class="topbar-av av-admin">👑</div>
-                <div class="topbar-name">Admin</div>
-                <button class="back-btn" onclick="logout()">Salir</button>
-            </div>
-            <div class="admin-body">
-                <div class="admin-profiles" id="admin-profiles"></div>
-                <div class="fab-wrap">
-                    <button class="fab" id="fab-btn">＋ Añadir tarea</button>
-                    <button class="fab-sec" onclick="openPassModal()">🔒 Contraseñas</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ADMIN VER USUARIO -->
-        <div class="screen" id="s-admin-user">
-            <div class="topbar">
-                <button class="back-btn" onclick="backToAdmin()">‹ Volver</button>
-                <div class="topbar-av" id="au-av" style="margin-left:8px"></div>
-                <div class="topbar-name" id="au-name" style="margin-left:8px"></div>
-            </div>
-            <div class="content" id="au-tasks"></div>
-        </div>
-
-        <!-- TIENDA -->
-        <div class="screen" id="s-shop">
-            <div class="topbar">
-                <button class="back-btn" onclick="exitShop()">‹ Volver</button>
-                <div class="topbar-av" id="shop-av" style="margin-left:8px"></div>
-                <div class="topbar-name" id="shop-name" style="margin-left:8px"></div>
-            </div>
-            <div class="shop-screen-wrap">
-                <div class="shop-header">
-                    <div class="shop-header-title">🏪 Tienda de recompensas</div>
-                    <div class="shop-header-pts">Tus puntos</div>
-                    <div class="shop-pts-big" id="shop-pts-display">0 ⭐</div>
-                </div>
-                <div id="shop-items"></div>
-                <div class="shop-history" id="shop-history"></div>
-            </div>
-        </div>
-
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <div class="topbar">
+    <div class="topbar-av av-admin">👑</div>
+    <div class="topbar-name">Admin</div>
+    <button class="back-btn" onclick="logout()">Salir</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-profiles" id="admin-profiles"></div>
+    <div class="fab-wrap">
+      <button class="fab" id="fab-btn">＋ Añadir tarea</button>
+      <button class="fab-sec" onclick="openPassModal()">🔒 Contraseñas</button>
     </div>
+  </div>
+</div>
 
-    <!-- PIN ADMIN -->
-    <div class="pin-bg" id="pin-bg">
-        <div class="pin-box">
-            <div class="pin-emoji">🔐</div>
-            <div class="pin-title">Acceso admin</div>
-            <div class="pin-sub">Introduce la contraseña</div>
-            <input class="pin-input" type="password" id="pin-input" maxlength="20" placeholder="••••••">
-            <div class="pin-error" id="pin-error"></div>
-            <div class="pin-btns">
-                <button class="btn-cancel" onclick="closePin()">Cancelar</button>
-                <button class="btn-save" onclick="checkPin()">Entrar</button>
-            </div>
-        </div>
+<!-- ADMIN VER USUARIO -->
+<div class="screen" id="s-admin-user">
+  <div class="topbar">
+    <button class="back-btn" onclick="backToAdmin()">‹ Volver</button>
+    <div class="topbar-av" id="au-av" style="margin-left:8px"></div>
+    <div class="topbar-name" id="au-name" style="margin-left:8px"></div>
+  </div>
+  <div class="content" id="au-tasks"></div>
+</div>
+
+<!-- TIENDA -->
+<div class="screen" id="s-shop">
+  <div class="topbar">
+    <button class="back-btn" onclick="exitShop()">‹ Volver</button>
+    <div class="topbar-av" id="shop-av" style="margin-left:8px"></div>
+    <div class="topbar-name" id="shop-name" style="margin-left:8px"></div>
+  </div>
+  <div class="shop-screen-wrap">
+    <div class="shop-header">
+      <div class="shop-header-title">🏪 Tienda de recompensas</div>
+      <div class="shop-header-pts">Tus puntos</div>
+      <div class="shop-pts-big" id="shop-pts-display">0 ⭐</div>
     </div>
+    <div id="shop-items"></div>
+    <div class="shop-history" id="shop-history"></div>
+  </div>
+</div>
 
-    <!-- PIN USUARIO -->
-    <div class="pin-bg" id="user-pin-bg">
-        <div class="pin-box">
-            <div class="pin-emoji" id="upin-emoji"></div>
-            <div class="pin-title" id="upin-title"></div>
-            <div class="pin-sub">Introduce tu contraseña</div>
-            <input class="pin-input" type="password" id="upin-input" maxlength="20" placeholder="••••••">
-            <div class="pin-error" id="upin-error"></div>
-            <div class="pin-btns">
-                <button class="btn-cancel" onclick="closeUserPin()">Cancelar</button>
-                <button class="btn-save" onclick="checkUserPin()">Entrar</button>
-            </div>
-        </div>
+</div>
+
+<!-- PIN ADMIN -->
+<div class="pin-bg" id="pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji">🔐</div>
+    <div class="pin-title">Acceso admin</div>
+    <div class="pin-sub">Introduce la contraseña</div>
+    <input class="pin-input" type="password" id="pin-input" maxlength="20" placeholder="••••••">
+    <div class="pin-error" id="pin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closePin()">Cancelar</button>
+      <button class="btn-save" onclick="checkPin()">Entrar</button>
     </div>
+  </div>
+</div>
 
-    <!-- PIN TIENDA -->
-    <div class="pin-bg" id="shop-pin-bg">
-        <div class="pin-box">
-            <div class="pin-emoji" id="shop-pin-emoji"></div>
-            <div class="pin-title" id="shop-pin-title"></div>
-            <div class="pin-sub">Introduce tu contraseña</div>
-            <input class="pin-input" type="password" id="shop-pin-input" maxlength="20" placeholder="••••••">
-            <div class="pin-error" id="shop-pin-error"></div>
-            <div class="pin-btns">
-                <button class="btn-cancel" onclick="closeShopPin()">Cancelar</button>
-                <button class="btn-save" onclick="checkShopPin()">Entrar</button>
-            </div>
-        </div>
+<!-- PIN USUARIO -->
+<div class="pin-bg" id="user-pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji" id="upin-emoji"></div>
+    <div class="pin-title" id="upin-title"></div>
+    <div class="pin-sub">Introduce tu contraseña</div>
+    <input class="pin-input" type="password" id="upin-input" maxlength="20" placeholder="••••••">
+    <div class="pin-error" id="upin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closeUserPin()">Cancelar</button>
+      <button class="btn-save" onclick="checkUserPin()">Entrar</button>
     </div>
+  </div>
+</div>
 
-    <!-- ELEGIR QUIÉN ENTRA EN TIENDA -->
-    <div class="modal-bg" id="shop-login-bg">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <div class="modal-title">🏪 ¿Quién entra a la tienda?</div>
-            <div class="pass-user-grid" id="shop-login-grid"></div>
-            <div class="modal-actions" style="margin-top:1rem">
-                <button class="btn-cancel" onclick="closeShopLogin()">Cancelar</button>
-            </div>
-        </div>
+<!-- PIN TIENDA -->
+<div class="pin-bg" id="shop-pin-bg">
+  <div class="pin-box">
+    <div class="pin-emoji" id="shop-pin-emoji"></div>
+    <div class="pin-title" id="shop-pin-title"></div>
+    <div class="pin-sub">Introduce tu contraseña</div>
+    <input class="pin-input" type="password" id="shop-pin-input" maxlength="20" placeholder="••••••">
+    <div class="pin-error" id="shop-pin-error"></div>
+    <div class="pin-btns">
+      <button class="btn-cancel" onclick="closeShopPin()">Cancelar</button>
+      <button class="btn-save" onclick="checkShopPin()">Entrar</button>
     </div>
+  </div>
+</div>
 
-    <!-- MODAL AÑADIR TAREA -->
-    <div class="modal-bg" id="modal-bg">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <div class="modal-title">Nueva tarea</div>
-            <div class="field">
-                <label>Asignar a</label>
-                <div class="assign-grid" id="assign-grid"></div>
-            </div>
-            <div class="field">
-                <label for="f-title">Título</label>
-                <input type="text" id="f-title" placeholder="Ej: Limpia la terraza" autocomplete="off">
-            </div>
-            <div class="field">
-                <label for="f-desc">Descripción</label>
-                <textarea id="f-desc" placeholder="Ej: Barre el suelo y limpia los muebles"></textarea>
-            </div>
-            <div class="field">
-                <label>Dificultad</label>
-                <div class="diff-grid" id="diff-grid">
-                    <button class="diff-btn" onclick="pickDiff('easy')">
-                        ⭐ Fácil
-                        <br>
-                        <small>1 punto</small>
-                    </button>
-                    <button class="diff-btn" onclick="pickDiff('medium')">
-                        ⭐⭐ Media
-                        <br>
-                        <small>2 puntos</small>
-                    </button>
-                    <button class="diff-btn" onclick="pickDiff('hard')">
-                        ⭐⭐⭐ Difícil
-                        <br>
-                        <small>3 puntos</small>
-                    </button>
-                </div>
-            </div>
-            <div class="field">
-                <label>Fecha límite</label>
-                <div class="cal-wrap">
-                    <div class="cal-header">
-                        <button class="cal-nav" onclick="calMove(-1)">‹</button>
-                        <div class="cal-label">
-                            <select class="cal-select" id="cal-month-sel" onchange="calMonthChange()"></select>
-                            <select class="cal-select" id="cal-year-sel" onchange="calYearChange()"></select>
-                        </div>
-                        <button class="cal-nav" onclick="calMove(1)">›</button>
-                    </div>
-                    <div class="cal-grid" id="cal-grid"></div>
-                    <div class="cal-chosen" id="cal-chosen">Ninguna fecha seleccionada</div>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-                <button class="btn-save" id="save-task-btn" onclick="saveTask()">✓ Guardar tarea</button>
-            </div>
-        </div>
+<!-- ELEGIR QUIÉN ENTRA EN TIENDA -->
+<div class="modal-bg" id="shop-login-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏪 ¿Quién entra a la tienda?</div>
+    <div class="pass-user-grid" id="shop-login-grid"></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="closeShopLogin()">Cancelar</button>
     </div>
+  </div>
+</div>
 
-    <!-- MODAL CONTRASEÑAS -->
-    <div class="modal-bg" id="pass-modal-bg">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <div class="modal-title">Contraseñas de usuario</div>
-            <div class="field">
-                <label>Selecciona el perfil</label>
-                <div class="pass-user-grid" id="pass-user-grid"></div>
-            </div>
-            <div class="pass-fields" id="pass-fields" style="display:none">
-                <div class="field">
-                    <label id="new-pass-label">Nueva contraseña</label>
-                    <input type="password" id="new-pass" placeholder="Escribe la nueva contraseña" autocomplete="new-password">
-                </div>
-                <div class="field">
-                    <label>Confirmar contraseña</label>
-                    <input type="password" id="new-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
-                </div>
-                <div class="pin-error" id="pass-error" style="margin-bottom:8px"></div>
-                <div class="modal-actions">
-                    <button class="btn-cancel" onclick="closePassModal()">Cancelar</button>
-                    <button class="btn-save" onclick="savePass()">🔒 Guardar contraseña</button>
-                </div>
-            </div>
-        </div>
+<!-- MODAL AÑADIR TAREA -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Nueva tarea</div>
+    <div class="field">
+      <label>Asignar a</label>
+      <div class="assign-grid" id="assign-grid"></div>
     </div>
-
-    <!-- MODAL PASAR TAREA -->
-    <div class="modal-bg" id="pass-task-bg">
-        <div class="modal">
-            <div class="modal-handle"></div>
-            <div class="modal-title">📤 Pasar tarea</div>
-            <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">
-
-                      ⚠️ Cuesta 40 puntos pasar una tarea. Tienes 
-                <span id="pass-task-pts"></span>
-                 ⭐
-                    
-            </div>
-            <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">
-                Tarea: 
-                <strong id="pass-task-title"></strong>
-            </div>
-            <div class="field">
-                <label>¿A quién se la pasas?</label>
-                <div class="pass-task-user-grid" id="pass-task-user-grid"></div>
-            </div>
-            <div class="modal-actions" style="margin-top:1rem">
-                <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
-                <button class="btn-save" id="confirm-pass-task-btn" onclick="confirmPassTask()">✓ Pasar tarea</button>
-            </div>
-        </div>
+    <div class="field">
+      <label for="f-title">Título</label>
+      <input type="text" id="f-title" placeholder="Ej: Limpia la terraza" autocomplete="off">
     </div>
+    <div class="field">
+      <label for="f-desc">Descripción</label>
+      <textarea id="f-desc" placeholder="Ej: Barre el suelo y limpia los muebles"></textarea>
+    </div>
+    <div class="field">
+      <label>Dificultad</label>
+      <div class="diff-grid" id="diff-grid">
+        <button class="diff-btn" onclick="pickDiff('easy')">⭐ Fácil<br><small>1 punto</small></button>
+        <button class="diff-btn" onclick="pickDiff('medium')">⭐⭐ Media<br><small>2 puntos</small></button>
+        <button class="diff-btn" onclick="pickDiff('hard')">⭐⭐⭐ Difícil<br><small>3 puntos</small></button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Fecha límite</label>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calMove(-1)">‹</button>
+          <div class="cal-label">
+            <select class="cal-select" id="cal-month-sel" onchange="calMonthChange()"></select>
+            <select class="cal-select" id="cal-year-sel" onchange="calYearChange()"></select>
+          </div>
+          <button class="cal-nav" onclick="calMove(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-chosen" id="cal-chosen">Ninguna fecha seleccionada</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" id="save-task-btn" onclick="saveTask()">✓ Guardar tarea</button>
+    </div>
+  </div>
+</div>
 
-    <script>
-    const SUPABASE_URL = 'https://tfbrbvgqlmenbvfdxxgs.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYnJidmdxbG1lbmJ2ZmR4eGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODQ0NTcsImV4cCI6MjA5Nzg2MDQ1N30.XrBFyr3CRpsgq-jrvxKnTxGQFAVUPec4Vu8ZmTXf8PA';
+<!-- MODAL CONTRASEÑAS -->
+<div class="modal-bg" id="pass-modal-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Contraseñas de usuario</div>
+    <div class="field">
+      <label>Selecciona el perfil</label>
+      <div class="pass-user-grid" id="pass-user-grid"></div>
+    </div>
+    <div class="pass-fields" id="pass-fields" style="display:none">
+      <div class="field">
+        <label id="new-pass-label">Nueva contraseña</label>
+        <input type="password" id="new-pass" placeholder="Escribe la nueva contraseña" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label>Confirmar contraseña</label>
+        <input type="password" id="new-pass2" placeholder="Repite la contraseña" autocomplete="new-password">
+      </div>
+      <div class="pin-error" id="pass-error" style="margin-bottom:8px"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closePassModal()">Cancelar</button>
+        <button class="btn-save" onclick="savePass()">🔒 Guardar contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    async function sb(path, opts={}) {
-        const method = opts.method || 'GET';
-        const headers = {
-            'apikey': SUPABASE_KEY,
-            'Authorization': 'Bearer ' + SUPABASE_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-        };
-        if (opts.extraHeaders)
-            Object.assign(headers, opts.extraHeaders);
-        const fetchOpts = {
-            method,
-            headers
-        };
-        if (opts.body)
-            fetchOpts.body = opts.body;
-        const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, fetchOpts);
-        const text = await res.text();
-        if (!res.ok)
-            throw new Error(text);
-        return text ? JSON.parse(text) : [];
+<!-- MODAL PASAR TAREA -->
+<div class="modal-bg" id="pass-task-bg">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 Pasar tarea</div>
+    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">
+      ⚠️ Cuesta 40 puntos pasar una tarea. Tienes <span id="pass-task-pts"></span> ⭐
+    </div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong id="pass-task-title"></strong></div>
+    <div class="field">
+      <label>¿A quién se la pasas?</label>
+      <div class="pass-task-user-grid" id="pass-task-user-grid"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
+      <button class="btn-save" id="confirm-pass-task-btn" onclick="confirmPassTask()">✓ Pasar tarea</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://tfbrbvgqlmenbvfdxxgs.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmYnJidmdxbG1lbmJ2ZmR4eGdzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODQ0NTcsImV4cCI6MjA5Nzg2MDQ1N30.XrBFyr3CRpsgq-jrvxKnTxGQFAVUPec4Vu8ZmTXf8PA';
+
+async function sb(path, opts={}){
+  const method = opts.method||'GET';
+  const headers = {'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  if(opts.extraHeaders) Object.assign(headers,opts.extraHeaders);
+  const fetchOpts={method,headers};
+  if(opts.body) fetchOpts.body=opts.body;
+  const res = await fetch(SUPABASE_URL+'/rest/v1/'+path,fetchOpts);
+  const text = await res.text();
+  if(!res.ok) throw new Error(text);
+  return text?JSON.parse(text):[];
+}
+
+const USERS=[
+  {id:'mama',  name:'Mamá',    emoji:'👩', av:'av-mama'},
+  {id:'papa',  name:'Papá',    emoji:'👨', av:'av-papa'},
+  {id:'sara',  name:'Sara',    emoji:'👧', av:'av-sara'},
+  {id:'antonio',name:'Antonio',emoji:'🧒', av:'av-antonio'},
+];
+const ADMIN_PIN='190715';
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAYS=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+const DIFF_PTS={easy:1,medium:2,hard:3};
+const DIFF_LABEL={easy:'⭐ Fácil',medium:'⭐⭐ Media',hard:'⭐⭐⭐ Difícil'};
+const DIFF_TAG={easy:'tag-easy',medium:'tag-medium',hard:'tag-hard'};
+
+const SHOP_ITEMS=[
+  {id:'day-off', icon:'🛌', name:'Día sin tareas', desc:'Un día completo sin ninguna tarea asignada', cost:50},
+  {id:'pass-task', icon:'📤', name:'Pasar tarea', desc:'Pasa una de tus tareas pendientes a otro miembro', cost:40},
+];
+
+let tasks=[], userPasses={}, userPoints={mama:0,papa:0,sara:0,antonio:0};
+let curUser=null, selUser=null, adminViewUid=null;
+let calYear, calMonth, selDate=null, selDiff=null;
+let pendingLoginId=null, selPassUser=null;
+let shopUser=null, pendingShopLoginId=null;
+let passTaskId=null, passTaskToUser=null;
+let refreshInterval=null;
+
+function getUser(id){return USERS.find(u=>u.id===id)||{id:'?',name:'?',emoji:'?',av:''}}
+function getUserPts(id){return userPoints[id]||0}
+
+async function loadAll(){
+  document.getElementById('loading-screen').classList.remove('hidden');
+  try{
+    const [t,p] = await Promise.all([
+      sb('tasks?order=id.asc'),
+      sb('user_passwords?select=user_id,password')
+    ]);
+    tasks=t;
+    userPasses={};p.forEach(r=>{userPasses[r.user_id]=r.password});
+    // Recalculate points from completed tasks
+    recalcPoints();
+  }catch(e){ toast('❌ Error conectando') }
+  document.getElementById('loading-screen').classList.add('hidden');
+  buildLogin();
+}
+
+function recalcPoints(){
+  userPoints={mama:0,papa:0,sara:0,antonio:0};
+  tasks.forEach(t=>{
+    if(t.done && t.difficulty && userPoints[t.user_id]!==undefined){
+      userPoints[t.user_id]+=(DIFF_PTS[t.difficulty]||1);
     }
+  });
+  // Subtract spent points (stored in localStorage)
+  USERS.forEach(u=>{
+    const spent = parseInt(localStorage.getItem('spent_'+u.id)||'0');
+    userPoints[u.id]=Math.max(0,(userPoints[u.id]||0)-spent);
+  });
+}
 
-    const USERS = [
-    {
-        id: 'mama',
-        name: 'Mamá',
-        emoji: '👩',
-        av: 'av-mama'
-    },
-    {
-        id: 'papa',
-        name: 'Papá',
-        emoji: '👨',
-        av: 'av-papa'
-    },
-    {
-        id: 'sara',
-        name: 'Sara',
-        emoji: '👧',
-        av: 'av-sara'
-    },
-    {
-        id: 'antonio',
-        name: 'Antonio',
-        emoji: '🧒',
-        av: 'av-antonio'
-    },
-    ];
-    const ADMIN_PIN = '190715';
-    const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    const DAYS = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
-    const DIFF_PTS = {
-        easy: 1,
-        medium: 2,
-        hard: 3
-    };
-    const DIFF_LABEL = {
-        easy: '⭐ Fácil',
-        medium: '⭐⭐ Media',
-        hard: '⭐⭐⭐ Difícil'
-    };
-    const DIFF_TAG = {
-        easy: 'tag-easy',
-        medium: 'tag-medium',
-        hard: 'tag-hard'
-    };
+function spendPoints(uid, amt){
+  const cur = parseInt(localStorage.getItem('spent_'+uid)||'0');
+  localStorage.setItem('spent_'+uid, cur+amt);
+  recalcPoints();
+}
 
-    const SHOP_ITEMS = [
-    {
-        id: 'day-off',
-        icon: '🛌',
-        name: 'Día sin tareas',
-        desc: 'Un día completo sin ninguna tarea asignada',
-        cost: 50
-    },
-    {
-        id: 'pass-task',
-        icon: '📤',
-        name: 'Pasar tarea',
-        desc: 'Pasa una de tus tareas pendientes a otro miembro',
-        cost: 40
-    },
-    ];
+/* ── LOGIN ── */
+function buildLogin(){
+  let h='';
+  USERS.forEach(u=>{
+    const p=tasks.filter(t=>t.user_id===u.id&&!t.done).length;
+    const hasPass=!!userPasses[u.id];
+    const pts=getUserPts(u.id);
+    h+=`<div class="user-card" onclick="tryLoginUser('${u.id}')">
+      ${p?`<div class="notif-badge">${p}</div>`:''}
+      ${hasPass?`<span class="lock-icon">🔒</span>`:''}
+      <div class="avatar ${u.av}">${u.emoji}</div>
+      <div class="user-name">${u.name}</div>
+      <div class="user-role">${pts>0?pts+' ⭐':'Miembro'}</div>
+    </div>`;
+  });
+  h+=`<div class="user-card admin-card" onclick="openPin()">
+    <div class="avatar av-admin" style="width:48px;height:48px;font-size:22px;margin:0;flex-shrink:0">👑</div>
+    <div class="admin-info"><div class="user-name">Admin</div><div class="user-role">Gestión de tareas</div></div>
+    <span style="color:#aeaeb2;font-size:18px">🔒</span>
+  </div>`;
+  document.getElementById('login-grid').innerHTML=h;
+}
 
-    let tasks = [],
-        userPasses = {},
-        userPoints = {
-            mama: 0,
-            papa: 0,
-            sara: 0,
-            antonio: 0
-        };
-    let curUser = null,
-        selUser = null,
-        adminViewUid = null;
-    let calYear,
-        calMonth,
-        selDate = null,
-        selDiff = null;
-    let pendingLoginId = null,
-        selPassUser = null;
-    let shopUser = null,
-        pendingShopLoginId = null;
-    let passTaskId = null,
-        passTaskToUser = null;
-    let refreshInterval = null;
+function tryLoginUser(id){
+  if(userPasses[id]){
+    pendingLoginId=id;
+    const u=getUser(id);
+    document.getElementById('upin-emoji').textContent=u.emoji;
+    document.getElementById('upin-title').textContent=u.name;
+    document.getElementById('upin-input').value='';
+    document.getElementById('upin-error').textContent='';
+    document.getElementById('user-pin-bg').classList.add('open');
+    setTimeout(()=>document.getElementById('upin-input').focus(),300);
+  } else { loginAs(id); }
+}
+function closeUserPin(){document.getElementById('user-pin-bg').classList.remove('open');}
+function checkUserPin(){
+  const v=document.getElementById('upin-input').value;
+  if(v===userPasses[pendingLoginId]){
+    const id=pendingLoginId;
+    pendingLoginId=null;
+    closeUserPin();
+    loginAs(id);
+  } else {
+    document.getElementById('upin-error').textContent='Contraseña incorrecta';
+    document.getElementById('upin-input').value='';
+  }
+}
+document.getElementById('upin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkUserPin()});
 
-    function getUser(id) {
-        return USERS.find(u => u.id === id) || {
-                id: '?',
-                name: '?',
-                emoji: '?',
-                av: ''
-            }
-    }
-    function getUserPts(id) {
-        return userPoints[id] || 0
-    }
+function loginAs(id){
+  curUser=id;
+  if(id==='admin'){show('s-admin');renderAdminProfiles();}
+  else{
+    const u=getUser(id);
+    setAv('u-av',u);
+    document.getElementById('u-name').textContent=u.name;
+    document.getElementById('u-points').textContent='⭐ '+getUserPts(id);
+    show('s-user');
+    renderTasks(id,'u-tasks',false);
+    startAutoRefresh();
+  }
+}
+function logout(){curUser=null;stopAutoRefresh();buildLogin();show('s-login')}
 
-    async function loadAll() {
-        document.getElementById('loading-screen').classList.remove('hidden');
-        try {
-            const [t, p] = await Promise.all([
-            sb('tasks?order=id.asc'),
-            sb('user_passwords?select=user_id,password')
-            ]);
-            tasks = t;
-            userPasses = {};
-            p.forEach(r => {
-                userPasses[r.user_id] = r.password
-            });
-            // Recalculate points from completed tasks
-            recalcPoints();
-        } catch (e) {
-            toast('❌ Error conectando')
-        }
-        document.getElementById('loading-screen').classList.add('hidden');
-        buildLogin();
-    }
+/* ── AUTO REFRESH ── */
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshInterval=setInterval(async()=>{
+    if(!curUser||curUser==='admin')return;
+    try{tasks=await sb('tasks?order=id.asc');recalcPoints();renderTasks(curUser,'u-tasks',false);buildLogin();document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);}catch(e){}
+  },30000);
+}
+function stopAutoRefresh(){if(refreshInterval){clearInterval(refreshInterval);refreshInterval=null}}
 
-    function recalcPoints() {
-        userPoints = {
-            mama: 0,
-            papa: 0,
-            sara: 0,
-            antonio: 0
-        };
-        tasks.forEach(t => {
-            if (t.done && t.difficulty && userPoints[t.user_id] !== undefined) {
-                userPoints[t.user_id] += (DIFF_PTS[t.difficulty] || 1);
-            }
-        });
-        // Subtract spent points (stored in localStorage)
-        USERS.forEach(u => {
-            const spent = parseInt(localStorage.getItem('spent_' + u.id) || '0');
-            userPoints[u.id] = Math.max(0, (userPoints[u.id] || 0) - spent);
-        });
-    }
+/* ── TIENDA ── */
+function openShopLogin(){
+  let h='';
+  USERS.forEach(u=>{
+    const pts=getUserPts(u.id);
+    h+=`<button class="pass-user-btn" onclick="pickShopUser('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
+      <div class="pass-user-status">${pts} ⭐</div>
+    </button>`;
+  });
+  document.getElementById('shop-login-grid').innerHTML=h;
+  document.getElementById('shop-login-bg').classList.add('open');
+}
+function closeShopLogin(){document.getElementById('shop-login-bg').classList.remove('open')}
 
-    function spendPoints(uid, amt) {
-        const cur = parseInt(localStorage.getItem('spent_' + uid) || '0');
-        localStorage.setItem('spent_' + uid, cur + amt);
-        recalcPoints();
-    }
+function pickShopUser(id){
+  closeShopLogin();
+  if(userPasses[id]){
+    pendingShopLoginId=id;
+    const u=getUser(id);
+    document.getElementById('shop-pin-emoji').textContent=u.emoji;
+    document.getElementById('shop-pin-title').textContent=u.name;
+    document.getElementById('shop-pin-input').value='';
+    document.getElementById('shop-pin-error').textContent='';
+    document.getElementById('shop-pin-bg').classList.add('open');
+    setTimeout(()=>document.getElementById('shop-pin-input').focus(),300);
+  } else { enterShop(id); }
+}
+function closeShopPin(){document.getElementById('shop-pin-bg').classList.remove('open')}
+function checkShopPin(){
+  const v=document.getElementById('shop-pin-input').value;
+  if(v===userPasses[pendingShopLoginId]){closeShopPin();enterShop(pendingShopLoginId);}
+  else{document.getElementById('shop-pin-error').textContent='Contraseña incorrecta';document.getElementById('shop-pin-input').value='';}
+}
+document.getElementById('shop-pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkShopPin()});
 
-    /* ── LOGIN ── */
-    function buildLogin() {
-        let h = '';
-        USERS.forEach(u => {
-            const p = tasks.filter(t => t.user_id === u.id && !t.done).length;
-            const hasPass = !!userPasses[u.id];
-            const pts = getUserPts(u.id);
-            h += `<div class="user-card" onclick="tryLoginUser('${u.id}')">
-                  ${p ? `<div class="notif-badge">${p}</div>` : ''}
-                  ${hasPass ? `<span class="lock-icon">🔒</span>` : ''}
-                  <div class="avatar ${u.av}">${u.emoji}</div>
-                  <div class="user-name">${u.name}</div>
-                  <div class="user-role">${pts > 0 ? pts + ' ⭐' : 'Miembro'}</div>
-                </div>`;
-        });
-        h += `<div class="user-card admin-card" onclick="openPin()">
-            <div class="avatar av-admin" style="width:48px;height:48px;font-size:22px;margin:0;flex-shrink:0">👑</div>
-            <div class="admin-info"><div class="user-name">Admin</div><div class="user-role">Gestión de tareas</div></div>
-            <span style="color:#aeaeb2;font-size:18px">🔒</span>
-          </div>`;
-        document.getElementById('login-grid').innerHTML = h;
-    }
+function enterShop(uid){
+  shopUser=uid;
+  const u=getUser(uid);
+  setAv('shop-av',u);
+  document.getElementById('shop-name').textContent=u.name;
+  renderShop();
+  show('s-shop');
+}
+function exitShop(){shopUser=null;show('s-login')}
 
-    function tryLoginUser(id) {
-        if (userPasses[id]) {
-            pendingLoginId = id;
-            const u = getUser(id);
-            document.getElementById('upin-emoji').textContent = u.emoji;
-            document.getElementById('upin-title').textContent = u.name;
-            document.getElementById('upin-input').value = '';
-            document.getElementById('upin-error').textContent = '';
-            document.getElementById('user-pin-bg').classList.add('open');
-            setTimeout(() => document.getElementById('upin-input').focus(), 300);
-        } else {
-            loginAs(id);
-        }
-    }
-    function closeUserPin() {
-        document.getElementById('user-pin-bg').classList.remove('open');
-        pendingLoginId = null
-    }
-    function checkUserPin() {
-        const v = document.getElementById('upin-input').value;
-        if (v === userPasses[pendingLoginId]) {
-            closeUserPin();
-            loginAs(pendingLoginId);
-        }
-        else {
-            document.getElementById('upin-error').textContent = 'Contraseña incorrecta';
-            document.getElementById('upin-input').value = '';
-        }
-    }
-    document.getElementById('upin-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter')
-            checkUserPin()
+function renderShop(){
+  const pts=getUserPts(shopUser);
+  document.getElementById('shop-pts-display').textContent=pts+' ⭐';
+
+  let h='';
+  SHOP_ITEMS.forEach(item=>{
+    const canBuy=pts>=item.cost;
+    h+=`<div class="shop-item">
+      <div class="shop-item-icon">${item.icon}</div>
+      <div class="shop-item-info">
+        <div class="shop-item-name">${item.name}</div>
+        <div class="shop-item-desc">${item.desc}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+        <div class="shop-item-cost">⭐ ${item.cost}</div>
+        <button class="shop-buy-btn" ${canBuy?'':'disabled'} onclick="buyItem('${item.id}')">${canBuy?'Comprar':'Sin puntos'}</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('shop-items').innerHTML=h;
+
+  // History
+  const history = JSON.parse(localStorage.getItem('shop_history_'+shopUser)||'[]');
+  if(history.length){
+    let hh='<p class="section-label">Historial de compras</p>';
+    history.slice().reverse().forEach(h=>{
+      hh+=`<div class="shop-history-item"><span>${h.icon} ${h.name}</span><span>-${h.cost} ⭐ · ${h.date}</span></div>`;
     });
+    document.getElementById('shop-history').innerHTML=hh;
+  } else {
+    document.getElementById('shop-history').innerHTML='';
+  }
+}
 
-    function loginAs(id) {
-        curUser = id;
-        if (id === 'admin') {
-            show('s-admin');
-            renderAdminProfiles();
-        }
-        else {
-            const u = getUser(id);
-            setAv('u-av', u);
-            document.getElementById('u-name').textContent = u.name;
-            document.getElementById('u-points').textContent = '⭐ ' + getUserPts(id);
-            show('s-user');
-            renderTasks(id, 'u-tasks', false);
-            startAutoRefresh();
-        }
-    }
-    function logout() {
-        curUser = null;
-        stopAutoRefresh();
-        buildLogin();
-        show('s-login')
-    }
+function buyItem(itemId){
+  const item=SHOP_ITEMS.find(i=>i.id===itemId);
+  const pts=getUserPts(shopUser);
+  if(pts<item.cost){toast('No tienes suficientes puntos');return}
 
-    /* ── AUTO REFRESH ── */
-    function startAutoRefresh() {
-        stopAutoRefresh();
-        refreshInterval = setInterval(async () => {
-            if (!curUser || curUser === 'admin')
-                return;
-            try {
-                tasks = await sb('tasks?order=id.asc');
-                recalcPoints();
-                renderTasks(curUser, 'u-tasks', false);
-                buildLogin();
-                document.getElementById('u-points').textContent = '⭐ ' + getUserPts(curUser);
-            } catch (e) {}
-        }, 30000);
-    }
-    function stopAutoRefresh() {
-        if (refreshInterval) {
-            clearInterval(refreshInterval);
-            refreshInterval = null
-        }
-    }
+  if(itemId==='pass-task'){
+    // Open pass task flow from shop
+    openPassTaskFromShop();
+    return;
+  }
 
-    /* ── TIENDA ── */
-    function openShopLogin() {
-        let h = '';
-        USERS.forEach(u => {
-            const pts = getUserPts(u.id);
-            h += `<button class="pass-user-btn" onclick="pickShopUser('${u.id}')">
-                  <div class="pass-user-av ${u.av}">${u.emoji}</div>
-                  <div class="pass-user-name">${u.name}</div>
-                  <div class="pass-user-status">${pts} ⭐</div>
-                </button>`;
-        });
-        document.getElementById('shop-login-grid').innerHTML = h;
-        document.getElementById('shop-login-bg').classList.add('open');
-    }
-    function closeShopLogin() {
-        document.getElementById('shop-login-bg').classList.remove('open')
-    }
+  if(itemId==='day-off'){
+    if(!confirm('¿Confirmas canjear "'+item.name+'" por '+item.cost+' puntos?'))return;
+    spendPoints(shopUser, item.cost);
+    addShopHistory(shopUser, item);
+    renderShop();
+    toast('🛌 ¡Día sin tareas conseguido!');
+  }
+}
 
-    function pickShopUser(id) {
-        closeShopLogin();
-        if (userPasses[id]) {
-            pendingShopLoginId = id;
-            const u = getUser(id);
-            document.getElementById('shop-pin-emoji').textContent = u.emoji;
-            document.getElementById('shop-pin-title').textContent = u.name;
-            document.getElementById('shop-pin-input').value = '';
-            document.getElementById('shop-pin-error').textContent = '';
-            document.getElementById('shop-pin-bg').classList.add('open');
-            setTimeout(() => document.getElementById('shop-pin-input').focus(), 300);
-        } else {
-            enterShop(id);
-        }
-    }
-    function closeShopPin() {
-        document.getElementById('shop-pin-bg').classList.remove('open')
-    }
-    function checkShopPin() {
-        const v = document.getElementById('shop-pin-input').value;
-        if (v === userPasses[pendingShopLoginId]) {
-            closeShopPin();
-            enterShop(pendingShopLoginId);
-        }
-        else {
-            document.getElementById('shop-pin-error').textContent = 'Contraseña incorrecta';
-            document.getElementById('shop-pin-input').value = '';
-        }
-    }
-    document.getElementById('shop-pin-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter')
-            checkShopPin()
-    });
+function addShopHistory(uid, item){
+  const history=JSON.parse(localStorage.getItem('shop_history_'+uid)||'[]');
+  history.push({icon:item.icon,name:item.name,cost:item.cost,date:new Date().toLocaleDateString('es-ES')});
+  localStorage.setItem('shop_history_'+uid,JSON.stringify(history));
+}
 
-    function enterShop(uid) {
-        shopUser = uid;
-        const u = getUser(uid);
-        setAv('shop-av', u);
-        document.getElementById('shop-name').textContent = u.name;
-        renderShop();
-        show('s-shop');
-    }
-    function exitShop() {
-        shopUser = null;
-        show('s-login')
-    }
+/* ── PASAR TAREA ── */
+function openPassTaskFromShop(){
+  const myTasks=tasks.filter(t=>t.user_id===shopUser&&!t.done);
+  if(!myTasks.length){toast('No tienes tareas pendientes para pasar');return}
 
-    function renderShop() {
-        const pts = getUserPts(shopUser);
-        document.getElementById('shop-pts-display').textContent = pts + ' ⭐';
+  // Show list of tasks to pick
+  let h='<p class="section-label" style="margin-top:0">Elige qué tarea pasar</p>';
+  myTasks.forEach(t=>{
+    h+=`<div class="task-card" style="cursor:pointer" onclick="selectTaskToPass(${t.id})">
+      <div class="task-title">${t.title}</div>
+      ${t.description?`<div class="task-desc" style="margin-top:4px">${t.description}</div>`:''}
+    </div>`;
+  });
+  // Use pass-task modal repurposed
+  document.getElementById('pass-task-pts').textContent=getUserPts(shopUser);
+  document.getElementById('pass-task-title').textContent='Elige una tarea abajo';
+  document.getElementById('pass-task-user-grid').innerHTML='';
+  // override modal content
+  const modal = document.querySelector('#pass-task-bg .modal');
+  modal.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 ¿Qué tarea quieres pasar?</div>
+    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${getUserPts(shopUser)} ⭐</div>
+    ${h}
+    <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closePassTask()">Cancelar</button>
+  `;
+  document.getElementById('pass-task-bg').classList.add('open');
+}
 
-        let h = '';
-        SHOP_ITEMS.forEach(item => {
-            const canBuy = pts >= item.cost;
-            h += `<div class="shop-item">
-                  <div class="shop-item-icon">${item.icon}</div>
-                  <div class="shop-item-info">
-                    <div class="shop-item-name">${item.name}</div>
-                    <div class="shop-item-desc">${item.desc}</div>
-                  </div>
-                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
-                    <div class="shop-item-cost">⭐ ${item.cost}</div>
-                    <button class="shop-buy-btn" ${canBuy ? '' : 'disabled'} onclick="buyItem('${item.id}')">${canBuy ? 'Comprar' : 'Sin puntos'}</button>
-                  </div>
-                </div>`;
-        });
-        document.getElementById('shop-items').innerHTML = h;
+function selectTaskToPass(taskId){
+  passTaskId=taskId;
+  const t=tasks.find(x=>x.id===taskId);
+  const others=USERS.filter(u=>u.id!==shopUser);
+  let h='';
+  others.forEach(u=>{
+    h+=`<button class="pass-task-user-btn" onclick="pickPassTarget('${u.id}')">
+      <div class="pass-user-av ${u.av}" style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px">${u.emoji}</div>
+      <div class="pass-user-name" style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
+    </button>`;
+  });
+  const modal = document.querySelector('#pass-task-bg .modal');
+  modal.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 ¿A quién le pasas "${t.title}"?</div>
+    <div class="pass-task-user-grid">${h}</div>
+    <button class="btn-cancel" style="width:100%;margin-top:12px" onclick="closePassTask()">Cancelar</button>
+  `;
+}
 
-        // History
-        const history = JSON.parse(localStorage.getItem('shop_history_' + shopUser) || '[]');
-        if (history.length) {
-            let hh = '<p class="section-label">Historial de compras</p>';
-            history.slice().reverse().forEach(h => {
-                hh += `<div class="shop-history-item"><span>${h.icon} ${h.name}</span><span>-${h.cost} ⭐ · ${h.date}</span></div>`;
-            });
-            document.getElementById('shop-history').innerHTML = hh;
-        } else {
-            document.getElementById('shop-history').innerHTML = '';
-        }
-    }
+async function pickPassTarget(targetId){
+  if(!confirm('¿Pasarle "'+tasks.find(x=>x.id===passTaskId).title+'" a '+getUser(targetId).name+' por 40 puntos?'))return;
+  try{
+    await sb(`tasks?id=eq.${passTaskId}`,{method:'PATCH',body:JSON.stringify({user_id:targetId})});
+    spendPoints(shopUser,40);
+    addShopHistory(shopUser,{icon:'📤',name:'Tarea pasada a '+getUser(targetId).name,cost:40});
+    tasks=await sb('tasks?order=id.asc');
+    recalcPoints();
+    closePassTask();
+    renderShop();
+    toast('✓ Tarea pasada a '+getUser(targetId).name);
+  }catch(e){ toast('❌ Error al pasar la tarea') }
+}
 
-    function buyItem(itemId) {
-        const item = SHOP_ITEMS.find(i => i.id === itemId);
-        const pts = getUserPts(shopUser);
-        if (pts < item.cost) {
-            toast('No tienes suficientes puntos');
-            return
-        }
+function closePassTask(){
+  document.getElementById('pass-task-bg').classList.remove('open');
+  passTaskId=null;
+}
+document.getElementById('pass-task-bg').addEventListener('click',function(e){if(e.target===this)closePassTask()});
 
-        if (itemId === 'pass-task') {
-            // Open pass task flow from shop
-            openPassTaskFromShop();
-            return;
-        }
+/* ── PIN ADMIN ── */
+function openPin(){
+  document.getElementById('pin-input').value='';
+  document.getElementById('pin-error').textContent='';
+  document.getElementById('pin-bg').classList.add('open');
+  setTimeout(()=>document.getElementById('pin-input').focus(),300);
+}
+function closePin(){document.getElementById('pin-bg').classList.remove('open')}
+function checkPin(){
+  if(document.getElementById('pin-input').value===ADMIN_PIN){closePin();loginAs('admin');}
+  else{document.getElementById('pin-error').textContent='Contraseña incorrecta';document.getElementById('pin-input').value='';}
+}
+document.getElementById('pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
 
-        if (itemId === 'day-off') {
-            if (!confirm('¿Confirmas canjear "' + item.name + '" por ' + item.cost + ' puntos?'))
-                return;
-            spendPoints(shopUser, item.cost);
-            addShopHistory(shopUser, item);
-            renderShop();
-            toast('🛌 ¡Día sin tareas conseguido!');
-        }
-    }
+/* ── MODAL TAREA ── */
+document.getElementById('fab-btn').addEventListener('click',openModal);
+function openModal(){
+  selUser=null;selDiff=null;
+  buildAssignGrid();buildDiffGrid();
+  document.getElementById('f-title').value='';
+  document.getElementById('f-desc').value='';
+  initCal();
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open')}
+document.getElementById('modal-bg').addEventListener('click',function(e){if(e.target===this)closeModal()});
 
-    function addShopHistory(uid, item) {
-        const history = JSON.parse(localStorage.getItem('shop_history_' + uid) || '[]');
-        history.push({
-            icon: item.icon,
-            name: item.name,
-            cost: item.cost,
-            date: new Date().toLocaleDateString('es-ES')
-        });
-        localStorage.setItem('shop_history_' + uid, JSON.stringify(history));
-    }
+function buildAssignGrid(){
+  let h='';
+  USERS.forEach(u=>{
+    h+=`<button class="assign-btn${selUser===u.id?' sel':''}" onclick="pickUser('${u.id}')">
+      <div class="assign-av ${u.av}">${u.emoji}</div>
+      <div class="assign-name">${u.name}</div>
+    </button>`;
+  });
+  document.getElementById('assign-grid').innerHTML=h;
+}
+function pickUser(id){selUser=id;buildAssignGrid()}
 
-    /* ── PASAR TAREA ── */
-    function openPassTaskFromShop() {
-        const myTasks = tasks.filter(t => t.user_id === shopUser && !t.done);
-        if (!myTasks.length) {
-            toast('No tienes tareas pendientes para pasar');
-            return
-        }
+function buildDiffGrid(){
+  const diffs=['easy','medium','hard'];
+  const labels=['⭐ Fácil<br><small>1 punto</small>','⭐⭐ Media<br><small>2 puntos</small>','⭐⭐⭐ Difícil<br><small>3 puntos</small>'];
+  let h='';
+  diffs.forEach((d,i)=>{
+    const selCls=selDiff===d?` sel-${d}`:'';
+    h+=`<button class="diff-btn${selCls}" onclick="pickDiff('${d}')">${labels[i]}</button>`;
+  });
+  document.getElementById('diff-grid').innerHTML=h;
+}
+function pickDiff(d){selDiff=d;buildDiffGrid()}
 
-        // Show list of tasks to pick
-        let h = '<p class="section-label" style="margin-top:0">Elige qué tarea pasar</p>';
-        myTasks.forEach(t => {
-            h += `<div class="task-card" style="cursor:pointer" onclick="selectTaskToPass(${t.id})">
-                  <div class="task-title">${t.title}</div>
-                  ${t.description ? `<div class="task-desc" style="margin-top:4px">${t.description}</div>` : ''}
-                </div>`;
-        });
-        // Use pass-task modal repurposed
-        document.getElementById('pass-task-pts').textContent = getUserPts(shopUser);
-        document.getElementById('pass-task-title').textContent = 'Elige una tarea abajo';
-        document.getElementById('pass-task-user-grid').innerHTML = '';
-        // override modal content
-        const modal = document.querySelector('#pass-task-bg .modal');
-        modal.innerHTML = `
-            <div class="modal-handle"></div>
-            <div class="modal-title">📤 ¿Qué tarea quieres pasar?</div>
-            <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${getUserPts(shopUser)} ⭐</div>
-            ${h}
-            <button class="btn-cancel" style="width:100%;margin-top:8px" onclick="closePassTask()">Cancelar</button>
-          `;
-        document.getElementById('pass-task-bg').classList.add('open');
-    }
+async function saveTask(){
+  const title=document.getElementById('f-title').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  const date=getSelDateStr();
+  if(!selUser){toast('Selecciona a quién asignar la tarea');return}
+  if(!title){toast('Escribe el título de la tarea');return}
+  if(!selDiff){toast('Selecciona la dificultad');return}
+  if(!date){toast('Elige una fecha límite');return}
+  const btn=document.getElementById('save-task-btn');
+  btn.textContent='Guardando...';btn.disabled=true;
+  try{
+    const result=await sb('tasks',{method:'POST',body:JSON.stringify({user_id:selUser,title,description:desc,deadline:date,done:false,difficulty:selDiff})});
+    if(result&&result[0])tasks.push(result[0]);
+    closeModal();buildLogin();renderAdminProfiles();
+    toast('✓ Tarea añadida a '+getUser(selUser).name);
+  }catch(e){ toast('❌ Error al guardar') }
+  finally{btn.textContent='✓ Guardar tarea';btn.disabled=false;}
+}
 
-    function selectTaskToPass(taskId) {
-        passTaskId = taskId;
-        const t = tasks.find(x => x.id === taskId);
-        const others = USERS.filter(u => u.id !== shopUser);
-        let h = '';
-        others.forEach(u => {
-            h += `<button class="pass-task-user-btn" onclick="pickPassTarget('${u.id}')">
-                  <div class="pass-user-av ${u.av}" style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px">${u.emoji}</div>
-                  <div class="pass-user-name" style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
-                </button>`;
-        });
-        const modal = document.querySelector('#pass-task-bg .modal');
-        modal.innerHTML = `
-            <div class="modal-handle"></div>
-            <div class="modal-title">📤 ¿A quién le pasas "${t.title}"?</div>
-            <div class="pass-task-user-grid">${h}</div>
-            <button class="btn-cancel" style="width:100%;margin-top:12px" onclick="closePassTask()">Cancelar</button>
-          `;
-    }
+/* ── MODAL CONTRASEÑAS ── */
+function openPassModal(){
+  selPassUser=null;buildPassUserGrid();
+  document.getElementById('pass-fields').style.display='none';
+  document.getElementById('new-pass').value='';
+  document.getElementById('new-pass2').value='';
+  document.getElementById('pass-error').textContent='';
+  document.getElementById('pass-modal-bg').classList.add('open');
+}
+function closePassModal(){document.getElementById('pass-modal-bg').classList.remove('open')}
+document.getElementById('pass-modal-bg').addEventListener('click',function(e){if(e.target===this)closePassModal()});
 
-    async function pickPassTarget(targetId) {
-        if (!confirm('¿Pasarle "' + tasks.find(x => x.id === passTaskId).title + '" a ' + getUser(targetId).name + ' por 40 puntos?'))
-            return;
-        try {
-            await sb(`tasks?id=eq.${passTaskId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    user_id: targetId
-                })
-            });
-            spendPoints(shopUser, 40);
-            addShopHistory(shopUser, {
-                icon: '📤',
-                name: 'Tarea pasada a ' + getUser(targetId).name,
-                cost: 40
-            });
-            tasks = await sb('tasks?order=id.asc');
-            recalcPoints();
-            closePassTask();
-            renderShop();
-            toast('✓ Tarea pasada a ' + getUser(targetId).name);
-        } catch (e) {
-            toast('❌ Error al pasar la tarea')
-        }
-    }
+function buildPassUserGrid(){
+  let h='';
+  USERS.forEach(u=>{
+    const hasP=!!userPasses[u.id];
+    h+=`<button class="pass-user-btn${selPassUser===u.id?' sel':''}" onclick="pickPassUser('${u.id}')">
+      <div class="pass-user-av ${u.av}">${u.emoji}</div>
+      <div class="pass-user-name">${u.name}</div>
+      <div class="pass-user-status">${hasP?'🔒 Con contraseña':'Sin contraseña'}</div>
+    </button>`;
+  });
+  document.getElementById('pass-user-grid').innerHTML=h;
+}
+function pickPassUser(id){
+  selPassUser=id;buildPassUserGrid();
+  document.getElementById('pass-fields').style.display='block';
+  document.getElementById('new-pass').value='';
+  document.getElementById('new-pass2').value='';
+  document.getElementById('pass-error').textContent='';
+  document.getElementById('new-pass-label').textContent='Nueva contraseña para '+getUser(id).name;
+  setTimeout(()=>document.getElementById('new-pass').focus(),100);
+}
+async function savePass(){
+  const p1=document.getElementById('new-pass').value;
+  const p2=document.getElementById('new-pass2').value;
+  if(!p1){document.getElementById('pass-error').textContent='Escribe una contraseña';return}
+  if(p1!==p2){document.getElementById('pass-error').textContent='Las contraseñas no coinciden';return}
+  try{
+    await sb('user_passwords',{method:'POST',extraHeaders:{'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify({user_id:selPassUser,password:p1})});
+    userPasses[selPassUser]=p1;closePassModal();buildLogin();
+    toast('✓ Contraseña guardada para '+getUser(selPassUser).name);
+  }catch(e){ toast('❌ Error guardando contraseña') }
+}
 
-    function closePassTask() {
-        document.getElementById('pass-task-bg').classList.remove('open');
-        passTaskId = null;
-    }
-    document.getElementById('pass-task-bg').addEventListener('click', function(e) {
-        if (e.target === this)
-            closePassTask()
-    });
+/* ── ADMIN ── */
+function renderAdminProfiles(){
+  recalcPoints();
+  let h='';
+  USERS.forEach(u=>{
+    const ut=tasks.filter(t=>t.user_id===u.id);
+    const pend=ut.filter(t=>!t.done).length,done=ut.filter(t=>t.done).length;
+    const pts=getUserPts(u.id);
+    let st=ut.length===0?`<span class="stat-pill stat-none">Sin tareas</span>`:'';
+    if(pend)st+=`<span class="stat-pill stat-pend">${pend} pend.</span>`;
+    if(done)st+=`<span class="stat-pill stat-done">${done} hechas</span>`;
+    if(pts)st+=`<span class="stat-pill stat-pts">${pts} ⭐</span>`;
+    h+=`<div class="profile-row" onclick="openUserView('${u.id}')">
+      <div class="profile-av ${u.av}">${u.emoji}</div>
+      <div class="profile-name">${u.name}</div>
+      <div class="profile-stats">${st}</div>
+      <span style="color:#aeaeb2;font-size:20px">›</span>
+    </div>`;
+  });
+  document.getElementById('admin-profiles').innerHTML=h;
+}
 
-    /* ── PIN ADMIN ── */
-    function openPin() {
-        document.getElementById('pin-input').value = '';
-        document.getElementById('pin-error').textContent = '';
-        document.getElementById('pin-bg').classList.add('open');
-        setTimeout(() => document.getElementById('pin-input').focus(), 300);
-    }
-    function closePin() {
-        document.getElementById('pin-bg').classList.remove('open')
-    }
-    function checkPin() {
-        if (document.getElementById('pin-input').value === ADMIN_PIN) {
-            closePin();
-            loginAs('admin');
-        }
-        else {
-            document.getElementById('pin-error').textContent = 'Contraseña incorrecta';
-            document.getElementById('pin-input').value = '';
-        }
-    }
-    document.getElementById('pin-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter')
-            checkPin()
-    });
+async function openUserView(uid){
+  adminViewUid=uid;const u=getUser(uid);
+  setAv('au-av',u);document.getElementById('au-name').textContent='Tareas de '+u.name;
+  show('s-admin-user');
+  try{tasks=await sb('tasks?order=id.asc');recalcPoints();}catch(e){}
+  renderTasks(uid,'au-tasks',true);
+}
+function backToAdmin(){adminViewUid=null;renderAdminProfiles();show('s-admin')}
 
-    /* ── MODAL TAREA ── */
-    document.getElementById('fab-btn').addEventListener('click', openModal);
-    function openModal() {
-        selUser = null;
-        selDiff = null;
-        buildAssignGrid();
-        buildDiffGrid();
-        document.getElementById('f-title').value = '';
-        document.getElementById('f-desc').value = '';
-        initCal();
-        document.getElementById('modal-bg').classList.add('open');
-    }
-    function closeModal() {
-        document.getElementById('modal-bg').classList.remove('open')
-    }
-    document.getElementById('modal-bg').addEventListener('click', function(e) {
-        if (e.target === this)
-            closeModal()
-    });
+/* ── TAREAS ── */
+function renderTasks(uid,cid,isAdmin){
+  const ut=tasks.filter(t=>t.user_id===uid);
+  const pend=ut.filter(t=>!t.done),done=ut.filter(t=>t.done);
+  let h='';
+  if(pend.length){h+=`<p class="section-label">Pendientes (${pend.length})</p>`;pend.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(done.length){h+=`<p class="section-label">Completadas</p>`;done.forEach(t=>{h+=taskHTML(t,isAdmin)})}
+  if(!ut.length)h=`<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">✓</div>Sin tareas asignadas de momento.</div>`;
+  document.getElementById(cid).innerHTML=h;
+}
 
-    function buildAssignGrid() {
-        let h = '';
-        USERS.forEach(u => {
-            h += `<button class="assign-btn${selUser === u.id ? ' sel' : ''}" onclick="pickUser('${u.id}')">
-                  <div class="assign-av ${u.av}">${u.emoji}</div>
-                  <div class="assign-name">${u.name}</div>
-                </button>`;
-        });
-        document.getElementById('assign-grid').innerHTML = h;
-    }
-    function pickUser(id) {
-        selUser = id;
-        buildAssignGrid()
-    }
+function taskHTML(t,isAdmin){
+  const ov=isOverdue(t),di=dlInfo(t);
+  const diffTag=t.difficulty?`<span class="tag ${DIFF_TAG[t.difficulty]||'tag-ok'}">${DIFF_LABEL[t.difficulty]||''}</span>`:'';
+  return`<div class="task-card${t.done?' done':''}${ov?' overdue':''}" id="tc-${t.id}">
+    <div class="task-row">
+      ${!isAdmin?`<button class="check-btn${t.done?' checked':''}" onclick="toggle(${t.id})"></button>`:''}
+      <div class="task-info">
+        <div class="task-title">${t.title}</div>
+        ${t.description?`<div class="task-desc">${t.description}</div>`:''}
+        <div class="task-meta">
+          ${di.txt?`<span class="tag ${di.cls}">📅 ${di.txt}</span>`:''}
+          ${diffTag}
+        </div>
+        ${!isAdmin&&!t.done?`<div class="task-actions"><button class="pass-btn" onclick="openPassTaskModal(${t.id})">📤 Pasar tarea (40⭐)</button></div>`:''}
+      </div>
+      ${isAdmin?`<button class="del-btn" onclick="delTask(${t.id})">🗑️</button>`:''}
+    </div>
+  </div>`;
+}
 
-    function buildDiffGrid() {
-        const diffs = ['easy', 'medium', 'hard'];
-        const labels = ['⭐ Fácil<br><small>1 punto</small>', '⭐⭐ Media<br><small>2 puntos</small>', '⭐⭐⭐ Difícil<br><small>3 puntos</small>'];
-        let h = '';
-        diffs.forEach((d, i) => {
-            const selCls = selDiff === d ? ` sel-${d}` : '';
-            h += `<button class="diff-btn${selCls}" onclick="pickDiff('${d}')">${labels[i]}</button>`;
-        });
-        document.getElementById('diff-grid').innerHTML = h;
-    }
-    function pickDiff(d) {
-        selDiff = d;
-        buildDiffGrid()
-    }
+function openPassTaskModal(taskId){
+  const pts=getUserPts(curUser);
+  if(pts<40){toast('Necesitas 40 ⭐ para pasar una tarea. Tienes '+pts);return}
+  passTaskId=taskId;
+  const t=tasks.find(x=>x.id===taskId);
+  const others=USERS.filter(u=>u.id!==curUser);
+  document.getElementById('pass-task-pts').textContent=pts;
+  document.getElementById('pass-task-title').textContent=t.title;
+  let h='';
+  others.forEach(u=>{
+    h+=`<button class="pass-task-user-btn${passTaskToUser===u.id?' sel':''}" onclick="pickPassTarget('${u.id}')">
+      <div style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px" class="${u.av}">${u.emoji}</div>
+      <div style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
+    </button>`;
+  });
+  // Rebuild modal to original structure
+  const modal=document.querySelector('#pass-task-bg .modal');
+  modal.innerHTML=`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📤 Pasar tarea</div>
+    <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${pts} ⭐</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong>${t.title}</strong></div>
+    <div class="field"><label>¿A quién se la pasas?</label><div class="pass-task-user-grid">${h}</div></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
+      <button class="btn-save" onclick="confirmPassTask()">✓ Pasar tarea</button>
+    </div>
+  `;
+  document.getElementById('pass-task-bg').classList.add('open');
+}
 
-    async function saveTask() {
-        const title = document.getElementById('f-title').value.trim();
-        const desc = document.getElementById('f-desc').value.trim();
-        const date = getSelDateStr();
-        if (!selUser) {
-            toast('Selecciona a quién asignar la tarea');
-            return
-        }
-        if (!title) {
-            toast('Escribe el título de la tarea');
-            return
-        }
-        if (!selDiff) {
-            toast('Selecciona la dificultad');
-            return
-        }
-        if (!date) {
-            toast('Elige una fecha límite');
-            return
-        }
-        const btn = document.getElementById('save-task-btn');
-        btn.textContent = 'Guardando...';
-        btn.disabled = true;
-        try {
-            const result = await sb('tasks', {
-                method: 'POST',
-                body: JSON.stringify({
-                    user_id: selUser,
-                    title,
-                    description: desc,
-                    deadline: date,
-                    done: false,
-                    difficulty: selDiff
-                })
-            });
-            if (result && result[0])
-                tasks.push(result[0]);
-            closeModal();
-            buildLogin();
-            renderAdminProfiles();
-            toast('✓ Tarea añadida a ' + getUser(selUser).name);
-        } catch (e) {
-            toast('❌ Error al guardar')
-        }
-        finally {
-            btn.textContent = '✓ Guardar tarea';
-            btn.disabled = false;
-        }
-    }
+async function confirmPassTask(){
+  if(!passTaskToUser){toast('Selecciona a quién pasarla');return}
+  const t=tasks.find(x=>x.id===passTaskId);
+  if(!confirm('¿Pasarle "'+t.title+'" a '+getUser(passTaskToUser).name+' por 40 puntos?'))return;
+  try{
+    await sb(`tasks?id=eq.${passTaskId}`,{method:'PATCH',body:JSON.stringify({user_id:passTaskToUser})});
+    spendPoints(curUser,40);
+    tasks=await sb('tasks?order=id.asc');
+    recalcPoints();
+    closePassTask();
+    document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
+    renderTasks(curUser,'u-tasks',false);
+    buildLogin();
+    toast('✓ Tarea pasada a '+getUser(passTaskToUser).name);
+  }catch(e){ toast('❌ Error al pasar la tarea') }
+}
 
-    /* ── MODAL CONTRASEÑAS ── */
-    function openPassModal() {
-        selPassUser = null;
-        buildPassUserGrid();
-        document.getElementById('pass-fields').style.display = 'none';
-        document.getElementById('new-pass').value = '';
-        document.getElementById('new-pass2').value = '';
-        document.getElementById('pass-error').textContent = '';
-        document.getElementById('pass-modal-bg').classList.add('open');
-    }
-    function closePassModal() {
-        document.getElementById('pass-modal-bg').classList.remove('open')
-    }
-    document.getElementById('pass-modal-bg').addEventListener('click', function(e) {
-        if (e.target === this)
-            closePassModal()
-    });
+async function toggle(id){
+  const t=tasks.find(x=>x.id===id);if(!t)return;
+  const newDone=!t.done;t.done=newDone;
+  renderTasks(curUser,'u-tasks',false);buildLogin();
+  const pts=getUserPts(curUser);
+  document.getElementById('u-points').textContent='⭐ '+(newDone?pts+(DIFF_PTS[t.difficulty]||1):pts-(DIFF_PTS[t.difficulty]||1));
+  try{
+    await sb(`tasks?id=eq.${id}`,{method:'PATCH',body:JSON.stringify({done:newDone})});
+    recalcPoints();
+    document.getElementById('u-points').textContent='⭐ '+getUserPts(curUser);
+  }catch(e){t.done=!newDone;renderTasks(curUser,'u-tasks',false);toast('❌ Error al actualizar');}
+}
 
-    function buildPassUserGrid() {
-        let h = '';
-        USERS.forEach(u => {
-            const hasP = !!userPasses[u.id];
-            h += `<button class="pass-user-btn${selPassUser === u.id ? ' sel' : ''}" onclick="pickPassUser('${u.id}')">
-                  <div class="pass-user-av ${u.av}">${u.emoji}</div>
-                  <div class="pass-user-name">${u.name}</div>
-                  <div class="pass-user-status">${hasP ? '🔒 Con contraseña' : 'Sin contraseña'}</div>
-                </button>`;
-        });
-        document.getElementById('pass-user-grid').innerHTML = h;
-    }
-    function pickPassUser(id) {
-        selPassUser = id;
-        buildPassUserGrid();
-        document.getElementById('pass-fields').style.display = 'block';
-        document.getElementById('new-pass').value = '';
-        document.getElementById('new-pass2').value = '';
-        document.getElementById('pass-error').textContent = '';
-        document.getElementById('new-pass-label').textContent = 'Nueva contraseña para ' + getUser(id).name;
-        setTimeout(() => document.getElementById('new-pass').focus(), 100);
-    }
-    async function savePass() {
-        const p1 = document.getElementById('new-pass').value;
-        const p2 = document.getElementById('new-pass2').value;
-        if (!p1) {
-            document.getElementById('pass-error').textContent = 'Escribe una contraseña';
-            return
-        }
-        if (p1 !== p2) {
-            document.getElementById('pass-error').textContent = 'Las contraseñas no coinciden';
-            return
-        }
-        try {
-            await sb('user_passwords', {
-                method: 'POST',
-                extraHeaders: {
-                    'Prefer': 'resolution=merge-duplicates,return=representation'
-                },
-                body: JSON.stringify({
-                    user_id: selPassUser,
-                    password: p1
-                })
-            });
-            userPasses[selPassUser] = p1;
-            closePassModal();
-            buildLogin();
-            toast('✓ Contraseña guardada para ' + getUser(selPassUser).name);
-        } catch (e) {
-            toast('❌ Error guardando contraseña')
-        }
-    }
+async function delTask(id){
+  if(!confirm('¿Eliminar esta tarea?'))return;
+  tasks=tasks.filter(x=>x.id!==id);recalcPoints();
+  buildLogin();
+  if(adminViewUid){renderTasks(adminViewUid,'au-tasks',true);renderAdminProfiles();}
+  try{
+    await fetch(SUPABASE_URL+'/rest/v1/tasks?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});
+  }catch(e){ toast('❌ Error al eliminar') }
+}
 
-    /* ── ADMIN ── */
-    function renderAdminProfiles() {
-        recalcPoints();
-        let h = '';
-        USERS.forEach(u => {
-            const ut = tasks.filter(t => t.user_id === u.id);
-            const pend = ut.filter(t => !t.done).length,
-                done = ut.filter(t => t.done).length;
-            const pts = getUserPts(u.id);
-            let st = ut.length === 0 ? `<span class="stat-pill stat-none">Sin tareas</span>` : '';
-            if (pend)
-                st += `<span class="stat-pill stat-pend">${pend} pend.</span>`;
-            if (done)
-                st += `<span class="stat-pill stat-done">${done} hechas</span>`;
-            if (pts)
-                st += `<span class="stat-pill stat-pts">${pts} ⭐</span>`;
-            h += `<div class="profile-row" onclick="openUserView('${u.id}')">
-                  <div class="profile-av ${u.av}">${u.emoji}</div>
-                  <div class="profile-name">${u.name}</div>
-                  <div class="profile-stats">${st}</div>
-                  <span style="color:#aeaeb2;font-size:20px">›</span>
-                </div>`;
-        });
-        document.getElementById('admin-profiles').innerHTML = h;
-    }
+/* ── CALENDARIO ── */
+function initCal(){
+  const now=new Date();calYear=now.getFullYear();calMonth=now.getMonth();selDate=null;
+  buildCalSelects();renderCal();
+  document.getElementById('cal-chosen').textContent='Ninguna fecha seleccionada';
+}
+function buildCalSelects(){
+  const ms=document.getElementById('cal-month-sel');
+  ms.innerHTML=MONTHS.map((m,i)=>`<option value="${i}"${i===calMonth?' selected':''}>${m}</option>`).join('');
+  const ys=document.getElementById('cal-year-sel');
+  const now=new Date().getFullYear();let yo='';
+  for(let y=now;y<=2040;y++)yo+=`<option value="${y}"${y===calYear?' selected':''}>${y}</option>`;
+  ys.innerHTML=yo;
+}
+function calMonthChange(){calMonth=parseInt(document.getElementById('cal-month-sel').value);renderCal()}
+function calYearChange(){calYear=parseInt(document.getElementById('cal-year-sel').value);renderCal()}
+function calMove(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}
+  if(calYear>2040){calYear=2040;calMonth=11;}
+  const now=new Date();
+  if(calYear<now.getFullYear()||(calYear===now.getFullYear()&&calMonth<now.getMonth())){calYear=now.getFullYear();calMonth=now.getMonth();}
+  buildCalSelects();renderCal();
+}
+function renderCal(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let startDow=new Date(calYear,calMonth,1).getDay();startDow=startDow===0?6:startDow-1;
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const dip=new Date(calYear,calMonth,0).getDate();
+  let h=DAYS.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++)h+=`<div class="cal-day other">${dip-startDow+1+i}</div>`;
+  for(let d=1;d<=dim;d++){
+    const dt=new Date(calYear,calMonth,d);
+    const isPast=dt<today,isTod=dt.getTime()===today.getTime(),isSel=selDate&&dt.getTime()===selDate.getTime();
+    let cls='cal-day';
+    if(isPast)cls+=' past';else if(isSel)cls+=' selected';else if(isTod)cls+=' today';
+    h+=`<div class="${cls}"${isPast?'':` onclick="pickDay(${d})"`}>${d}</div>`;
+  }
+  const rem=(7-(startDow+dim)%7)%7;
+  for(let i=1;i<=rem;i++)h+=`<div class="cal-day other">${i}</div>`;
+  document.getElementById('cal-grid').innerHTML=h;
+}
+function pickDay(d){
+  selDate=new Date(calYear,calMonth,d);renderCal();
+  document.getElementById('cal-chosen').textContent='📅 '+String(d).padStart(2,'0')+'/'+String(calMonth+1).padStart(2,'0')+'/'+calYear;
+}
+function getSelDateStr(){
+  if(!selDate)return null;
+  return selDate.getFullYear()+'-'+String(selDate.getMonth()+1).padStart(2,'0')+'-'+String(selDate.getDate()).padStart(2,'0');
+}
 
-    async function openUserView(uid) {
-        adminViewUid = uid;
-        const u = getUser(uid);
-        setAv('au-av', u);
-        document.getElementById('au-name').textContent = 'Tareas de ' + u.name;
-        show('s-admin-user');
-        try {
-            tasks = await sb('tasks?order=id.asc');
-            recalcPoints();
-        } catch (e) {}
-        renderTasks(uid, 'au-tasks', true);
-    }
-    function backToAdmin() {
-        adminViewUid = null;
-        renderAdminProfiles();
-        show('s-admin')
-    }
+/* ── HELPERS ── */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function setAv(elId,u){const el=document.getElementById(elId);el.className='topbar-av '+u.av;el.textContent=u.emoji}
+function isOverdue(t){if(t.done||!t.deadline)return false;const td=new Date();td.setHours(0,0,0,0);return new Date(t.deadline)<td}
+function fmtDate(dl){const[y,m,d]=dl.split('-');return d+'/'+m+'/'+y}
+function dlInfo(t){
+  if(!t.deadline)return{cls:'tag-ok',txt:''};
+  const td=new Date();td.setHours(0,0,0,0);
+  const diff=Math.round((new Date(t.deadline)-td)/86400000);
+  if(t.done)return{cls:'tag-ok',txt:'Entregada el '+fmtDate(t.deadline)};
+  if(diff<0)return{cls:'tag-overdue',txt:'Vencida el '+fmtDate(t.deadline)};
+  if(diff===0)return{cls:'tag-soon',txt:'Vence hoy'};
+  if(diff===1)return{cls:'tag-soon',txt:'Vence mañana'};
+  return{cls:'tag-ok',txt:'Hasta el '+fmtDate(t.deadline)};
+}
+function toast(msg){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;z-index:9999;white-space:nowrap;font-family:-apple-system,sans-serif;max-width:90vw;text-align:center';
+  el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);
+}
 
-    /* ── TAREAS ── */
-    function renderTasks(uid, cid, isAdmin) {
-        const ut = tasks.filter(t => t.user_id === uid);
-        const pend = ut.filter(t => !t.done),
-            done = ut.filter(t => t.done);
-        let h = '';
-        if (pend.length) {
-            h += `<p class="section-label">Pendientes (${pend.length})</p>`;
-            pend.forEach(t => {
-                h += taskHTML(t, isAdmin)
-            })
-        }
-        if (done.length) {
-            h += `<p class="section-label">Completadas</p>`;
-            done.forEach(t => {
-                h += taskHTML(t, isAdmin)
-            })
-        }
-        if (!ut.length)
-            h = `<div class="empty-state"><div style="font-size:32px;opacity:.3;margin-bottom:.6rem">✓</div>Sin tareas asignadas de momento.</div>`;
-        document.getElementById(cid).innerHTML = h;
-    }
-
-    function taskHTML(t, isAdmin) {
-        const ov = isOverdue(t),
-            di = dlInfo(t);
-        const diffTag = t.difficulty ? `<span class="tag ${DIFF_TAG[t.difficulty] || 'tag-ok'}">${DIFF_LABEL[t.difficulty] || ''}</span>` : '';
-        return `<div class="task-card${t.done ? ' done' : ''}${ov ? ' overdue' : ''}" id="tc-${t.id}">
-            <div class="task-row">
-              ${!isAdmin ? `<button class="check-btn${t.done ? ' checked' : ''}" onclick="toggle(${t.id})"></button>` : ''}
-              <div class="task-info">
-                <div class="task-title">${t.title}</div>
-                ${t.description ? `<div class="task-desc">${t.description}</div>` : ''}
-                <div class="task-meta">
-                  ${di.txt ? `<span class="tag ${di.cls}">📅 ${di.txt}</span>` : ''}
-                  ${diffTag}
-                </div>
-                ${!isAdmin && !t.done ? `<div class="task-actions"><button class="pass-btn" onclick="openPassTaskModal(${t.id})">📤 Pasar tarea (40⭐)</button></div>` : ''}
-              </div>
-              ${isAdmin ? `<button class="del-btn" onclick="delTask(${t.id})">🗑️</button>` : ''}
-            </div>
-          </div>`;
-    }
-
-    function openPassTaskModal(taskId) {
-        const pts = getUserPts(curUser);
-        if (pts < 40) {
-            toast('Necesitas 40 ⭐ para pasar una tarea. Tienes ' + pts);
-            return
-        }
-        passTaskId = taskId;
-        const t = tasks.find(x => x.id === taskId);
-        const others = USERS.filter(u => u.id !== curUser);
-        document.getElementById('pass-task-pts').textContent = pts;
-        document.getElementById('pass-task-title').textContent = t.title;
-        let h = '';
-        others.forEach(u => {
-            h += `<button class="pass-task-user-btn${passTaskToUser === u.id ? ' sel' : ''}" onclick="pickPassTarget('${u.id}')">
-                  <div style="width:40px;height:40px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px" class="${u.av}">${u.emoji}</div>
-                  <div style="font-size:14px;font-weight:600;color:var(--text)">${u.name}</div>
-                </button>`;
-        });
-        // Rebuild modal to original structure
-        const modal = document.querySelector('#pass-task-bg .modal');
-        modal.innerHTML = `
-            <div class="modal-handle"></div>
-            <div class="modal-title">📤 Pasar tarea</div>
-            <div style="background:var(--orange-bg);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:1rem;font-size:13px;color:var(--orange-text);font-weight:600">⚠️ Cuesta 40 puntos · Tienes ${pts} ⭐</div>
-            <div style="font-size:14px;color:var(--text2);margin-bottom:1rem">Tarea: <strong>${t.title}</strong></div>
-            <div class="field"><label>¿A quién se la pasas?</label><div class="pass-task-user-grid">${h}</div></div>
-            <div class="modal-actions" style="margin-top:1rem">
-              <button class="btn-cancel" onclick="closePassTask()">Cancelar</button>
-              <button class="btn-save" onclick="confirmPassTask()">✓ Pasar tarea</button>
-            </div>
-          `;
-        document.getElementById('pass-task-bg').classList.add('open');
-    }
-
-    async function confirmPassTask() {
-        if (!passTaskToUser) {
-            toast('Selecciona a quién pasarla');
-            return
-        }
-        const t = tasks.find(x => x.id === passTaskId);
-        if (!confirm('¿Pasarle "' + t.title + '" a ' + getUser(passTaskToUser).name + ' por 40 puntos?'))
-            return;
-        try {
-            await sb(`tasks?id=eq.${passTaskId}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    user_id: passTaskToUser
-                })
-            });
-            spendPoints(curUser, 40);
-            tasks = await sb('tasks?order=id.asc');
-            recalcPoints();
-            closePassTask();
-            document.getElementById('u-points').textContent = '⭐ ' + getUserPts(curUser);
-            renderTasks(curUser, 'u-tasks', false);
-            buildLogin();
-            toast('✓ Tarea pasada a ' + getUser(passTaskToUser).name);
-        } catch (e) {
-            toast('❌ Error al pasar la tarea')
-        }
-    }
-
-    async function toggle(id) {
-        const t = tasks.find(x => x.id === id);
-        if (!t)
-            return;
-        const newDone = !t.done;
-        t.done = newDone;
-        renderTasks(curUser, 'u-tasks', false);
-        buildLogin();
-        const pts = getUserPts(curUser);
-        document.getElementById('u-points').textContent = '⭐ ' + (newDone ? pts + (DIFF_PTS[t.difficulty] || 1) : pts - (DIFF_PTS[t.difficulty] || 1));
-        try {
-            await sb(`tasks?id=eq.${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                    done: newDone
-                })
-            });
-            recalcPoints();
-            document.getElementById('u-points').textContent = '⭐ ' + getUserPts(curUser);
-        } catch (e) {
-            t.done = !newDone;
-            renderTasks(curUser, 'u-tasks', false);
-            toast('❌ Error al actualizar');
-        }
-    }
-
-    async function delTask(id) {
-        if (!confirm('¿Eliminar esta tarea?'))
-            return;
-        tasks = tasks.filter(x => x.id !== id);
-        recalcPoints();
-        buildLogin();
-        if (adminViewUid) {
-            renderTasks(adminViewUid, 'au-tasks', true);
-            renderAdminProfiles();
-        }
-        try {
-            await fetch(SUPABASE_URL + '/rest/v1/tasks?id=eq.' + id, {
-                method: 'DELETE',
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY
-                }
-            });
-        } catch (e) {
-            toast('❌ Error al eliminar')
-        }
-    }
-
-    /* ── CALENDARIO ── */
-    function initCal() {
-        const now = new Date();
-        calYear = now.getFullYear();
-        calMonth = now.getMonth();
-        selDate = null;
-        buildCalSelects();
-        renderCal();
-        document.getElementById('cal-chosen').textContent = 'Ninguna fecha seleccionada';
-    }
-    function buildCalSelects() {
-        const ms = document.getElementById('cal-month-sel');
-        ms.innerHTML = MONTHS.map((m, i) => `<option value="${i}"${i === calMonth ? ' selected' : ''}>${m}</option>`).join('');
-        const ys = document.getElementById('cal-year-sel');
-        const now = new Date().getFullYear();
-        let yo = '';
-        for (let y = now; y <= 2040; y++)
-            yo += `<option value="${y}"${y === calYear ? ' selected' : ''}>${y}</option>`;
-        ys.innerHTML = yo;
-    }
-    function calMonthChange() {
-        calMonth = parseInt(document.getElementById('cal-month-sel').value);
-        renderCal()
-    }
-    function calYearChange() {
-        calYear = parseInt(document.getElementById('cal-year-sel').value);
-        renderCal()
-    }
-    function calMove(dir) {
-        calMonth += dir;
-        if (calMonth < 0) {
-            calMonth = 11;
-            calYear--;
-        }
-        if (calMonth > 11) {
-            calMonth = 0;
-            calYear++;
-        }
-        if (calYear > 2040) {
-            calYear = 2040;
-            calMonth = 11;
-        }
-        const now = new Date();
-        if (calYear < now.getFullYear() || (calYear === now.getFullYear() && calMonth < now.getMonth())) {
-            calYear = now.getFullYear();
-            calMonth = now.getMonth();
-        }
-        buildCalSelects();
-        renderCal();
-    }
-    function renderCal() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        let startDow = new Date(calYear, calMonth, 1).getDay();
-        startDow = startDow === 0 ? 6 : startDow - 1;
-        const dim = new Date(calYear, calMonth + 1, 0).getDate();
-        const dip = new Date(calYear, calMonth, 0).getDate();
-        let h = DAYS.map(d => `<div class="cal-day-name">${d}</div>`).join('');
-        for (let i = 0; i < startDow; i++)
-            h += `<div class="cal-day other">${dip - startDow + 1 + i}</div>`;
-        for (let d = 1; d <= dim; d++) {
-            const dt = new Date(calYear, calMonth, d);
-            const isPast = dt < today,
-                isTod = dt.getTime() === today.getTime(),
-                isSel = selDate && dt.getTime() === selDate.getTime();
-            let cls = 'cal-day';
-            if (isPast)
-                cls += ' past';
-            else if (isSel)
-                cls += ' selected';
-            else if (isTod)
-                cls += ' today';
-            h += `<div class="${cls}"${isPast ? '' : ` onclick="pickDay(${d})"`}>${d}</div>`;
-        }
-        const rem = (7 - (startDow + dim) % 7) % 7;
-        for (let i = 1; i <= rem; i++)
-            h += `<div class="cal-day other">${i}</div>`;
-        document.getElementById('cal-grid').innerHTML = h;
-    }
-    function pickDay(d) {
-        selDate = new Date(calYear, calMonth, d);
-        renderCal();
-        document.getElementById('cal-chosen').textContent = '📅 ' + String(d).padStart(2, '0') + '/' + String(calMonth + 1).padStart(2, '0') + '/' + calYear;
-    }
-    function getSelDateStr() {
-        if (!selDate)
-            return null;
-        return selDate.getFullYear() + '-' + String(selDate.getMonth() + 1).padStart(2, '0') + '-' + String(selDate.getDate()).padStart(2, '0');
-    }
-
-    /* ── HELPERS ── */
-    function show(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        window.scrollTo(0, 0)
-    }
-    function setAv(elId, u) {
-        const el = document.getElementById(elId);
-        el.className = 'topbar-av ' + u.av;
-        el.textContent = u.emoji
-    }
-    function isOverdue(t) {
-        if (t.done || !t.deadline)
-            return false;
-        const td = new Date();
-        td.setHours(0, 0, 0, 0);
-        return new Date(t.deadline) < td
-    }
-    function fmtDate(dl) {
-        const [y, m, d] = dl.split('-');
-        return d + '/' + m + '/' + y
-    }
-    function dlInfo(t) {
-        if (!t.deadline)
-            return {
-                cls: 'tag-ok',
-                txt: ''
-            };
-        const td = new Date();
-        td.setHours(0, 0, 0, 0);
-        const diff = Math.round((new Date(t.deadline) - td) / 86400000);
-        if (t.done)
-            return {
-                cls: 'tag-ok',
-                txt: 'Entregada el ' + fmtDate(t.deadline)
-            };
-        if (diff < 0)
-            return {
-                cls: 'tag-overdue',
-                txt: 'Vencida el ' + fmtDate(t.deadline)
-            };
-        if (diff === 0)
-            return {
-                cls: 'tag-soon',
-                txt: 'Vence hoy'
-            };
-        if (diff === 1)
-            return {
-                cls: 'tag-soon',
-                txt: 'Vence mañana'
-            };
-        return {
-            cls: 'tag-ok',
-            txt: 'Hasta el ' + fmtDate(t.deadline)
-        };
-    }
-    function toast(msg) {
-        const el = document.createElement('div');
-        el.style.cssText = 'position:fixed;bottom:max(24px,env(safe-area-inset-bottom,24px));left:50%;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;font-weight:600;z-index:9999;white-space:nowrap;font-family:-apple-system,sans-serif;max-width:90vw;text-align:center';
-        el.textContent = msg;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 3000);
-    }
-
-    loadAll();
-    </script>
+loadAll();
+</script>
 </body>
 </html>
