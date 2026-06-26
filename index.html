@@ -935,14 +935,13 @@ async function saveWheelSpin(idx){
       user_id:wheelUser,prize_id:p.id,prize_name:p.name,prize_emoji:p.emoji,week
     })});
     if(result&&result[0])wheelSpins.unshift(result[0]);
-    // Add points if prize gives points
-    if(p.pts>0){
-      recalcPoints();
-      buildLogin();
-    }
+    // Siempre recalcular y actualizar ranking y tienda
+    recalcPoints();
+    buildLogin();
     renderWheelHistory();
     updateWheelBtn();
-    // Also update shop if open
+    // Si la tienda está abierta para este usuario, actualizarla también
+    if(shopUser===wheelUser) renderShop();
   }catch(e){toast('❌ Error guardando premio')}
 }
 
@@ -996,6 +995,14 @@ function renderLeaderboard(){
         if(pts[c.from_user]!==undefined) pts[c.from_user]=Math.max(0,pts[c.from_user]-c.points);
         if(pts[c.to_user]!==undefined) pts[c.to_user]=Math.max(0,pts[c.to_user]-c.points);
       }
+    }
+  });
+  // Puntos de ruleta esta semana
+  wheelSpins.forEach(s=>{
+    const prize=WHEEL_PRIZES.find(p=>p.id===s.prize_id);
+    if(prize&&prize.pts>0&&s.created_at&&pts[s.user_id]!==undefined){
+      const d=new Date(s.created_at);
+      if(d>=weekAgo) pts[s.user_id]+=prize.pts;
     }
   });
   const ranked=[...USERS].sort((a,b)=>pts[b.id]-pts[a.id]);
