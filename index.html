@@ -32,10 +32,12 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 
 /* LOGIN */
 .login-wrap{padding:2rem 1.25rem;max-width:440px;margin:0 auto}
-.login-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.75rem}
+.login-header{margin-bottom:1.5rem}
+.login-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:.25rem}
 .login-title{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.3px}
 .login-sub{font-size:15px;color:var(--text2);margin-top:.2rem}
-.shop-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.login-btns{display:flex;gap:8px;flex-shrink:0;padding-top:2px}
+.shop-btn{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .shop-btn:active{opacity:.85}
 .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1rem;cursor:pointer;text-align:center;position:relative;-webkit-user-select:none;user-select:none}
@@ -234,14 +236,14 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .shop-history-item{background:var(--surface2);border-radius:var(--radius-sm);padding:.7rem 1rem;margin-bottom:6px;font-size:13px;color:var(--text2);display:flex;justify-content:space-between;gap:8px}
 
 /* RULETA */
-.wheel-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.wheel-btn{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border:none;border-radius:var(--radius);padding:9px 13px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .wheel-btn:active{opacity:.85}
 .wheel-screen-wrap{max-width:400px;margin:0 auto;padding:1.25rem}
 .wheel-header{background:linear-gradient(135deg,#FFD93D,#FF6B9D);border-radius:var(--radius);padding:1.25rem;text-align:center;margin-bottom:1.25rem;color:#fff}
 .wheel-spins-badge{display:inline-block;background:rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;margin-top:.5rem}
 .wheel-wrap{position:relative;width:300px;height:300px;margin:0 auto 1.25rem}
 .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;z-index:10;line-height:1}
-#wheel-svg{width:300px;height:300px}
+#wheel-svg{width:300px;height:300px;display:block;overflow:visible}
 .wheel-spin-btn{display:block;width:100%;padding:14px;background:var(--text);color:var(--surface);border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:1rem}
 .wheel-spin-btn:disabled{opacity:.35;cursor:default}
 .wheel-result{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;margin-bottom:1rem}
@@ -277,16 +279,16 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <div class="screen active" id="s-login">
   <div class="login-wrap">
     <div class="login-header">
-      <div>
+      <div class="login-top">
         <div class="login-title">Tareas en familia 🏠</div>
-        <div class="login-sub">¿Quién eres?</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="wheel-btn" onclick="openWheelLogin()">🎰 Ruleta</button>
-        <button class="shop-btn" onclick="openShopLogin()">🏪 Tienda</button>
+        <div class="login-btns">
+          <button class="wheel-btn" onclick="openWheelLogin()">🎰 Ruleta</button>
+          <button class="shop-btn" onclick="openShopLogin()">🏪 Tienda</button>
+        </div>
       </div>
     </div>
     <div id="leaderboard"></div>
+    <div class="login-sub" style="margin-bottom:.75rem">¿Quién eres?</div>
     <div class="user-grid" id="login-grid"></div>
   </div>
 </div>
@@ -297,6 +299,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     <div class="topbar-av" id="u-av"></div>
     <div class="topbar-name" id="u-name"></div>
     <div class="points-chip" id="u-points">⭐ 0</div>
+    <button class="back-btn" style="background:linear-gradient(135deg,#FFD93D,#FF6B9D);color:#fff;border:none" onclick="openWheelLogin()">🎰</button>
+    <button class="back-btn" style="background:linear-gradient(135deg,#6C63FF,#FF6B9D);color:#fff;border:none" onclick="openShopLogin()">🏪</button>
     <button class="back-btn" onclick="logout()">Salir</button>
   </div>
   <div class="user-tabs">
@@ -755,6 +759,7 @@ function getWeeklyLeaderboard(){
 }
 
 function openWheelLogin(){
+  if(curUser&&curUser!=='admin'){enterWheel(curUser);return;}
   let h='';
   USERS.forEach(u=>{
     const left=getWheelSpinsLeft(u.id);
@@ -805,7 +810,7 @@ function enterWheel(uid){
   document.getElementById('wheel-result').innerHTML='<div class="wheel-result-sub">Pulsa el botón para girar</div>';
   show('s-wheel');
 }
-function exitWheel(){wheelUser=null;show('s-login')}
+function exitWheel(){wheelUser=null;if(curUser&&curUser!=='admin'){show('s-user');}else{show('s-login');}}
 
 function buildWheelSVG(){
   const g=document.getElementById('wheel-g');
@@ -1335,6 +1340,7 @@ async function sendChallenge(){
 
 /* ── TIENDA ── */
 function openShopLogin(){
+  if(curUser&&curUser!=='admin'){enterShop(curUser);return;}
   let h='';
   USERS.forEach(u=>{
     h+=`<button class="pass-user-btn" onclick="pickShopUser('${u.id}')">
@@ -1373,7 +1379,7 @@ function enterShop(uid){
   setAv('shop-av',u);document.getElementById('shop-name').textContent=u.name;
   renderShop();show('s-shop');
 }
-function exitShop(){shopUser=null;show('s-login')}
+function exitShop(){shopUser=null;if(curUser&&curUser!=='admin'){show('s-user');}else{show('s-login');}}
 
 function renderShop(){
   const pts=getUserPts(shopUser);
