@@ -241,9 +241,9 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 .wheel-screen-wrap{max-width:400px;margin:0 auto;padding:1.25rem}
 .wheel-header{background:linear-gradient(135deg,#FFD93D,#FF6B9D);border-radius:var(--radius);padding:1.25rem;text-align:center;margin-bottom:1.25rem;color:#fff}
 .wheel-spins-badge{display:inline-block;background:rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700;margin-top:.5rem}
-.wheel-wrap{position:relative;width:300px;height:300px;margin:0 auto 1.25rem}
+.wheel-wrap{position:relative;width:300px;height:300px;margin:0 auto 1.25rem;line-height:0}
 .wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:32px;z-index:10;line-height:1}
-#wheel-svg{width:300px;height:300px;display:block;overflow:visible}
+#wheel-svg{width:300px;height:300px;display:block;overflow:visible;line-height:0}
 .wheel-spin-btn{display:block;width:100%;padding:14px;background:var(--text);color:var(--surface);border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:1rem}
 .wheel-spin-btn:disabled{opacity:.35;cursor:default}
 .wheel-result{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;margin-bottom:1rem}
@@ -340,7 +340,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <!-- TIENDA -->
 <div class="screen" id="s-shop">
   <div class="topbar">
-    <button class="back-btn" onclick="exitShop()">‹ Volver</button>
+    <button class="back-btn" onclick="exitShop()">‹ Inicio</button>
     <div class="topbar-av" id="shop-av" style="margin-left:8px"></div>
     <div class="topbar-name" id="shop-name" style="margin-left:8px"></div>
   </div>
@@ -360,7 +360,7 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 <!-- RULETA -->
 <div class="screen" id="s-wheel">
   <div class="topbar">
-    <button class="back-btn" onclick="exitWheel()">‹ Volver</button>
+    <button class="back-btn" onclick="exitWheel()">‹ Inicio</button>
     <div class="topbar-av" id="wheel-av" style="margin-left:8px"></div>
     <div class="topbar-name" id="wheel-name" style="margin-left:8px"></div>
   </div>
@@ -371,10 +371,10 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
     </div>
     <div class="wheel-wrap">
       <div class="wheel-pointer">▼</div>
-      <svg id="wheel-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <svg id="wheel-svg" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="display:block;width:300px;height:300px">
         <g id="wheel-g" style="transform-origin:150px 150px"></g>
         <circle cx="150" cy="150" r="28" fill="white" stroke="rgba(0,0,0,0.1)" stroke-width="2"/>
-        <text x="150" y="158" text-anchor="middle" font-size="22">🎰</text>
+        <text x="150" y="158" text-anchor="middle" dominant-baseline="middle" font-size="22">🎰</text>
       </svg>
     </div>
     <button class="wheel-spin-btn" id="wheel-spin-btn" onclick="spinWheel()">🎰 Girar ruleta</button>
@@ -810,7 +810,7 @@ function enterWheel(uid){
   document.getElementById('wheel-result').innerHTML='<div class="wheel-result-sub">Pulsa el botón para girar</div>';
   show('s-wheel');
 }
-function exitWheel(){wheelUser=null;if(curUser&&curUser!=='admin'){show('s-user');}else{show('s-login');}}
+function exitWheel(){wheelUser=null;buildLogin();show('s-login');}
 
 function buildWheelSVG(){
   const g=document.getElementById('wheel-g');
@@ -1379,7 +1379,7 @@ function enterShop(uid){
   setAv('shop-av',u);document.getElementById('shop-name').textContent=u.name;
   renderShop();show('s-shop');
 }
-function exitShop(){shopUser=null;if(curUser&&curUser!=='admin'){show('s-user');}else{show('s-login');}}
+function exitShop(){shopUser=null;buildLogin();show('s-login');}
 
 function renderShop(){
   const pts=getUserPts(shopUser);
