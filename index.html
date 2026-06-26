@@ -25,6 +25,7 @@
 html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
 .app{min-height:100vh;background:var(--bg)}
 .screen{display:none}.screen.active{display:block}
+#s-wheel.active{display:flex!important;flex-direction:column}
 .loading-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999}
 .loading-screen.hidden{display:none}
 .spinner{width:32px;height:32px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
@@ -358,8 +359,8 @@ html,body{height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSys
 </div>
 
 <!-- RULETA -->
-<div class="screen" id="s-wheel">
-  <div class="topbar">
+<div class="screen" id="s-wheel" style="display:none;flex-direction:column;min-height:100vh">
+  <div style="background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:.9rem 1.25rem">
     <button class="back-btn" onclick="exitWheel()">‹ Inicio</button>
     <div class="topbar-av" id="wheel-av" style="margin-left:8px"></div>
     <div class="topbar-name" id="wheel-name" style="margin-left:8px"></div>
@@ -1767,7 +1768,16 @@ function getDateStr(key){
 }
 
 /* ── HELPERS ── */
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    s.style.display='none';
+  });
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  el.style.display=id==='s-wheel'?'flex':'block';
+  window.scrollTo(0,0);
+}
 function setAv(elId,u){const el=document.getElementById(elId);el.className='topbar-av '+u.av;el.textContent=u.emoji}
 function isOverdue(t){if(t.done||!t.deadline)return false;const td=new Date();td.setHours(0,0,0,0);return new Date(t.deadline)<td}
 function fmtDate(dl){const[y,m,d]=dl.split('-');return d+'/'+m+'/'+y}
